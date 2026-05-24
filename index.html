@@ -86,30 +86,38 @@
         <p class="text-xs font-bold text-slate-500 mt-2"><span id="ui-ledger-crew">Crew:</span> <span id="dash-members">Waiting...</span></p>
       </div>
 
-      <!-- PHOTO ZONE -->
-      <div class="border-2 border-dashed border-gray-300 rounded-2xl p-6 bg-white text-center relative cursor-pointer shadow-sm">
-        <input type="file" id="file-input" accept="image/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer z-20">
-        <div class="space-y-1">
-          <div class="text-2xl">📷</div>
-          <p class="text-xs font-bold text-slate-700" id="ui-ledger-scan-p1">Scan Receipt to Auto-Split</p>
+      <!-- ENTRY ACTIONS BOX (相機掃描與打字記帳雙軌並行) -->
+      <div class="grid grid-cols-1 gap-2">
+        <!-- 1. SCAN PHOTO -->
+        <div class="border-2 border-dashed border-gray-300 rounded-2xl p-5 bg-white text-center relative cursor-pointer shadow-xs hover:bg-gray-50 transition">
+          <input type="file" id="file-input" accept="image/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer z-20">
+          <div class="space-y-1">
+            <div class="text-xl">📷</div>
+            <p class="text-xs font-bold text-slate-700" id="ui-ledger-scan-p1">Scan Receipt to Auto-Split</p>
+          </div>
         </div>
+        <!-- 2. MANUAL WRITE BUTTON (點擊後直接拉開底下的打字編輯器) -->
+        <button onclick="openManualBillForm()" type="button" class="w-full bg-slate-900 hover:bg-pink-600 text-white font-bold py-3.5 rounded-2xl text-xs uppercase tracking-widest transition cursor-pointer shadow-sm flex items-center justify-center gap-2" id="ui-ledger-manual-btn">
+          ✍️ Quick Manual Log
+        </button>
       </div>
+
       <div id="scan-status-box" class="p-3 bg-white border border-pink-200 rounded-xl text-xs flex items-center gap-2" style="display: none;">
         <span class="w-2 h-2 rounded-full bg-pink-500 animate-ping"></span>
         <span id="scan-status-text">Processing image...</span>
       </div>
 
-      <!-- BILL TWEAK EDITOR -->
+      <!-- BILL TWEAK/MANUAL EDITOR -->
       <section id="bill-editor" class="bg-white p-5 rounded-2xl border-2 border-pink-400 space-y-4 shadow-xl" style="display: none;">
         <div class="flex justify-between items-center pb-2 border-b border-gray-100">
-          <h3 class="text-xs font-bold tracking-wider uppercase text-pink-600" id="ui-bill-title">Verify & Adjust Splits</h3>
+          <h3 class="text-xs font-black tracking-wider uppercase text-pink-600" id="ui-bill-title">Verify & Adjust Splits</h3>
           <button onclick="closeBillPanel()" type="button" class="text-xs text-gray-400 hover:text-slate-900 cursor-pointer" id="ui-bill-cancel">Cancel</button>
         </div>
         <input type="hidden" id="edit-id">
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-merchant">Merchant (English)</label>
-            <input type="text" id="edit-store" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+            <input type="text" id="edit-store" placeholder="e.g. Coles, Uber, Cafe" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
           </div>
           <div>
             <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-paidby">Paid By</label>
@@ -118,20 +126,20 @@
         </div>
         <div>
           <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-items">Items Summary</label>
-          <input type="text" id="edit-items" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+          <input type="text" id="edit-items" placeholder="e.g. Coffee, Ferry Ticket, Dinner" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
         </div>
         <div class="grid grid-cols-3 gap-2">
           <div>
             <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-cost">Cost (AUD)</label>
-            <input type="number" id="edit-amount" step="0.01" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-pink-600">
+            <input type="number" id="edit-amount" step="0.01" value="0.00" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-pink-600 focus:bg-white focus:outline-pink-400">
           </div>
           <div>
             <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-cat">Category</label>
-            <input type="text" id="edit-cat" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+            <input type="text" id="edit-cat" placeholder="Food" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
           </div>
           <div>
             <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-date">Date</label>
-            <input type="date" id="edit-date" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+            <input type="date" id="edit-date" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
           </div>
         </div>
         <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3">
@@ -156,7 +164,7 @@
       </div>
     </div>
 
-    <!-- TAB 2: PLANNER (行程 & 航班) -->
+    <!-- TAB 2: PLANNER -->
     <div id="tab-itinerary-content" class="space-y-4" style="display: none;">
       <!-- FLIGHT MATRIX BOARD -->
       <section class="bg-slate-900 text-white rounded-2xl p-4 shadow-sm space-y-3">
@@ -218,14 +226,14 @@
       <div id="itinerary-cards-container" class="space-y-3"></div>
     </div>
 
-    <!-- TAB 3: WISHLIST (許願池) -->
+    <!-- TAB 3: WISHLIST -->
     <div id="tab-wishlist-content" class="space-y-4" style="display: none;">
       <div class="flex justify-between items-center">
         <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-wish-title">🎁 Group Wishlist</h2>
         <button onclick="toggleWishEditor()" class="bg-pink-500 text-white text-[11px] font-bold px-4 py-2 rounded-full hover:bg-slate-900 transition" id="ui-wish-btn">Make a Wish</button>
       </div>
 
-      <!-- WISH DRAWER EDITOR (修復重點：確保有 style="display: none;") -->
+      <!-- WISH DRAWER EDITOR -->
       <section id="wish-editor" class="bg-white p-5 rounded-2xl border-2 border-pink-400 space-y-4 shadow-xl" style="display: none;">
         <h3 class="text-xs font-black uppercase text-pink-600" id="ui-wish-pane-title">Throw in a Wish Node</h3>
         <div class="space-y-2">
@@ -235,7 +243,6 @@
           <input type="text" id="wish-input-author" placeholder="Your Name" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
         </div>
         <div class="flex gap-2">
-          <!-- 補齊核心大掃除與防護發送 -->
           <button onclick="saveWishNode()" class="flex-1 bg-slate-900 text-white font-bold py-2 rounded-xl text-xs uppercase" id="ui-wish-cast">Cast Wish</button>
           <button onclick="toggleWishEditor()" class="bg-gray-100 text-gray-600 px-3 rounded-xl text-xs" id="ui-wish-cancel">Cancel</button>
         </div>
@@ -274,10 +281,10 @@
     let currentLang = 'en';
     const langPack = {
       en: {
-        toggleBtn: "🌐 中文", cfgTitle: "Cloud Credentials", cfgDesc: "Syncs everything seamlessly to your private Firebase container.", cfgMembers: "Trip Members (Comma Separated)", cfgBtn: "⚡ SAVE & INITIALIZE LIVE SERVER", hotelBadge: "🏠 Basecamp / Accommodation", hotelEditBtn: "Edit", hotelSave: "Save Basecamp", hotelCancel: "Cancel", ledgerTitle: "Total Group Expense", ledgerCrew: "Crew:", ledgerScanP1: "Scan Receipt to Auto-Split", ledgerVault: "Vault Ledgers", flightTitle: "✈️ Crew Flight Times", flightBtn: "Update Mine", flightSync: "Sync Flight", planTitle: "Itinerary Timeline", planAddBtn: "+ Add New Event", wishTitle: "🎁 Group Wishlist", wishBtn: "Make a Wish", wishPaneTitle: "Throw in a Wish Node", wishCast: "Cast Wish", wishCancel: "Cancel", navLedger: "Ledger", navPlanner: "Planner", navWishlist: "Wishlist", billTitle: "Verify & Adjust Splits", billCancel: "Cancel", billMerchant: "Merchant (English)", billPaidby: "Paid By", billItems: "Items Summary", billCost: "Cost (AUD)", billCat: "Category", billDate: "Date", billManual: "Manual Split Weights", billEqual: "Split Equally", billAssigned: "Assigned Total:", billSave: "Save Record to Cloud", planCancel: "Cancel", planTime: "Time / Day Index", planCat: "Category", planLocation: "Hub Location", planMemo: "Action & Memo Details", planSync: "Sync To Cloud"
+        toggleBtn: "🌐 中文", cfgTitle: "Cloud Credentials", cfgDesc: "Syncs everything seamlessly to your private Firebase container.", cfgMembers: "Trip Members (Comma Separated)", cfgBtn: "⚡ SAVE & INITIALIZE LIVE SERVER", hotelBadge: "🏠 Basecamp / Accommodation", hotelEditBtn: "Edit", hotelSave: "Save Basecamp", hotelCancel: "Cancel", ledgerTitle: "Total Group Expense", ledgerCrew: "Crew:", ledgerScanP1: "Scan Receipt to Auto-Split", ledgerManualBtn: "✍️ Quick Manual Log", ledgerVault: "Vault Ledgers", flightTitle: "✈️ Crew Flight Times", flightBtn: "Update Mine", flightSync: "Sync Flight", planTitle: "Itinerary Timeline", planAddBtn: "+ Add New Event", wishTitle: "🎁 Group Wishlist", wishBtn: "Make a Wish", wishPaneTitle: "Throw in a Wish Node", wishCast: "Cast Wish", wishCancel: "Cancel", navLedger: "Ledger", navPlanner: "Planner", navWishlist: "Wishlist", billTitle: "Verify & Adjust Splits", billCancel: "Cancel", billMerchant: "Merchant (English)", billPaidby: "Paid By", billItems: "Items Summary", billCost: "Cost (AUD)", billCat: "Category", billDate: "Date", billManual: "Manual Split Weights", billEqual: "Split Equally", billAssigned: "Assigned Total:", billSave: "Save Record to Cloud", planCancel: "Cancel", planTime: "Time / Day Index", planCat: "Category", planLocation: "Hub Location", planMemo: "Action & Memo Details", planSync: "Sync To Cloud"
       },
       zh: {
-        toggleBtn: "🌐 EN", cfgTitle: "雲端連線設定", cfgDesc: "將所有密鑰安全同步至您的私人 Firebase 雲端庫中。", cfgMembers: "本團旅伴成員名單 (用逗號隔開)", cfgBtn: "⚡ 儲存並啟動雲端連線", hotelBadge: "🏠 住宿大本營 / 飯店地址資訊", hotelEditBtn: "修改", hotelSave: "儲存住宿資訊", hotelCancel: "取消", ledgerTitle: "本團澳幣總花費", ledgerCrew: "本團成員:", ledgerScanP1: "拍照或上傳澳洲收據 (自動分帳)", ledgerVault: "雲端消費歷史帳目明細", flightTitle: "✈️ 大家降落雪梨班機時間看板", flightBtn: "更新我的航班", flightSync: "同步航班資訊", planTitle: "雪梨動態行程時間表", planAddBtn: "+ 新增行程活動", wishTitle: "🎁 旅伴敲碗許願池", wishBtn: "我要許願", wishPaneTitle: "填寫你的雪梨願望清單", wishCast: "拋入許願池", wishCancel: "取消", navLedger: "分帳本", navPlanner: "行程表", navWishlist: "許願池", billTitle: "核對並手動微調分帳金額", billCancel: "取消", billMerchant: "店名 (維持英文)", billPaidby: "誰付的錢", billItems: "購買品項摘要", billCost: "總金額 (AUD)", billCat: "消費分類", billDate: "消費日期", billManual: "每人應付金額微調", billEqual: "平分總金額", billAssigned: "已分配總計:", billSave: "將帳目同步至雲端", planCancel: "取消", planTime: "時間 / 天數標記", planCat: "活動分類", planLocation: "地點/樞紐", planMemo: "具體計劃與備忘細節", planSync: "同步行程至雲端"
+        toggleBtn: "🌐 EN", cfgTitle: "雲端連線設定", cfgDesc: "將所有密鑰安全同步至您的私人 Firebase 雲端庫中。", cfgMembers: "本團旅伴成員名單 (用逗號隔開)", cfgBtn: "⚡ 儲存並啟動雲端連線", hotelBadge: "🏠 住宿大本營 / 飯店地址資訊", hotelEditBtn: "修改", hotelSave: "儲存住宿資訊", hotelCancel: "取消", ledgerTitle: "本團澳幣總花費", ledgerCrew: "本團成員:", ledgerScanP1: "拍照或上傳澳洲收據 (自動分帳)", ledgerManualBtn: "✍️ 手動快速記帳", ledgerVault: "雲端消費歷史帳目明細", flightTitle: "✈️ 大家降落雪梨班機時間看板", flightBtn: "更新我的航班", flightSync: "同步航班資訊", planTitle: "雪梨動態行程時間表", planAddBtn: "+ 新增行程活動", wishTitle: "🎁 旅伴敲碗許願池", wishBtn: "我要許願", wishPaneTitle: "填寫你的雪梨願望清單", wishCast: "拋入許願池", wishCancel: "取消", navLedger: "分帳本", navPlanner: "行程表", navWishlist: "許願池", billTitle: "核對並手動微調分帳金額", billCancel: "取消", billMerchant: "店名 (維持英文)", billPaidby: "誰付的錢", billItems: "購買品項摘要", billCost: "總金額 (AUD)", billCat: "消費分類", billDate: "消費日期", billManual: "每人應付金額微調", billEqual: "平分總金額", billAssigned: "已分配總計:", billSave: "將帳目同步至雲端", planCancel: "取消", planTime: "時間 / 天數標記", planCat: "活動分類", planLocation: "地點/樞紐", planMemo: "具體計劃與備忘細節", planSync: "同步行程至雲端"
       }
     };
 
@@ -301,6 +308,7 @@
       document.getElementById('ui-ledger-title').innerText = pack.ledgerTitle;
       document.getElementById('ui-ledger-crew').innerText = pack.ledgerCrew;
       document.getElementById('ui-ledger-scan-p1').innerText = pack.ledgerScanP1;
+      document.getElementById('ui-ledger-manual-btn').innerText = pack.ledgerManualBtn;
       document.getElementById('ui-ledger-vault').innerText = pack.ledgerVault;
       document.getElementById('ui-flight-title').innerText = pack.flightTitle;
       document.getElementById('ui-flight-btn').innerText = pack.flightBtn;
@@ -402,7 +410,16 @@
     window.saveFlightRow = saveFlightRow;
     function streamFlights() { db.collection("sydney_luxe_flights").onSnapshot(snap => { const box = document.getElementById('flight-display-list'); let html = ''; snap.forEach(d => { html += `<div class="flex justify-between py-1 border-b border-slate-800/40"><span class="font-bold text-amber-300">${d.id}</span><span class="text-zinc-400">${d.data().no || 'QF--'}</span><span class="font-mono text-zinc-200 font-semibold">${d.data().eta || 'Not Logged'}</span></div>`; }); box.innerHTML = html || `<p class="text-zinc-500 italic text-[11px]">${currentLang==='en'?'No flights logged.':'目前沒有任何航班紀錄'}</p>`; }); }
 
-    // EXPENSES
+    // EXPENSES CORE (WITH MANUAL WRITING LOGIC)
+    function openManualBillForm() {
+      // ✍️ 觸發手動快速記帳：直接清空並預填基本資料
+      const today = new Date().toISOString().split('T')[0];
+      const emptyData = { storeName: "", items: "", amountAUD: 0, category: "Food", date: today };
+      openBillPanel(null, emptyData);
+      document.getElementById('bill-editor').scrollIntoView({ behavior: 'smooth' });
+    }
+    window.openManualBillForm = openManualBillForm;
+
     function streamExpenses() {
       db.collection("sydney_luxe_expenses").onSnapshot((snap) => {
         currentExpenses = []; snap.forEach(d => currentExpenses.push({ id: d.id, ...d.data() }));
@@ -441,6 +458,12 @@
       const id = document.getElementById('edit-id').value; let splits = {}; document.querySelectorAll('.split-weight-node').forEach(i => { splits[i.getAttribute('data-member')] = parseFloat(i.value) || 0; });
       const packageObj = { storeName: document.getElementById('edit-store').value.trim(), items: document.getElementById('edit-items').value.trim(), amountAUD: parseFloat(document.getElementById('edit-amount').value) || 0, category: document.getElementById('edit-cat').value.trim(), date: document.getElementById('edit-date').value, paidBy: document.getElementById('edit-paid-by').value, splits };
       if(id) { await db.collection("sydney_luxe_expenses").doc(id).set(packageObj, { merge: true }); } else { await db.collection("sydney_luxe_expenses").add(packageObj); }
+      
+      // ⚡ 終極擦乾淨大掃除代碼：儲存完立刻將記帳欄位徹底洗白！
+      document.getElementById('edit-store').value = '';
+      document.getElementById('edit-items').value = '';
+      document.getElementById('edit-amount').value = 0;
+      document.getElementById('edit-cat').value = 'Others';
       closeBillPanel();
     });
     window.initiateBillTweak = function(id) { const target = currentExpenses.find(e => e.id === id); if(target) openBillPanel(id, target); };
@@ -476,54 +499,23 @@
     function deleteItineraryNode() { const id = document.getElementById('edit-itin-id').value; if(confirm("Delete event?")) db.collection("sydney_luxe_itinerary").doc(id).delete().then(()=>closeItineraryEditor()); }
     window.deleteItineraryNode = deleteItineraryNode;
 
-    // WISHLIST (核心修復：這段有完整綁定到全域)
-    function toggleWishEditor() {
-      const el = document.getElementById('wish-editor');
-      el.style.display = (el.style.display === 'none') ? 'block' : 'none';
-    }
+    // WISHLIST
+    function toggleWishEditor() { const el = document.getElementById('wish-editor'); el.style.display = (el.style.display === 'none') ? 'block' : 'none'; }
     window.toggleWishEditor = toggleWishEditor;
-
     function saveWishNode() {
-      const title = document.getElementById('wish-input-title').value.trim();
-      const link = document.getElementById('wish-input-link').value.trim();
-      const img = document.getElementById('wish-input-img').value.trim();
-      const author = document.getElementById('wish-input-author').value.trim() || 'Someone';
-
+      const title = document.getElementById('wish-input-title').value.trim(); const link = document.getElementById('wish-input-link').value.trim(); const img = document.getElementById('wish-input-img').value.trim(); const author = document.getElementById('wish-input-author').value.trim() || 'Someone';
       if(!title) { alert(currentLang==='en'?"Please fill Wish Title!":"請填寫想要許願的名稱！"); return; }
-      
-      db.collection("sydney_luxe_wishes").add({ title, link, img, author, approvedInPlan: false, timestamp: Date.now() })
-        .then(() => {
-          // ⚡ 終極防護大掃除指令：送出成功一秒洗白輸入框，絕不留殘影！
-          document.getElementById('wish-input-title').value = '';
-          document.getElementById('wish-input-link').value = '';
-          document.getElementById('wish-input-img').value = '';
-          document.getElementById('wish-input-author').value = '';
-          
-          toggleWishEditor(); // 收起抽屜
-        })
-        .catch(err => alert("Wish error: " + err.message));
+      db.collection("sydney_luxe_wishes").add({ title, link, img, author, approvedInPlan: false, timestamp: Date.now() }).then(() => { document.getElementById('wish-input-title').value = ''; document.getElementById('wish-input-link').value = ''; document.getElementById('wish-input-img').value = ''; document.getElementById('wish-input-author').value = ''; toggleWishEditor(); }).catch(err => alert("Wish error: " + err.message));
     }
     window.saveWishNode = saveWishNode;
-
-    function streamWishes() {
-      db.collection("sydney_luxe_wishes").onSnapshot(snap => {
-        currentWishes = []; snap.forEach(d => currentWishes.push({ id: d.id, ...d.data() }));
-        currentWishes.sort((a,b) => b.timestamp - a.timestamp);
-        streamWishesRender();
-      });
-    }
-
+    function streamWishes() { db.collection("sydney_luxe_wishes").onSnapshot(snap => { currentWishes = []; snap.forEach(d => currentWishes.push({ id: d.id, ...d.data() })); currentWishes.sort((a,b) => b.timestamp - a.timestamp); streamWishesRender(); }); }
     function streamWishesRender() {
-      const container = document.getElementById('wishlist-cards-container');
-      if(currentWishes.length === 0) { container.innerHTML = `<div class="p-6 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm">${currentLang==='en'?'Wish pool empty.':'許願池空空如也，快丟 IG 連結來許願吧！'}</div>`; return; }
+      const container = document.getElementById('wishlist-cards-container'); if(currentWishes.length === 0) { container.innerHTML = `<div class="p-6 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm">${currentLang==='en'?'Wish pool empty.':'許願池空空如也，快丟 IG 連結來許願吧！'}</div>`; return; }
       container.innerHTML = currentWishes.map(wish => {
-        const isUrl = wish.link && (wish.link.startsWith('http://') || wish.link.startsWith('https://'));
-        const linkButton = isUrl ? `<a href="${wish.link}" target="_blank" onclick="event.stopPropagation()" class="inline-block mt-1 text-[10px] text-pink-600 font-bold bg-pink-50 border border-pink-100 px-2 py-0.5 rounded-md">🔗 ${currentLang==='en'?'View Link':'打開對外連結'}</a>` : '';
-        const imageBox = wish.img ? `<img src="${wish.img}" class="w-full h-24 object-cover rounded-xl mt-2 border border-gray-100">` : '';
+        const isUrl = wish.link && (wish.link.startsWith('http://') || wish.link.startsWith('https://')); const linkButton = isUrl ? `<a href="${wish.link}" target="_blank" onclick="event.stopPropagation()" class="inline-block mt-1 text-[10px] text-pink-600 font-bold bg-pink-50 border border-pink-100 px-2 py-0.5 rounded-md">🔗 ${currentLang==='en'?'View Link':'打開對外連結'}</a>` : ''; const imageBox = wish.img ? `<img src="${wish.img}" class="w-full h-24 object-cover rounded-xl mt-2 border border-gray-100">` : '';
         return `<div class="bg-white border border-gray-200 p-4 rounded-2xl shadow-sm space-y-2 relative"><div><h4 class="text-xs font-bold text-slate-900">${wish.title}</h4><p class="text-[9px] text-gray-400">${currentLang==='en'?'Wished by':'許願人'} <span class="text-slate-600 font-medium">${wish.author}</span></p>${linkButton}</div>${imageBox}<div class="pt-2 border-t border-gray-100 flex justify-between items-center text-[10px]"><label class="flex items-center gap-1.5 font-bold text-gray-500 cursor-pointer"><input type="checkbox" ${wish.approvedInPlan ? 'checked':''} onclick="window.toggleWishStatus('${wish.id}', ${wish.approvedInPlan})" class="w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-400"><span>${currentLang==='en'?'Approved in Plan':'已排進行程中 ✔️'}</span></label><button onclick="window.nukeWishNode('${wish.id}')" class="text-gray-300 hover:text-red-500">${currentLang==='en'?'✕ Delete':'✕ 撤銷願望'}</button></div></div>`;
       }).join('');
     }
-
     window.toggleWishStatus = function(id, currentStatus) { db.collection("sydney_luxe_wishes").doc(id).update({ approvedInPlan: !currentStatus }); };
     window.nukeWishNode = function(id) { if(confirm(currentLang==='en'?"Delete?":"確定要撤銷這個願望嗎？")) db.collection("sydney_luxe_wishes").doc(id).delete(); };
 
