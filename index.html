@@ -7,17 +7,9 @@
   <!-- Tailwind v4 -->
   <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
   
-  <!-- 舊版 Firebase 導入常會因為快取死鎖，這次我們換成最穩定的標準 Web 全球 CDN 載入 -->
+  <!-- Firebase CDN Legacy Stables -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  
-  <script type="importmap">
-    {
-      "imports": {
-        "@google/generative-ai": "https://esm.run/@google/generative-ai"
-      }
-    }
-  </script>
 </head>
 <body class="bg-gray-50 text-slate-900 min-h-screen pb-32 font-sans antialiased">
 
@@ -28,7 +20,6 @@
         <span class="w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse"></span>
         <h1 class="text-base font-black tracking-widest uppercase text-slate-900">SYDNEY <span class="text-pink-500">.</span> LUXE</h1>
       </div>
-      <!-- 點擊這個按鈕 100% 強制開關設定，不受任何雲端錯誤卡死影響 -->
       <button onclick="toggleConfigPanel()" type="button" class="text-[11px] font-bold tracking-wider uppercase bg-slate-900 text-white px-4 py-2 rounded-full hover:bg-pink-500 transition cursor-pointer shadow-sm">
         ⚙️ Cloud Keys
       </button>
@@ -37,7 +28,7 @@
 
   <main class="max-w-md mx-auto px-4 mt-5 space-y-6">
 
-    <!-- CONFIG SECTION (最重要按鈕改為明顯的鮮豔黃色，用來辨識網頁是否有成功刷新) -->
+    <!-- CONFIG SECTION (耀眼黃色外框，方便確認刷新) -->
     <section id="section-config" class="bg-white p-5 rounded-2xl border-2 border-amber-400 space-y-4 shadow-xl" style="display: block;">
       <div class="space-y-1">
         <h2 class="text-sm font-bold tracking-wider uppercase text-amber-600">Cloud Credentials</h2>
@@ -57,9 +48,8 @@
           <input type="text" id="cfg-members" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:outline-none">
         </div>
       </div>
-      <!-- 如果你有成功讀取到這一版程式碼，這個按鈕會變成耀眼的黃金色，並且有黃色外框！ -->
       <button onclick="saveApplicationConfig()" type="button" class="w-full bg-amber-400 hover:bg-amber-500 text-slate-950 font-black p-4 rounded-xl text-xs tracking-widest uppercase transition cursor-pointer shadow-md">
-        ⚡ SAVE & INITIALIZE LIVE SERVER (V6)
+        ⚡ SAVE & INITIALIZE LIVE SERVER (FINAL)
       </button>
     </section>
 
@@ -120,15 +110,13 @@
     </div>
   </nav>
 
+  <!-- 修正關鍵：改用網頁瀏覽器直連 ESM 最正確的 Google Gen AI 載入包裝 -->
   <script type="module">
-    import { GoogleGenAI } from "@google/generative-ai";
-    window.GoogleGenAI = GoogleGenAI; // 綁定到全域確保能跨範疇讀取
+    import { GoogleGenAI } from "https://esm.run/@google/generative-ai";
+    window.MyGoogleGenAIInstance = GoogleGenAI; 
   </script>
 
   <script>
-    // ==========================================
-    // 絕對不卡死、脫離任何雲端框架的純原生 UI 邏輯
-    // ==========================================
     let db = null;
     let aiModel = null;
     let config = { geminiKey: '', members: ['Sabrina', '中偉', '聖聖', '老麥', '倫倫'] };
@@ -159,29 +147,18 @@
     }
     window.switchTab = switchTab;
 
-    // ==========================================
-    // 終極暴力儲存驗證：只要按下去，100% 必須跳出視窗
-    // ==========================================
     function saveApplicationConfig() {
       const geminiKey = document.getElementById('cfg-gemini-key').value.trim();
       const firebaseJson = document.getElementById('cfg-firebase-json').value.trim();
       const membersStr = document.getElementById('cfg-members').value.trim();
 
-      if (!geminiKey) {
-        alert("❌ 申請失敗：你的 GEMINI AI KEY 欄位是空的！請去複製貼上。");
-        return;
-      }
-      if (!firebaseJson) {
-        alert("❌ 申請失敗：FIREBASE CONFIGURATION JSON 欄位不能是空的！");
-        return;
-      }
+      if (!geminiKey) { alert("Gemini Key is empty!"); return; }
+      if (!firebaseJson) { alert("Firebase JSON is empty!"); return; }
 
-      // JSON 實體測試
-      let parsed = null;
       try {
-        parsed = JSON.parse(firebaseJson);
+        JSON.parse(firebaseJson);
       } catch (err) {
-        alert("❌ JSON 格式發生嚴重錯誤！\n\n原因：你的大括號 {} 內有漏掉符號、或者最前面或最後面多黏到了字。請完全清空大框框，並重新複製聊天室裡的那段 JSON 貼上。");
+        alert("❌ JSON 格式發生錯誤，請重新確認大括號是否有對齊。");
         return;
       }
 
@@ -193,7 +170,7 @@
       try {
         bootCloudNodes(payload);
         document.getElementById('section-config').style.display = 'none';
-        alert("🎉 雲端連線成功！帳本與行程功能已完全解凍！");
+        alert("🎉 雲端連線成功！雪梨記帳本與行程表正式開通！");
       } catch (bootErr) {
         alert("❌ 與 Firebase 對接失敗：" + bootErr.message);
       }
@@ -224,11 +201,12 @@
       config = cfg;
       document.getElementById('dash-members').innerText = config.members.join(', ');
       
-      // Init AI
-      const genAI = new window.GoogleGenAI({ apiKey: config.geminiKey });
-      aiModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+      // 修正後的正確 Constructor 呼叫方式
+      if (window.MyGoogleGenAIInstance) {
+        const genAI = new window.MyGoogleGenAIInstance({ apiKey: config.geminiKey });
+        aiModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+      }
 
-      // Init Firebase (Compat version)
       if (firebase.apps.length === 0) {
         const app = firebase.initializeApp(JSON.parse(config.firebaseJson));
         db = firebase.firestore(app);
@@ -236,7 +214,7 @@
         db = firebase.firestore();
       }
 
-      // Stream data
+      // Live Streams
       db.collection("sydney_luxe_expenses").onSnapshot((snap) => {
         let currentExpenses = [];
         snap.forEach(d => currentExpenses.push({ id: d.id, ...d.data() }));
@@ -298,8 +276,8 @@
     }
     window.addNewItineraryEvent = addNewItineraryEvent;
 
-    // Boot
-    bootstrapConfig();
+    // 延遲載入確保 Module 初始化完成
+    setTimeout(bootstrapConfig, 500);
   </script>
 </body>
 </html>
