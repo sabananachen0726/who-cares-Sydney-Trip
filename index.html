@@ -20,60 +20,33 @@
         <span class="w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse"></span>
         <h1 class="text-base font-black tracking-widest uppercase text-slate-900">SYDNEY <span class="text-pink-500">.</span> LUXE</h1>
       </div>
-      <div class="flex items-center gap-2">
-        <button onclick="toggleLanguage()" type="button" id="btn-lang-toggle" class="text-[10px] font-black tracking-wider uppercase bg-pink-50 text-pink-600 border border-pink-100 px-3 py-2 rounded-full cursor-pointer shadow-xs">
-          🌐 中文
-        </button>
-        <button onclick="toggleConfigPanel()" type="button" class="text-[11px] font-bold tracking-wider uppercase bg-slate-900 text-white px-4 py-2 rounded-full hover:bg-pink-500 transition cursor-pointer shadow-sm">
-          ⚙️ Keys
-        </button>
-      </div>
+      <!-- 預設直接是中文版，讓大家點開最親切 -->
+      <button onclick="toggleLanguage()" type="button" id="btn-lang-toggle" class="text-[10px] font-black tracking-wider uppercase bg-pink-50 text-pink-600 border border-pink-100 px-3 py-2 rounded-full cursor-pointer shadow-xs">
+        🌐 EN
+      </button>
     </div>
   </header>
 
   <main class="max-w-md mx-auto px-4 mt-5 space-y-6">
 
-    <!-- CONFIG SECTION -->
-    <section id="section-config" class="bg-white p-5 rounded-2xl border-2 border-amber-400 space-y-4 shadow-xl" style="display: block;">
-      <div class="space-y-1">
-        <h2 class="text-sm font-bold tracking-wider uppercase text-amber-600" id="ui-cfg-title">Cloud Credentials</h2>
-        <p class="text-[11px] text-gray-500" id="ui-cfg-desc">Syncs everything seamlessly to your private Firebase container.</p>
-      </div>
-      <div class="space-y-3">
-        <div>
-          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Gemini AI Key</label>
-          <input type="text" id="cfg-gemini-key" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:outline-none" placeholder="Paste your AIzaSy... here">
-        </div>
-        <div>
-          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Firebase Configuration JSON</label>
-          <textarea id="cfg-firebase-json" rows="6" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-800 font-mono focus:outline-none" placeholder="Must start with { and end with }"></textarea>
-        </div>
-        <div>
-          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1" id="ui-cfg-members">Trip Members (Comma Separated)</label>
-          <input type="text" id="cfg-members" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:outline-none">
-        </div>
-      </div>
-      <button onclick="saveApplicationConfig()" type="button" class="w-full bg-amber-400 hover:bg-amber-500 text-slate-950 font-black p-4 rounded-xl text-xs tracking-widest uppercase transition cursor-pointer shadow-md" id="ui-cfg-btn">
-        ⚡ SAVE & INITIALIZE LIVE SERVER
-      </button>
-    </section>
+    <!-- 🔒 黃色設定面板已徹底移除！大家再也不會被這個擋住 🔒 -->
 
     <!-- LIVE HOTEL MANAGER -->
     <section class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm relative group" onclick="openHotelEditor()">
       <div class="flex justify-between items-start">
         <div class="space-y-0.5">
-          <span class="text-[8px] font-black tracking-widest text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full uppercase border border-pink-100" id="ui-hotel-badge">🏠 Basecamp / Accommodation</span>
-          <h3 class="text-sm font-bold text-slate-900 mt-1.5" id="hotel-display-name">Tap to set Hotel Name / Info</h3>
-          <p class="text-xs text-gray-500 font-mono mt-0.5" id="hotel-display-address">No address provided yet.</p>
+          <span class="text-[8px] font-black tracking-widest text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full uppercase border border-pink-100" id="ui-hotel-badge">住宿大本營 / 飯店地址資訊</span>
+          <h3 class="text-sm font-bold text-slate-900 mt-1.5" id="hotel-display-name">點擊設定飯店名稱與資訊</h3>
+          <p class="text-xs text-gray-500 font-mono mt-0.5" id="hotel-display-address">目前尚未提供地址資訊</p>
         </div>
-        <span class="text-[10px] text-pink-500 font-bold bg-gray-50 px-2 py-1 rounded-lg" id="ui-hotel-edit-btn">Edit</span>
+        <span class="text-[10px] text-pink-500 font-bold bg-gray-50 px-2 py-1 rounded-lg" id="ui-hotel-edit-btn">修改</span>
       </div>
       <div id="hotel-editor-panel" class="mt-3 pt-3 border-t border-gray-100 space-y-2" style="display: none;" onclick="event.stopPropagation()">
         <input type="text" id="input-hotel-name" placeholder="Hotel Name (e.g. Hilton Sydney)" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl text-xs">
         <input type="text" id="input-hotel-address" placeholder="Full Address (For Uber/Maps)" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl text-xs">
         <div class="flex gap-2">
-          <button onclick="saveHotelInfo()" class="flex-1 bg-slate-900 text-white font-bold py-2 rounded-xl text-xs uppercase" id="ui-hotel-save-btn">Save Basecamp</button>
-          <button onclick="closeHotelEditor()" class="bg-gray-100 text-gray-600 px-3 rounded-xl text-xs" id="ui-hotel-cancel-btn">Cancel</button>
+          <button onclick="saveHotelInfo()" class="flex-1 bg-slate-900 text-white font-bold py-2 rounded-xl text-xs uppercase" id="ui-hotel-save-btn">儲存住宿資訊</button>
+          <button onclick="closeHotelEditor()" class="bg-gray-100 text-gray-600 px-3 rounded-xl text-xs" id="ui-hotel-cancel-btn">取消</button>
         </div>
       </div>
     </section>
@@ -81,24 +54,22 @@
     <!-- TAB 1: LEDGER (帳本) -->
     <div id="tab-tracker-content" class="space-y-4" style="display: block;">
       <div class="bg-white border border-gray-200 p-5 rounded-2xl shadow-sm">
-        <p class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-ledger-title">Total Group Expense</p>
+        <p class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-ledger-title">本團澳幣總花費</p>
         <p class="text-3xl font-black text-slate-900 mt-1" id="dash-total">A$ 0.00</p>
-        <p class="text-xs font-bold text-slate-500 mt-2"><span id="ui-ledger-crew">Crew:</span> <span id="dash-members">Waiting...</span></p>
+        <p class="text-xs font-bold text-slate-500 mt-2"><span id="ui-ledger-crew">本團成員:</span> <span id="dash-members">Sabrina, 中偉, 聖聖, 老麥, 倫倫</span></p>
       </div>
 
-      <!-- ENTRY ACTIONS BOX (相機掃描與打字記帳雙軌並行) -->
+      <!-- ENTRY ACTIONS BOX -->
       <div class="grid grid-cols-1 gap-2">
-        <!-- 1. SCAN PHOTO -->
         <div class="border-2 border-dashed border-gray-300 rounded-2xl p-5 bg-white text-center relative cursor-pointer shadow-xs hover:bg-gray-50 transition">
           <input type="file" id="file-input" accept="image/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer z-20">
           <div class="space-y-1">
             <div class="text-xl">📷</div>
-            <p class="text-xs font-bold text-slate-700" id="ui-ledger-scan-p1">Scan Receipt to Auto-Split</p>
+            <p class="text-xs font-bold text-slate-700" id="ui-ledger-scan-p1">拍照或上傳澳洲收據 (自動分帳)</p>
           </div>
         </div>
-        <!-- 2. MANUAL WRITE BUTTON (點擊後直接拉開底下的打字編輯器) -->
         <button onclick="openManualBillForm()" type="button" class="w-full bg-slate-900 hover:bg-pink-600 text-white font-bold py-3.5 rounded-2xl text-xs uppercase tracking-widest transition cursor-pointer shadow-sm flex items-center justify-center gap-2" id="ui-ledger-manual-btn">
-          ✍️ Quick Manual Log
+          ✍️ 手動快速記帳
         </button>
       </div>
 
@@ -110,67 +81,67 @@
       <!-- BILL TWEAK/MANUAL EDITOR -->
       <section id="bill-editor" class="bg-white p-5 rounded-2xl border-2 border-pink-400 space-y-4 shadow-xl" style="display: none;">
         <div class="flex justify-between items-center pb-2 border-b border-gray-100">
-          <h3 class="text-xs font-black tracking-wider uppercase text-pink-600" id="ui-bill-title">Verify & Adjust Splits</h3>
-          <button onclick="closeBillPanel()" type="button" class="text-xs text-gray-400 hover:text-slate-900 cursor-pointer" id="ui-bill-cancel">Cancel</button>
+          <h3 class="text-xs font-black tracking-wider uppercase text-pink-600" id="ui-bill-title">核對並手動微調分帳金額</h3>
+          <button onclick="closeBillPanel()" type="button" class="text-xs text-gray-400 hover:text-slate-900 cursor-pointer" id="ui-bill-cancel">取消</button>
         </div>
         <input type="hidden" id="edit-id">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-merchant">Merchant (English)</label>
-            <input type="text" id="edit-store" placeholder="e.g. Coles, Uber, Cafe" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-merchant">店名 (維持英文)</label>
+            <input type="text" id="edit-store" placeholder="e.g. Coles, Uber, Cafe" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
           </div>
           <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-paidby">Paid By</label>
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-paidby">誰付的錢</label>
             <select id="edit-paid-by" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900"></select>
           </div>
         </div>
         <div>
-          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-items">Items Summary</label>
-          <input type="text" id="edit-items" placeholder="e.g. Coffee, Ferry Ticket, Dinner" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
+          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-items">購買品項摘要</label>
+          <input type="text" id="edit-items" placeholder="e.g. Coffee, Ferry Ticket" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
         </div>
         <div class="grid grid-cols-3 gap-2">
           <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-cost">Cost (AUD)</label>
-            <input type="number" id="edit-amount" step="0.01" value="0.00" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-pink-600 focus:bg-white focus:outline-pink-400">
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-cost">總金額 (AUD)</label>
+            <input type="number" id="edit-amount" step="0.01" value="0.00" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-pink-600">
           </div>
           <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-cat">Category</label>
-            <input type="text" id="edit-cat" placeholder="Food" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-cat">消費分類</label>
+            <input type="text" id="edit-cat" placeholder="Food" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
           </div>
           <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-date">Date</label>
-            <input type="date" id="edit-date" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-date">消費日期</label>
+            <input type="date" id="edit-date" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
           </div>
         </div>
         <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3">
           <div class="flex justify-between items-center">
-            <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest" id="ui-bill-manual">Manual Split Weights</p>
-            <button id="btn-equal-split" type="button" class="text-[10px] text-pink-600 font-bold hover:underline cursor-pointer" id="ui-bill-equal">Split Equally</button>
+            <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest" id="ui-bill-manual">每人應付金額微調</p>
+            <button id="btn-equal-split" type="button" class="text-[10px] text-pink-600 font-bold hover:underline cursor-pointer" id="ui-bill-equal">平分總金額</button>
           </div>
           <div id="split-shares-container" class="space-y-2"></div>
           <div class="text-[10px] text-gray-500 pt-2 border-t border-gray-200 flex justify-between">
-            <span id="ui-bill-assigned">Assigned Total:</span>
+            <span id="ui-bill-assigned">已分配總計:</span>
             <strong id="split-total-assigned" class="text-slate-900">A$ 0.00</strong>
           </div>
         </div>
         <button id="btn-save-bill" type="button" class="w-full bg-slate-900 hover:bg-pink-600 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition cursor-pointer" id="ui-bill-save">
-          Save Record to Cloud
+          將帳目同步至雲端
         </button>
       </section>
 
       <div class="space-y-2">
-        <h3 class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-ledger-vault">Vault Ledgers</h3>
+        <h3 class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-ledger-vault">雲端消費歷史帳目明細</h3>
         <ul id="expense-list" class="space-y-2"></ul>
       </div>
     </div>
 
-    <!-- TAB 2: PLANNER -->
+    <!-- TAB 2: PLANNER (行程 & 航班) -->
     <div id="tab-itinerary-content" class="space-y-4" style="display: none;">
       <!-- FLIGHT MATRIX BOARD -->
       <section class="bg-slate-900 text-white rounded-2xl p-4 shadow-sm space-y-3">
         <div class="flex justify-between items-center">
-          <h3 class="text-[10px] font-bold tracking-widest uppercase text-amber-400" id="ui-flight-title">✈️ Crew Flight Times</h3>
-          <button onclick="openFlightEditor()" class="text-[10px] bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-full text-zinc-300" id="ui-flight-btn">Update Mine</button>
+          <h3 class="text-[10px] font-bold tracking-widest uppercase text-amber-400" id="ui-flight-title">✈️ 大家降落雪梨班機時間看板</h3>
+          <button onclick="openFlightEditor()" class="text-[10px] bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-full text-zinc-300" id="ui-flight-btn">更新我的航班</button>
         </div>
         <div id="flight-editor-box" class="bg-slate-800 p-3 rounded-xl space-y-2" style="display: none;">
           <div class="grid grid-cols-2 gap-2">
@@ -178,15 +149,15 @@
             <input type="text" id="flight-input-no" placeholder="Flight No (QF2)" class="bg-slate-900 border border-slate-700 p-2 rounded-lg text-xs text-white">
           </div>
           <input type="text" id="flight-input-time" placeholder="ETA / Arrival Info (e.g. Day 1 08:30)" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-xs text-white">
-          <button onclick="saveFlightRow()" class="w-full bg-amber-400 text-slate-950 font-bold py-2 rounded-lg text-xs uppercase" id="ui-flight-sync">Sync Flight</button>
+          <button onclick="saveFlightRow()" class="w-full bg-amber-400 text-slate-950 font-bold py-2 rounded-lg text-xs uppercase" id="ui-flight-sync">同步航班資訊</button>
         </div>
         <div id="flight-display-list" class="divide-y divide-slate-800 text-xs space-y-1.5 pt-1"></div>
       </section>
 
       <div class="flex justify-between items-center">
-        <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-plan-title">Itinerary Timeline</h2>
+        <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-plan-title">雪梨動態行程時間表</h2>
         <button onclick="openItineraryEditorModal(null)" type="button" class="bg-slate-900 text-white text-[11px] font-bold px-4 py-2 rounded-full hover:bg-pink-600 transition cursor-pointer" id="ui-plan-add-btn">
-          + Add New Event
+          + 新增行程活動
         </button>
       </div>
 
@@ -194,31 +165,31 @@
       <section id="itinerary-editor" class="bg-white p-5 rounded-2xl border-2 border-pink-400 space-y-4 shadow-xl" style="display: none;">
         <div class="flex justify-between items-center pb-2 border-b border-gray-100">
           <h3 class="text-xs font-black tracking-wider uppercase text-pink-600" id="itin-editor-title">Create Schedule Node</h3>
-          <button onclick="closeItineraryEditor()" type="button" class="text-xs text-gray-400 hover:text-slate-900 cursor-pointer" id="ui-plan-cancel">Cancel</button>
+          <button onclick="closeItineraryEditor()" type="button" class="text-xs text-gray-400 hover:text-slate-900 cursor-pointer" id="ui-plan-cancel">取消</button>
         </div>
         <input type="hidden" id="edit-itin-id">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-plan-time">Time / Day Index</label>
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-plan-time">時間 / 天數標記</label>
             <input type="text" id="edit-itin-time" placeholder="e.g. 09:00 / Day 1" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
           </div>
           <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-plan-cat">Category</label>
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-plan-cat">活動分類</label>
             <select id="edit-itin-type" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
               <!-- JS 動態語系標籤 -->
             </select>
           </div>
         </div>
         <div>
-          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-plan-location">Hub Location</label>
+          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-plan-location">地點/樞紐</label>
           <input type="text" id="edit-itin-location" placeholder="e.g. Sydney Opera House" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
         </div>
         <div>
-          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-plan-memo">Action & Memo Details</label>
+          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-plan-memo">具體計劃與備忘細節</label>
           <textarea id="edit-itin-details" rows="3" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900"></textarea>
         </div>
         <div class="flex gap-2">
-          <button onclick="saveItineraryNode()" type="button" class="flex-1 bg-slate-900 text-white font-bold py-3 rounded-xl text-xs uppercase" id="ui-plan-sync">Sync To Cloud</button>
+          <button onclick="saveItineraryNode()" type="button" class="flex-1 bg-slate-900 text-white font-bold py-3 rounded-xl text-xs uppercase" id="ui-plan-sync">同步行程至雲端</button>
           <button id="btn-delete-itin" onclick="deleteItineraryNode()" type="button" class="bg-red-50 text-red-600 font-bold px-4 rounded-xl text-xs uppercase">🗑️</button>
         </div>
       </section>
@@ -229,22 +200,22 @@
     <!-- TAB 3: WISHLIST -->
     <div id="tab-wishlist-content" class="space-y-4" style="display: none;">
       <div class="flex justify-between items-center">
-        <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-wish-title">🎁 Group Wishlist</h2>
-        <button onclick="toggleWishEditor()" class="bg-pink-500 text-white text-[11px] font-bold px-4 py-2 rounded-full hover:bg-slate-900 transition" id="ui-wish-btn">Make a Wish</button>
+        <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-wish-title">🎁 旅伴敲碗許願池</h2>
+        <button onclick="toggleWishEditor()" class="bg-pink-500 text-white text-[11px] font-bold px-4 py-2 rounded-full hover:bg-slate-900 transition" id="ui-wish-btn">我要許願</button>
       </div>
 
       <!-- WISH DRAWER EDITOR -->
       <section id="wish-editor" class="bg-white p-5 rounded-2xl border-2 border-pink-400 space-y-4 shadow-xl" style="display: none;">
-        <h3 class="text-xs font-black uppercase text-pink-600" id="ui-wish-pane-title">Throw in a Wish Node</h3>
+        <h3 class="text-xs font-black uppercase text-pink-600" id="ui-wish-pane-title">填寫你的雪梨願望清單</h3>
         <div class="space-y-2">
-          <input type="text" id="wish-input-title" placeholder="What do you want? (e.g. Buy UGG Boots)" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
-          <input type="text" id="wish-input-link" placeholder="Social Link / URL (IG, Facebook...)" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
-          <input type="text" id="wish-input-img" placeholder="Image URL (Optional snapshots)" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
-          <input type="text" id="wish-input-author" placeholder="Your Name" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+          <input type="text" id="wish-input-title" placeholder="想要買或吃的？(e.g. 買 UGG 雪靴, 岩石區鬆餅)" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+          <input type="text" id="wish-input-link" placeholder="網頁或社群連結 (IG, Facebook...)" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+          <input type="text" id="wish-input-img" placeholder="圖片網址 URL (選填)" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+          <input type="text" id="wish-input-author" placeholder="你的名字" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
         </div>
         <div class="flex gap-2">
-          <button onclick="saveWishNode()" class="flex-1 bg-slate-900 text-white font-bold py-2 rounded-xl text-xs uppercase" id="ui-wish-cast">Cast Wish</button>
-          <button onclick="toggleWishEditor()" class="bg-gray-100 text-gray-600 px-3 rounded-xl text-xs" id="ui-wish-cancel">Cancel</button>
+          <button onclick="saveWishNode()" class="flex-1 bg-slate-900 text-white font-bold py-2 rounded-xl text-xs uppercase" id="ui-wish-cast">拋入許願池</button>
+          <button onclick="toggleWishEditor()" class="bg-gray-100 text-gray-600 px-3 rounded-xl text-xs" id="ui-wish-cancel">取消</button>
         </div>
       </section>
 
@@ -257,13 +228,13 @@
   <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 py-3 px-2 z-40 shadow-lg">
     <div class="max-w-md mx-auto flex justify-around items-center">
       <button onclick="switchTab('tracker')" type="button" id="nav-tab-tracker" class="flex-1 flex flex-col items-center gap-1 text-pink-600 cursor-pointer">
-        <span class="text-base">🧾</span><span class="text-[9px] font-bold uppercase tracking-widest" id="ui-nav-ledger">Ledger</span>
+        <span class="text-base">🧾</span><span class="text-[9px] font-bold uppercase tracking-widest" id="ui-nav-ledger">分帳本</span>
       </button>
       <button onclick="switchTab('itinerary')" type="button" id="nav-tab-itinerary" class="flex-1 flex flex-col items-center gap-1 text-gray-400 cursor-pointer">
-        <span class="text-base">🗓️</span><span class="text-[9px] font-bold uppercase tracking-widest" id="ui-nav-planner">Planner</span>
+        <span class="text-base">🗓️</span><span class="text-[9px] font-bold uppercase tracking-widest" id="ui-nav-planner">行程表</span>
       </button>
       <button onclick="switchTab('wishlist')" type="button" id="nav-tab-wishlist" class="flex-1 flex flex-col items-center gap-1 text-gray-400 cursor-pointer">
-        <span class="text-base">🎁</span><span class="text-[9px] font-bold uppercase tracking-widest" id="ui-nav-wishlist">Wishlist</span>
+        <span class="text-base">🎁</span><span class="text-[9px] font-bold uppercase tracking-widest" id="ui-nav-wishlist">許願池</span>
       </button>
     </div>
   </nav>
@@ -274,22 +245,37 @@
   </script>
 
   <script>
+    // ==========================================
+    // 🔒 終極核心：直接把開發金鑰寫死嵌入程式最底層！
+    // ==========================================
+    const EMBEDDED_GEMINI_KEY = "AIzaSyAgCKkT_l1qtwe6-6-kN0PD1loVBwFdLAs";
+    const EMBEDDED_FIREBASE_JSON = `{
+      "apiKey": "AIzaSyDeP9DNQ66vSIxSfobvszadV-pRkT1pSoc",
+      "authDomain": "samuel-st-rent.firebaseapp.com",
+      "projectId": "samuel-st-rent",
+      "storageBucket": "samuel-st-rent.firebasestorage.app",
+      "messagingSenderId": "794096659826",
+      "appId": "1:794096659826:web:d99d862c67c94ce56f41eb",
+      "measurementId": "G-XCH2ZH980C"
+    }`;
+    const FIXED_MEMBERS = ['Sabrina', '中偉', '聖聖', '老麥', '倫倫'];
+
     let db = null; let aiModel = null;
-    let config = { geminiKey: '', members: ['Sabrina', '中偉'] };
     let currentExpenses = []; let currentItinerary = []; let currentWishes = [];
     
-    let currentLang = 'en';
+    // 旅伴點開網頁，預設直接進入中文最親切
+    let currentLang = 'zh';
     const langPack = {
       en: {
-        toggleBtn: "🌐 中文", cfgTitle: "Cloud Credentials", cfgDesc: "Syncs everything seamlessly to your private Firebase container.", cfgMembers: "Trip Members (Comma Separated)", cfgBtn: "⚡ SAVE & INITIALIZE LIVE SERVER", hotelBadge: "🏠 Basecamp / Accommodation", hotelEditBtn: "Edit", hotelSave: "Save Basecamp", hotelCancel: "Cancel", ledgerTitle: "Total Group Expense", ledgerCrew: "Crew:", ledgerScanP1: "Scan Receipt to Auto-Split", ledgerManualBtn: "✍️ Quick Manual Log", ledgerVault: "Vault Ledgers", flightTitle: "✈️ Crew Flight Times", flightBtn: "Update Mine", flightSync: "Sync Flight", planTitle: "Itinerary Timeline", planAddBtn: "+ Add New Event", wishTitle: "🎁 Group Wishlist", wishBtn: "Make a Wish", wishPaneTitle: "Throw in a Wish Node", wishCast: "Cast Wish", wishCancel: "Cancel", navLedger: "Ledger", navPlanner: "Planner", navWishlist: "Wishlist", billTitle: "Verify & Adjust Splits", billCancel: "Cancel", billMerchant: "Merchant (English)", billPaidby: "Paid By", billItems: "Items Summary", billCost: "Cost (AUD)", billCat: "Category", billDate: "Date", billManual: "Manual Split Weights", billEqual: "Split Equally", billAssigned: "Assigned Total:", billSave: "Save Record to Cloud", planCancel: "Cancel", planTime: "Time / Day Index", planCat: "Category", planLocation: "Hub Location", planMemo: "Action & Memo Details", planSync: "Sync To Cloud"
+        toggleBtn: "🌐 中文", hotelBadge: "🏠 Basecamp / Accommodation", hotelEditBtn: "Edit", hotelSave: "Save Basecamp", hotelCancel: "Cancel", ledgerTitle: "Total Group Expense", ledgerCrew: "Crew:", ledgerScanP1: "Scan Receipt to Auto-Split", ledgerManualBtn: "✍️ Quick Manual Log", ledgerVault: "Vault Ledgers", flightTitle: "✈️ Crew Flight Times", flightBtn: "Update Mine", flightSync: "Sync Flight", planTitle: "Itinerary Timeline", planAddBtn: "+ Add New Event", wishTitle: "🎁 Group Wishlist", wishBtn: "Make a Wish", wishPaneTitle: "Throw in a Wish Node", wishCast: "Cast Wish", wishCancel: "Cancel", navLedger: "Ledger", navPlanner: "Planner", navWishlist: "Wishlist", billTitle: "Verify & Adjust Splits", billCancel: "Cancel", billMerchant: "Merchant (English)", billPaidby: "Paid By", billItems: "Items Summary", billCost: "Cost (AUD)", billCat: "Category", billDate: "Date", billManual: "Manual Split Weights", billEqual: "Split Equally", billAssigned: "Assigned Total:", billSave: "Save Record to Cloud", planCancel: "Cancel", planTime: "Time / Day Index", planCat: "Category", planLocation: "Hub Location", planMemo: "Action & Memo Details", planSync: "Sync To Cloud"
       },
       zh: {
-        toggleBtn: "🌐 EN", cfgTitle: "雲端連線設定", cfgDesc: "將所有密鑰安全同步至您的私人 Firebase 雲端庫中。", cfgMembers: "本團旅伴成員名單 (用逗號隔開)", cfgBtn: "⚡ 儲存並啟動雲端連線", hotelBadge: "🏠 住宿大本營 / 飯店地址資訊", hotelEditBtn: "修改", hotelSave: "儲存住宿資訊", hotelCancel: "取消", ledgerTitle: "本團澳幣總花費", ledgerCrew: "本團成員:", ledgerScanP1: "拍照或上傳澳洲收據 (自動分帳)", ledgerManualBtn: "✍️ 手動快速記帳", ledgerVault: "雲端消費歷史帳目明細", flightTitle: "✈️ 大家降落雪梨班機時間看板", flightBtn: "更新我的航班", flightSync: "同步航班資訊", planTitle: "雪梨動態行程時間表", planAddBtn: "+ 新增行程活動", wishTitle: "🎁 旅伴敲碗許願池", wishBtn: "我要許願", wishPaneTitle: "填寫你的雪梨願望清單", wishCast: "拋入許願池", wishCancel: "取消", navLedger: "分帳本", navPlanner: "行程表", navWishlist: "許願池", billTitle: "核對並手動微調分帳金額", billCancel: "取消", billMerchant: "店名 (維持英文)", billPaidby: "誰付的錢", billItems: "購買品項摘要", billCost: "總金額 (AUD)", billCat: "消費分類", billDate: "消費日期", billManual: "每人應付金額微調", billEqual: "平分總金額", billAssigned: "已分配總計:", billSave: "將帳目同步至雲端", planCancel: "取消", planTime: "時間 / 天數標記", planCat: "活動分類", planLocation: "地點/樞紐", planMemo: "具體計劃與備忘細節", planSync: "同步行程至雲端"
+        toggleBtn: "🌐 EN", hotelBadge: "🏠 住宿大本營 / 飯店地址資訊", hotelEditBtn: "修改", hotelSave: "儲存住宿資訊", hotelCancel: "取消", ledgerTitle: "本團澳幣總花費", ledgerCrew: "本團成員:", ledgerScanP1: "拍照或上傳澳洲收據 (自動分帳)", ledgerManualBtn: "✍️ 手動快速記帳", ledgerVault: "雲端消費歷史帳目明細", flightTitle: "✈️ 大家降落雪梨班機時間看板", flightBtn: "更新我的航班", flightSync: "同步航班資訊", planTitle: "雪梨動態行程時間表", planAddBtn: "+ 新增行程活動", wishTitle: "🎁 旅伴敲碗許願池", wishBtn: "我要許願", wishPaneTitle: "填寫你的雪梨願望清單", wishCast: "拋入許願池", wishCancel: "取消", navLedger: "分帳本", navPlanner: "行程表", navWishlist: "許願池", billTitle: "核對並手動微調分帳金額", billCancel: "取消", billMerchant: "店名 (維持英文)", billPaidby: "誰付的錢", billItems: "購買品項摘要", billCost: "總金額 (AUD)", billCat: "消費分類", billDate: "消費日期", billManual: "每人應付金額微調", billEqual: "平分總金額", billAssigned: "已分配總計:", billSave: "將帳目同步至雲端", planCancel: "取消", planTime: "時間 / 天數標記", planCat: "活動分類", planLocation: "地點/樞紐", planMemo: "具體計劃與備忘細節", planSync: "同步行程至雲端"
       }
     };
 
     function toggleLanguage() {
-      currentLang = (currentLang === 'en') ? 'zh' : 'en';
+      currentLang = (currentLang === 'zh') ? 'en' : 'zh';
       applyLanguagePack();
     }
     window.toggleLanguage = toggleLanguage;
@@ -297,10 +283,6 @@
     function applyLanguagePack() {
       const pack = langPack[currentLang];
       document.getElementById('btn-lang-toggle').innerText = pack.toggleBtn;
-      document.getElementById('ui-cfg-title').innerText = pack.cfgTitle;
-      document.getElementById('ui-cfg-desc').innerText = pack.cfgDesc;
-      document.getElementById('ui-cfg-members').innerText = pack.cfgMembers;
-      document.getElementById('ui-cfg-btn').innerText = pack.cfgBtn;
       document.getElementById('ui-hotel-badge').innerText = pack.hotelBadge;
       document.getElementById('ui-hotel-edit-btn').innerText = pack.hotelEditBtn;
       document.getElementById('ui-hotel-save-btn').innerText = pack.hotelSave;
@@ -354,9 +336,6 @@
       }
     }
 
-    function toggleConfigPanel() { const el = document.getElementById('section-config'); el.style.display = (el.style.display === 'none') ? 'block' : 'none'; }
-    window.toggleConfigPanel = toggleConfigPanel;
-
     function switchTab(tab) {
       const tabs = ['tracker', 'itinerary', 'wishlist'];
       tabs.forEach(t => {
@@ -367,31 +346,22 @@
     }
     window.switchTab = switchTab;
 
-    function saveApplicationConfig() {
-      const geminiKey = document.getElementById('cfg-gemini-key').value.trim(); const firebaseJson = document.getElementById('cfg-firebase-json').value.trim(); const membersStr = document.getElementById('cfg-members').value.trim();
-      if (!geminiKey || !firebaseJson) { alert("Missing credentials."); return; }
-      try { JSON.parse(firebaseJson); } catch (err) { alert("JSON error."); return; }
-      const members = membersStr.split(',').map(m => m.trim()).filter(m => m); const payload = { geminiKey, firebaseJson, members };
-      localStorage.setItem('sydney_luxe_config', JSON.stringify(payload));
-      try { bootCloudNodes(payload); document.getElementById('section-config').style.display = 'none'; alert(currentLang === 'en' ? "🎉 Connected!" : "🎉 連線成功！"); } catch (bootErr) { alert(bootErr.message); }
-    }
-    window.saveApplicationConfig = saveApplicationConfig;
-
+    // 直接啟動內嵌金鑰
     function bootstrapConfig() {
       applyLanguagePack();
-      const cached = localStorage.getItem('sydney_luxe_config');
-      if (cached) {
-        const data = JSON.parse(cached);
-        document.getElementById('cfg-gemini-key').value = data.geminiKey || ''; document.getElementById('cfg-firebase-json').value = data.firebaseJson || ''; document.getElementById('cfg-members').value = data.members ? data.members.join(', ') : 'Sabrina, 中偉, 聖聖, 老麥, 倫倫';
-        try { bootCloudNodes(data); document.getElementById('section-config').style.display = 'none'; } catch(e) { document.getElementById('section-config').style.display = 'block'; }
-      } else { document.getElementById('cfg-members').value = 'Sabrina, 中偉, 聖聖, 老麥, 倫倫'; document.getElementById('section-config').style.display = 'block'; }
-    }
+      document.getElementById('dash-members').innerText = FIXED_MEMBERS.join(', ');
+      document.getElementById('flight-member-select').innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
+      
+      // 初始化超級大腦與資料庫
+      if (window.MyGoogleGenAIInstance) {
+        const genAI = new window.MyGoogleGenAIInstance({ apiKey: EMBEDDED_GEMINI_KEY });
+        aiModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+      }
+      if (firebase.apps.length === 0) {
+        const app = firebase.initializeApp(JSON.parse(EMBEDDED_FIREBASE_JSON));
+        db = firebase.firestore(app);
+      } else { db = firebase.firestore(); }
 
-    function bootCloudNodes(cfg) {
-      config = cfg; document.getElementById('dash-members').innerText = config.members.join(', ');
-      document.getElementById('flight-member-select').innerHTML = config.members.map(m => `<option value="${m}">${m}</option>`).join('');
-      if (window.MyGoogleGenAIInstance) { const genAI = new window.MyGoogleGenAIInstance({ apiKey: config.geminiKey }); aiModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" }); }
-      if (firebase.apps.length === 0) { const app = firebase.initializeApp(JSON.parse(config.firebaseJson)); db = firebase.firestore(app); } else { db = firebase.firestore(); }
       streamExpenses(); streamItinerary(); streamWishes(); streamHotel(); streamFlights();
     }
 
@@ -401,7 +371,7 @@
     window.openHotelEditor = openHotelEditor; window.closeHotelEditor = closeHotelEditor;
     function saveHotelInfo() { const name = document.getElementById('input-hotel-name').value.trim(); const address = document.getElementById('input-hotel-address').value.trim(); db.collection("sydney_luxe_meta").doc("hotel").set({ name, address }).then(() => closeHotelEditor()); }
     window.saveHotelInfo = saveHotelInfo;
-    function streamHotel() { db.collection("sydney_luxe_meta").doc("hotel").onSnapshot(d => { if (d.exists()) { document.getElementById('hotel-display-name').innerText = d.data().name || "Tap to set Hotel"; document.getElementById('hotel-display-address').innerText = d.data().address || "No address provided."; document.getElementById('input-hotel-name').value = d.data().name || ''; document.getElementById('input-hotel-address').value = d.data().address || ''; } }); }
+    function streamHotel() { db.collection("sydney_luxe_meta").doc("hotel").onSnapshot(d => { if (d.exists()) { document.getElementById('hotel-display-name').innerText = d.data().name || "點擊設定飯店名稱與資訊"; document.getElementById('hotel-display-address').innerText = d.data().address || "目前尚未提供地址資訊"; document.getElementById('input-hotel-name').value = d.data().name || ''; document.getElementById('input-hotel-address').value = d.data().address || ''; } }); }
 
     // FLIGHTS
     function openFlightEditor() { document.getElementById('flight-editor-box').style.display = 'block'; }
@@ -410,16 +380,9 @@
     window.saveFlightRow = saveFlightRow;
     function streamFlights() { db.collection("sydney_luxe_flights").onSnapshot(snap => { const box = document.getElementById('flight-display-list'); let html = ''; snap.forEach(d => { html += `<div class="flex justify-between py-1 border-b border-slate-800/40"><span class="font-bold text-amber-300">${d.id}</span><span class="text-zinc-400">${d.data().no || 'QF--'}</span><span class="font-mono text-zinc-200 font-semibold">${d.data().eta || 'Not Logged'}</span></div>`; }); box.innerHTML = html || `<p class="text-zinc-500 italic text-[11px]">${currentLang==='en'?'No flights logged.':'目前沒有任何航班紀錄'}</p>`; }); }
 
-    // EXPENSES CORE (WITH MANUAL WRITING LOGIC)
-    function openManualBillForm() {
-      // ✍️ 觸發手動快速記帳：直接清空並預填基本資料
-      const today = new Date().toISOString().split('T')[0];
-      const emptyData = { storeName: "", items: "", amountAUD: 0, category: "Food", date: today };
-      openBillPanel(null, emptyData);
-      document.getElementById('bill-editor').scrollIntoView({ behavior: 'smooth' });
-    }
+    // EXPENSES
+    function openManualBillForm() { const today = new Date().toISOString().split('T')[0]; const emptyData = { storeName: "", items: "", amountAUD: 0, category: "Food", date: today }; openBillPanel(null, emptyData); document.getElementById('bill-editor').scrollIntoView({ behavior: 'smooth' }); }
     window.openManualBillForm = openManualBillForm;
-
     function streamExpenses() {
       db.collection("sydney_luxe_expenses").onSnapshot((snap) => {
         currentExpenses = []; snap.forEach(d => currentExpenses.push({ id: d.id, ...d.data() }));
@@ -440,14 +403,14 @@
       try { const b64 = await downscaleImageBytes(file); const generatedJSON = await streamGeminiVisionAI(b64); sBox.style.display = 'none'; openBillPanel(null, generatedJSON); } catch (err) { sBox.style.display = 'none'; alert("OCR Scan error: " + err.message); }
     });
     function downscaleImageBytes(file) { return new Promise((res) => { const r = new FileReader(); r.readAsDataURL(file); r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement("canvas"); let w = i.width, h = i.height; if (w > 1024) { h = Math.round((h * 1024) / w); w = 1024; } c.width = w; c.height = h; c.getContext("2d").drawImage(i, 0, 0, w, h); res(c.toDataURL("image/jpeg", 0.75).split(',')[1]); }; }; }); }
-    async function streamGeminiVisionAI(bytes) { const p = `Parse receipt. KEEP RAW ENGLISH. Format json: { "storeName": "Merchant", "items": "Flat string", "amountAUD": 12.50, "category": "Food", "date": "2026-05-24" }`; const res = await aiModel.generateContent([p, { inlineData: { data: bytes, mimeType: "image/jpeg" } }]); return JSON.parse(res.response.text()); }
+    async function streamGeminiVisionAI(bytes) { const p = `Parse receipt. KEEP STORES/ITEMS IN RAW ENGLISH STRICTLY. Format json: { "storeName": "Merchant", "items": "Flat string", "amountAUD": 12.50, "category": "Food", "date": "2026-05-24" }`; const res = await aiModel.generateContent([p, { inlineData: { data: bytes, mimeType: "image/jpeg" } }]); return JSON.parse(res.response.text()); }
 
     function openBillPanel(id, data) {
       document.getElementById('bill-editor').style.display = 'block'; document.getElementById('edit-id').value = id || ''; document.getElementById('edit-store').value = data.storeName || ''; document.getElementById('edit-items').value = data.items || ''; document.getElementById('edit-amount').value = data.amountAUD || 0; document.getElementById('edit-cat').value = data.category || 'Others'; document.getElementById('edit-date').value = data.date || '';
-      document.getElementById('edit-paid-by').innerHTML = config.members.map(m => `<option value="${m}" ${data.paidBy === m ? 'selected':''}>${m}</option>`).join('');
+      document.getElementById('edit-paid-by').innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}" ${data.paidBy === m ? 'selected':''}>${m}</option>`).join('');
       const weightBox = document.getElementById('split-shares-container'); const val = parseFloat(data.amountAUD) || 0;
-      let initialMatrix = data.splits || {}; if (Object.keys(initialMatrix).length === 0) { const splitQuotient = val / config.members.length; config.members.forEach(m => { initialMatrix[m] = parseFloat(splitQuotient.toFixed(2)); }); }
-      weightBox.innerHTML = config.members.map(m => `<div class="flex items-center justify-between gap-4"><span class="text-xs text-gray-600 font-medium">${m}</span><input type="number" step="0.01" data-member="${m}" class="split-weight-node w-24 p-2 bg-gray-50 border border-gray-200 rounded-xl text-right text-xs text-pink-600 font-mono" value="${initialMatrix[m] || 0}"></div>`).join('');
+      let initialMatrix = data.splits || {}; if (Object.keys(initialMatrix).length === 0) { const splitQuotient = val / FIXED_MEMBERS.length; FIXED_MEMBERS.forEach(m => { initialMatrix[m] = parseFloat(splitQuotient.toFixed(2)); }); }
+      weightBox.innerHTML = FIXED_MEMBERS.map(m => `<div class="flex items-center justify-between gap-4"><span class="text-xs text-gray-600 font-medium">${m}</span><input type="number" step="0.01" data-member="${m}" class="split-weight-node w-24 p-2 bg-gray-50 border border-gray-200 rounded-xl text-right text-xs text-pink-600 font-mono" value="${initialMatrix[m] || 0}"></div>`).join('');
       document.querySelectorAll('.split-weight-node').forEach(i => i.addEventListener('input', sumWeightNodes)); sumWeightNodes();
     }
     function sumWeightNodes() { let accum = 0; document.querySelectorAll('.split-weight-node').forEach(i => accum += parseFloat(i.value) || 0); document.getElementById('split-total-assigned').innerText = `A$ ${accum.toFixed(2)}`; }
@@ -458,13 +421,7 @@
       const id = document.getElementById('edit-id').value; let splits = {}; document.querySelectorAll('.split-weight-node').forEach(i => { splits[i.getAttribute('data-member')] = parseFloat(i.value) || 0; });
       const packageObj = { storeName: document.getElementById('edit-store').value.trim(), items: document.getElementById('edit-items').value.trim(), amountAUD: parseFloat(document.getElementById('edit-amount').value) || 0, category: document.getElementById('edit-cat').value.trim(), date: document.getElementById('edit-date').value, paidBy: document.getElementById('edit-paid-by').value, splits };
       if(id) { await db.collection("sydney_luxe_expenses").doc(id).set(packageObj, { merge: true }); } else { await db.collection("sydney_luxe_expenses").add(packageObj); }
-      
-      // ⚡ 終極擦乾淨大掃除代碼：儲存完立刻將記帳欄位徹底洗白！
-      document.getElementById('edit-store').value = '';
-      document.getElementById('edit-items').value = '';
-      document.getElementById('edit-amount').value = 0;
-      document.getElementById('edit-cat').value = 'Others';
-      closeBillPanel();
+      document.getElementById('edit-store').value = ''; document.getElementById('edit-items').value = ''; document.getElementById('edit-amount').value = 0; closeBillPanel();
     });
     window.initiateBillTweak = function(id) { const target = currentExpenses.find(e => e.id === id); if(target) openBillPanel(id, target); };
     window.nukeBillLog = function(id) { if(confirm(currentLang==='en'?"Delete?":"確定要永久刪除此帳目嗎？")) db.collection("sydney_luxe_expenses").doc(id).delete(); };
@@ -519,7 +476,8 @@
     window.toggleWishStatus = function(id, currentStatus) { db.collection("sydney_luxe_wishes").doc(id).update({ approvedInPlan: !currentStatus }); };
     window.nukeWishNode = function(id) { if(confirm(currentLang==='en'?"Delete?":"確定要撤銷這個願望嗎？")) db.collection("sydney_luxe_wishes").doc(id).delete(); };
 
-    setTimeout(bootstrapConfig, 500);
+    // 啟動加載
+    setTimeout(bootstrapConfig, 400);
   </script>
 </body>
 </html>
