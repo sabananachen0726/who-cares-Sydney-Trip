@@ -20,9 +20,15 @@
         <span class="w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse"></span>
         <h1 class="text-base font-black tracking-widest uppercase text-slate-900">SYDNEY <span class="text-pink-500">.</span> LUXE</h1>
       </div>
-      <button onclick="toggleConfigPanel()" type="button" class="text-[11px] font-bold tracking-wider uppercase bg-slate-900 text-white px-4 py-2 rounded-full hover:bg-pink-500 transition cursor-pointer shadow-sm">
-        ⚙️ Cloud Keys
-      </button>
+      <div class="flex items-center gap-2">
+        <!-- 語言切換按鈕 (EN / 繁中) -->
+        <button onclick="toggleLanguage()" type="button" id="btn-lang-toggle" class="text-[10px] font-black tracking-wider uppercase bg-pink-50 text-pink-600 border border-pink-100 px-3 py-2 rounded-full cursor-pointer shadow-xs">
+          🌐 中文
+        </button>
+        <button onclick="toggleConfigPanel()" type="button" class="text-[11px] font-bold tracking-wider uppercase bg-slate-900 text-white px-4 py-2 rounded-full hover:bg-pink-500 transition cursor-pointer shadow-sm">
+          ⚙️ Keys
+        </button>
+      </div>
     </div>
   </header>
 
@@ -31,8 +37,8 @@
     <!-- CONFIG SECTION -->
     <section id="section-config" class="bg-white p-5 rounded-2xl border-2 border-amber-400 space-y-4 shadow-xl" style="display: block;">
       <div class="space-y-1">
-        <h2 class="text-sm font-bold tracking-wider uppercase text-amber-600">Cloud Credentials</h2>
-        <p class="text-[11px] text-gray-500">Syncs everything seamlessly to your private Firebase container.</p>
+        <h2 class="text-sm font-bold tracking-wider uppercase text-amber-600" id="ui-cfg-title">Cloud Credentials</h2>
+        <p class="text-[11px] text-gray-500" id="ui-cfg-desc">Syncs everything seamlessly to your private Firebase container.</p>
       </div>
       <div class="space-y-3">
         <div>
@@ -44,32 +50,31 @@
           <textarea id="cfg-firebase-json" rows="6" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-800 font-mono focus:outline-none" placeholder="Must start with { and end with }"></textarea>
         </div>
         <div>
-          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Trip Members (Comma Separated)</label>
+          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1" id="ui-cfg-members">Trip Members (Comma Separated)</label>
           <input type="text" id="cfg-members" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:outline-none">
         </div>
       </div>
-      <button onclick="saveApplicationConfig()" type="button" class="w-full bg-amber-400 hover:bg-amber-500 text-slate-950 font-black p-4 rounded-xl text-xs tracking-widest uppercase transition cursor-pointer shadow-md">
+      <button onclick="saveApplicationConfig()" type="button" class="w-full bg-amber-400 hover:bg-amber-500 text-slate-950 font-black p-4 rounded-xl text-xs tracking-widest uppercase transition cursor-pointer shadow-md" id="ui-cfg-btn">
         ⚡ SAVE & INITIALIZE LIVE SERVER
       </button>
     </section>
 
-    <!-- LIVE HOTEL MANAGER (頂部飯店卡片：可即時編輯同步) -->
+    <!-- LIVE HOTEL MANAGER -->
     <section class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm relative group" onclick="openHotelEditor()">
       <div class="flex justify-between items-start">
         <div class="space-y-0.5">
-          <span class="text-[8px] font-black tracking-widest text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full uppercase border border-pink-100">🏠 Basecamp / Accommodation</span>
+          <span class="text-[8px] font-black tracking-widest text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full uppercase border border-pink-100" id="ui-hotel-badge">🏠 Basecamp / Accommodation</span>
           <h3 class="text-sm font-bold text-slate-900 mt-1.5" id="hotel-display-name">Tap to set Hotel Name / Info</h3>
           <p class="text-xs text-gray-500 font-mono mt-0.5" id="hotel-display-address">No address provided yet.</p>
         </div>
-        <span class="text-[10px] text-pink-500 font-bold bg-gray-50 px-2 py-1 rounded-lg">Edit</span>
+        <span class="text-[10px] text-pink-500 font-bold bg-gray-50 px-2 py-1 rounded-lg" id="ui-hotel-edit-btn">Edit</span>
       </div>
-      <!-- HOTEL EDITOR PANEL -->
       <div id="hotel-editor-panel" class="mt-3 pt-3 border-t border-gray-100 space-y-2" style="display: none;" onclick="event.stopPropagation()">
         <input type="text" id="input-hotel-name" placeholder="Hotel Name (e.g. Hilton Sydney)" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl text-xs">
         <input type="text" id="input-hotel-address" placeholder="Full Address (For Uber/Maps)" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl text-xs">
         <div class="flex gap-2">
-          <button onclick="saveHotelInfo()" class="flex-1 bg-slate-900 text-white font-bold py-2 rounded-xl text-xs uppercase">Save Basecamp</button>
-          <button onclick="closeHotelEditor()" class="bg-gray-100 text-gray-600 px-3 rounded-xl text-xs">Cancel</button>
+          <button onclick="saveHotelInfo()" class="flex-1 bg-slate-900 text-white font-bold py-2 rounded-xl text-xs uppercase" id="ui-hotel-save-btn">Save Basecamp</button>
+          <button onclick="closeHotelEditor()" class="bg-gray-100 text-gray-600 px-3 rounded-xl text-xs" id="ui-hotel-cancel-btn">Cancel</button>
         </div>
       </div>
     </section>
@@ -77,9 +82,9 @@
     <!-- TAB 1: LEDGER (帳本) -->
     <div id="tab-tracker-content" class="space-y-4" style="display: block;">
       <div class="bg-white border border-gray-200 p-5 rounded-2xl shadow-sm">
-        <p class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Total Group Expense</p>
+        <p class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-ledger-title">Total Group Expense</p>
         <p class="text-3xl font-black text-slate-900 mt-1" id="dash-total">A$ 0.00</p>
-        <p class="text-xs font-bold text-slate-500 mt-2">Crew: <span id="dash-members">Waiting...</span></p>
+        <p class="text-xs font-bold text-slate-500 mt-2"><span id="ui-ledger-crew">Crew:</span> <span id="dash-members">Waiting...</span></p>
       </div>
 
       <!-- PHOTO ZONE -->
@@ -87,7 +92,7 @@
         <input type="file" id="file-input" accept="image/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer z-20">
         <div class="space-y-1">
           <div class="text-2xl">📷</div>
-          <p class="text-xs font-bold text-slate-700">Scan Receipt to Auto-Split</p>
+          <p class="text-xs font-bold text-slate-700" id="ui-ledger-scan-p1">Scan Receipt to Auto-Split</p>
         </div>
       </div>
       <div id="scan-status-box" class="p-3 bg-white border border-pink-200 rounded-xl text-xs flex items-center gap-2" style="display: none;">
@@ -95,19 +100,70 @@
         <span id="scan-status-text">Processing image...</span>
       </div>
 
+      <!-- BILL TWEAK EDITOR -->
+      <section id="bill-editor" class="bg-white p-5 rounded-2xl border-2 border-pink-400 space-y-4 shadow-xl" style="display: none;">
+        <div class="flex justify-between items-center pb-2 border-b border-gray-100">
+          <h3 class="text-xs font-bold tracking-wider uppercase text-pink-600" id="ui-bill-title">Verify & Adjust Splits</h3>
+          <button onclick="closeBillPanel()" type="button" class="text-xs text-gray-400 hover:text-slate-900 cursor-pointer" id="ui-bill-cancel">Cancel</button>
+        </div>
+        <input type="hidden" id="edit-id">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-merchant">Merchant (English)</label>
+            <input type="text" id="edit-store" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+          </div>
+          <div>
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-paidby">Paid By</label>
+            <select id="edit-paid-by" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900"></select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-items">Items Summary</label>
+          <input type="text" id="edit-items" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-cost">Cost (AUD)</label>
+            <input type="number" id="edit-amount" step="0.01" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-pink-600">
+          </div>
+          <div>
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-cat">Category</label>
+            <input type="text" id="edit-cat" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+          </div>
+          <div>
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-date">Date</label>
+            <input type="date" id="edit-date" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+          </div>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3">
+          <div class="flex justify-between items-center">
+            <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest" id="ui-bill-manual">Manual Split Weights</p>
+            <button id="btn-equal-split" type="button" class="text-[10px] text-pink-600 font-bold hover:underline cursor-pointer" id="ui-bill-equal">Split Equally</button>
+          </div>
+          <div id="split-shares-container" class="space-y-2"></div>
+          <div class="text-[10px] text-gray-500 pt-2 border-t border-gray-200 flex justify-between">
+            <span id="ui-bill-assigned">Assigned Total:</span>
+            <strong id="split-total-assigned" class="text-slate-900">A$ 0.00</strong>
+          </div>
+        </div>
+        <button id="btn-save-bill" type="button" class="w-full bg-slate-900 hover:bg-pink-600 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition cursor-pointer" id="ui-bill-save">
+          Save Record to Cloud
+        </button>
+      </section>
+
       <div class="space-y-2">
-        <h3 class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Vault Ledgers</h3>
+        <h3 class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-ledger-vault">Vault Ledgers</h3>
         <ul id="expense-list" class="space-y-2"></ul>
       </div>
     </div>
 
     <!-- TAB 2: PLANNER (行程 & 航班) -->
     <div id="tab-itinerary-content" class="space-y-4" style="display: none;">
-      <!-- FLIGHT MATRIX HEADER BOARD -->
+      <!-- FLIGHT MATRIX BOARD -->
       <section class="bg-slate-900 text-white rounded-2xl p-4 shadow-sm space-y-3">
         <div class="flex justify-between items-center">
-          <h3 class="text-[10px] font-bold tracking-widest uppercase text-amber-400">✈️ Crew Flight Times</h3>
-          <button onclick="openFlightEditor()" class="text-[10px] bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-full text-zinc-300">Update Mine</button>
+          <h3 class="text-[10px] font-bold tracking-widest uppercase text-amber-400" id="ui-flight-title">✈️ Crew Flight Times</h3>
+          <button onclick="openFlightEditor()" class="text-[10px] bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-full text-zinc-300" id="ui-flight-btn">Update Mine</button>
         </div>
         <div id="flight-editor-box" class="bg-slate-800 p-3 rounded-xl space-y-2" style="display: none;">
           <div class="grid grid-cols-2 gap-2">
@@ -115,14 +171,14 @@
             <input type="text" id="flight-input-no" placeholder="Flight No (QF2)" class="bg-slate-900 border border-slate-700 p-2 rounded-lg text-xs text-white">
           </div>
           <input type="text" id="flight-input-time" placeholder="ETA / Arrival Info (e.g. Day 1 08:30)" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-xs text-white">
-          <button onclick="saveFlightRow()" class="w-full bg-amber-400 text-slate-950 font-bold py-2 rounded-lg text-xs uppercase">Sync Flight</button>
+          <button onclick="saveFlightRow()" class="w-full bg-amber-400 text-slate-950 font-bold py-2 rounded-lg text-xs uppercase" id="ui-flight-sync">Sync Flight</button>
         </div>
         <div id="flight-display-list" class="divide-y divide-slate-800 text-xs space-y-1.5 pt-1"></div>
       </section>
 
       <div class="flex justify-between items-center">
-        <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Itinerary Timeline</h2>
-        <button onclick="openItineraryEditorModal(null)" type="button" class="bg-slate-900 text-white text-[11px] font-bold px-4 py-2 rounded-full hover:bg-pink-600 transition cursor-pointer">
+        <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-plan-title">Itinerary Timeline</h2>
+        <button onclick="openItineraryEditorModal(null)" type="button" class="bg-slate-900 text-white text-[11px] font-bold px-4 py-2 rounded-full hover:bg-pink-600 transition cursor-pointer" id="ui-plan-add-btn">
           + Add New Event
         </button>
       </div>
@@ -131,36 +187,31 @@
       <section id="itinerary-editor" class="bg-white p-5 rounded-2xl border-2 border-pink-400 space-y-4 shadow-xl" style="display: none;">
         <div class="flex justify-between items-center pb-2 border-b border-gray-100">
           <h3 class="text-xs font-black tracking-wider uppercase text-pink-600" id="itin-editor-title">Create Schedule Node</h3>
-          <button onclick="closeItineraryEditor()" type="button" class="text-xs text-gray-400 hover:text-slate-900 cursor-pointer">Cancel</button>
+          <button onclick="closeItineraryEditor()" type="button" class="text-xs text-gray-400 hover:text-slate-900 cursor-pointer" id="ui-plan-cancel">Cancel</button>
         </div>
         <input type="hidden" id="edit-itin-id">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Time / Day Index</label>
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-plan-time">Time / Day Index</label>
             <input type="text" id="edit-itin-time" placeholder="e.g. 09:00 / Day 1" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
           </div>
           <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Category</label>
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-plan-cat">Category</label>
             <select id="edit-itin-type" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
-              <option value="Flight">✈️ Flight (機票)</option>
-              <option value="Breakfast">🍳 Breakfast (早餐)</option>
-              <option value="Lunch">🍝 Lunch (午餐)</option>
-              <option value="Dinner">🥩 Dinner (晚餐)</option>
-              <option value="Activity">🗺️ Activity (行程景點)</option>
-              <option value="Hotel">🏨 Hotel (住宿)</option>
+              <!-- JS 動態渲染中英標籤 -->
             </select>
           </div>
         </div>
         <div>
-          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Hub Location</label>
+          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-plan-location">Hub Location</label>
           <input type="text" id="edit-itin-location" placeholder="e.g. Sydney Opera House" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
         </div>
         <div>
-          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Action & Memo Details</label>
+          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-plan-memo">Action & Memo Details</label>
           <textarea id="edit-itin-details" rows="3" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900"></textarea>
         </div>
         <div class="flex gap-2">
-          <button onclick="saveItineraryNode()" type="button" class="flex-1 bg-slate-900 text-white font-bold py-3 rounded-xl text-xs uppercase">Sync To Cloud</button>
+          <button onclick="saveItineraryNode()" type="button" class="flex-1 bg-slate-900 text-white font-bold py-3 rounded-xl text-xs uppercase" id="ui-plan-sync">Sync To Cloud</button>
           <button id="btn-delete-itin" onclick="deleteItineraryNode()" type="button" class="bg-red-50 text-red-600 font-bold px-4 rounded-xl text-xs uppercase">🗑️</button>
         </div>
       </section>
@@ -168,25 +219,25 @@
       <div id="itinerary-cards-container" class="space-y-3"></div>
     </div>
 
-    <!-- TAB 3: WISHLIST (全新加開：許願清單分頁) -->
+    <!-- TAB 3: WISHLIST -->
     <div id="tab-wishlist-content" class="space-y-4" style="display: none;">
       <div class="flex justify-between items-center">
-        <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400">🎁 Group Wishlist</h2>
-        <button onclick="toggleWishEditor()" class="bg-pink-500 text-white text-[11px] font-bold px-4 py-2 rounded-full hover:bg-slate-900 transition">Make a Wish</button>
+        <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-wish-title">🎁 Group Wishlist</h2>
+        <button onclick="toggleWishEditor()" class="bg-pink-500 text-white text-[11px] font-bold px-4 py-2 rounded-full hover:bg-slate-900 transition" id="ui-wish-btn">Make a Wish</button>
       </div>
 
       <!-- WISH DRAWER EDITOR -->
       <section id="wish-editor" class="bg-white p-5 rounded-2xl border-2 border-pink-400 space-y-4 shadow-xl" style="display: none;">
-        <h3 class="text-xs font-black uppercase text-pink-600">Throw in a Wish Node</h3>
+        <h3 class="text-xs font-black uppercase text-pink-600" id="ui-wish-pane-title">Throw in a Wish Node</h3>
         <div class="space-y-2">
-          <input type="text" id="wish-input-title" placeholder="What do you want? (e.g. Buy UGG Boots, Pancakes on the Rocks)" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+          <input type="text" id="wish-input-title" placeholder="What do you want? (e.g. Buy UGG Boots)" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
           <input type="text" id="wish-input-link" placeholder="Social Link / URL (IG, Facebook, Web...)" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
           <input type="text" id="wish-input-img" placeholder="Image URL (Optional placeholder snapshot)" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
           <input type="text" id="wish-input-author" placeholder="Your Name" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
         </div>
         <div class="flex gap-2">
-          <button onclick="saveWishNode()" class="flex-1 bg-slate-900 text-white font-bold py-2 rounded-xl text-xs uppercase">Cast Wish</button>
-          <button onclick="toggleWishEditor()" class="bg-gray-100 text-gray-600 px-3 rounded-xl text-xs">Cancel</button>
+          <button onclick="saveWishNode()" class="flex-1 bg-slate-900 text-white font-bold py-2 rounded-xl text-xs uppercase" id="ui-wish-cast">Cast Wish</button>
+          <button onclick="toggleWishEditor()" class="bg-gray-100 text-gray-600 px-3 rounded-xl text-xs" id="ui-wish-cancel">Cancel</button>
         </div>
       </section>
 
@@ -195,17 +246,17 @@
 
   </main>
 
-  <!-- FIXED FOOTER TAB SWITCHER (三鍵精準排版) -->
+  <!-- FIXED FOOTER TAB SWITCHER -->
   <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 py-3 px-2 z-40 shadow-lg">
     <div class="max-w-md mx-auto flex justify-around items-center">
       <button onclick="switchTab('tracker')" type="button" id="nav-tab-tracker" class="flex-1 flex flex-col items-center gap-1 text-pink-600 cursor-pointer">
-        <span class="text-base">🧾</span><span class="text-[9px] font-bold uppercase tracking-widest">Ledger</span>
+        <span class="text-base">🧾</span><span class="text-[9px] font-bold uppercase tracking-widest" id="ui-nav-ledger">Ledger</span>
       </button>
       <button onclick="switchTab('itinerary')" type="button" id="nav-tab-itinerary" class="flex-1 flex flex-col items-center gap-1 text-gray-400 cursor-pointer">
-        <span class="text-base">🗓️</span><span class="text-[9px] font-bold uppercase tracking-widest">Planner</span>
+        <span class="text-base">🗓️</span><span class="text-[9px] font-bold uppercase tracking-widest" id="ui-nav-planner">Planner</span>
       </button>
       <button onclick="switchTab('wishlist')" type="button" id="nav-tab-wishlist" class="flex-1 flex flex-col items-center gap-1 text-gray-400 cursor-pointer">
-        <span class="text-base">🎁</span><span class="text-[9px] font-bold uppercase tracking-widest">Wishlist</span>
+        <span class="text-base">🎁</span><span class="text-[9px] font-bold uppercase tracking-widest" id="ui-nav-wishlist">Wishlist</span>
       </button>
     </div>
   </nav>
@@ -219,7 +270,195 @@
     let db = null; let aiModel = null;
     let config = { geminiKey: '', members: ['Sabrina', '中偉'] };
     let currentExpenses = []; let currentItinerary = []; let currentWishes = [];
+    
+    // 雙語語系字典集 (預設為英文)
+    let currentLang = 'en';
+    const langPack = {
+      en: {
+        toggleBtn: "🌐 中文",
+        cfgTitle: "Cloud Credentials",
+        cfgDesc: "Syncs everything seamlessly to your private Firebase container.",
+        cfgMembers: "Trip Members (Comma Separated)",
+        cfgBtn: "⚡ SAVE & INITIALIZE LIVE SERVER",
+        hotelBadge: "🏠 Basecamp / Accommodation",
+        hotelEditBtn: "Edit",
+        hotelSave: "Save Basecamp",
+        hotelCancel: "Cancel",
+        ledgerTitle: "Total Group Expense",
+        ledgerCrew: "Crew:",
+        ledgerScanP1: "Scan Receipt to Auto-Split",
+        ledgerVault: "Vault Ledgers",
+        flightTitle: "✈️ Crew Flight Times",
+        flightBtn: "Update Mine",
+        flightSync: "Sync Flight",
+        planTitle: "Itinerary Timeline",
+        planAddBtn: "+ Add New Event",
+        wishTitle: "🎁 Group Wishlist",
+        wishBtn: "Make a Wish",
+        wishPaneTitle: "Throw in a Wish Node",
+        wishCast: "Cast Wish",
+        wishCancel: "Cancel",
+        navLedger: "Ledger",
+        navPlanner: "Planner",
+        navWishlist: "Wishlist",
+        billTitle: "Verify & Adjust Splits",
+        billCancel: "Cancel",
+        billMerchant: "Merchant (English)",
+        billPaidby: "Paid By",
+        billItems: "Items Summary",
+        billCost: "Cost (AUD)",
+        billCat: "Category",
+        billDate: "Date",
+        billManual: "Manual Split Weights",
+        billEqual: "Split Equally",
+        billAssigned: "Assigned Total:",
+        billSave: "Save Record to Cloud",
+        planCancel: "Cancel",
+        planTime: "Time / Day Index",
+        planCat: "Category",
+        planLocation: "Hub Location",
+        planMemo: "Action & Memo Details",
+        planSync: "Sync To Cloud"
+      },
+      zh: {
+        toggleBtn: "🌐 EN",
+        cfgTitle: "雲端連線設定",
+        cfgDesc: "將所有密鑰安全同步至您的私人 Firebase 雲端庫中。",
+        cfgMembers: "本團旅伴成員名單 (用逗號隔開)",
+        cfgBtn: "⚡ 儲存並啟動雲端連線",
+        hotelBadge: "🏠 住宿大本營 / 飯店地址資訊",
+        hotelEditBtn: "修改",
+        hotelSave: "儲存住宿資訊",
+        hotelCancel: "取消",
+        ledgerTitle: "本團澳幣總花費",
+        ledgerCrew: "本團成員:",
+        ledgerScanP1: "拍照或上傳澳洲收據 (自動分帳)",
+        ledgerVault: "雲端消費歷史帳目明細",
+        flightTitle: "✈️ 大家降落雪梨班機時間看板",
+        flightBtn: "更新我的航班",
+        flightSync: "同步航班資訊",
+        planTitle: "雪梨動態行程時間表",
+        planAddBtn: "+ 新增行程活動",
+        wishTitle: "🎁 旅伴敲碗許願池",
+        wishBtn: "我要許願",
+        wishPaneTitle: "填寫你的雪梨願望清單",
+        wishCast: "拋入許願池",
+        wishCancel: "取消",
+        navLedger: "分帳本",
+        navPlanner: "行程表",
+        navWishlist: "許願池",
+        billTitle: "核對並手動微調分帳金額",
+        billCancel: "取消",
+        billMerchant: "店名 (維持英文)",
+        billPaidby: "誰付的錢",
+        billItems: "購買品項摘要",
+        billCost: "總金額 (AUD)",
+        billCat: "消費分類",
+        billDate: "消費日期",
+        billManual: "每人應付金額微調",
+        billEqual: "平分總金額",
+        billAssigned: "已分配總計:",
+        billSave: "將帳目同步至雲端",
+        planCancel: "取消",
+        planTime: "時間 / 天數標記",
+        planCat: "活動分類",
+        planLocation: "地點/樞紐",
+        planMemo: "具體計劃與備忘細節",
+        planSync: "同步行程至雲端"
+      }
+    };
 
+    function toggleLanguage() {
+      currentLang = (currentLang === 'en') ? 'zh' : 'en';
+      applyLanguagePack();
+    }
+    window.toggleLanguage = toggleLanguage;
+
+    function applyLanguagePack() {
+      const pack = langPack[currentLang];
+      
+      // 替換所有靜態 UI 標籤文本
+      document.getElementById('btn-lang-toggle').innerText = pack.toggleBtn;
+      document.getElementById('ui-cfg-title').innerText = pack.cfgTitle;
+      document.getElementById('ui-cfg-desc').innerText = pack.cfgDesc;
+      document.getElementById('ui-cfg-members').innerText = pack.cfgMembers;
+      document.getElementById('ui-cfg-btn').innerText = pack.cfgBtn;
+      document.getElementById('ui-hotel-badge').innerText = pack.hotelBadge;
+      document.getElementById('ui-hotel-edit-btn').innerText = pack.hotelEditBtn;
+      document.getElementById('ui-hotel-save-btn').innerText = pack.hotelSave;
+      document.getElementById('ui-hotel-cancel-btn').innerText = pack.hotelCancel;
+      document.getElementById('ui-ledger-title').innerText = pack.ledgerTitle;
+      document.getElementById('ui-ledger-crew').innerText = pack.ledgerCrew;
+      document.getElementById('ui-ledger-scan-p1').innerText = pack.ledgerScanP1;
+      document.getElementById('ui-ledger-vault').innerText = pack.ledgerVault;
+      document.getElementById('ui-flight-title').innerText = pack.flightTitle;
+      document.getElementById('ui-flight-btn').innerText = pack.flightBtn;
+      document.getElementById('ui-flight-sync').innerText = pack.flightSync;
+      document.getElementById('ui-plan-title').innerText = pack.planTitle;
+      document.getElementById('ui-plan-add-btn').innerText = pack.planAddBtn;
+      document.getElementById('ui-wish-title').innerText = pack.wishTitle;
+      document.getElementById('ui-wish-btn').innerText = pack.wishBtn;
+      document.getElementById('ui-wish-pane-title').innerText = pack.wishPaneTitle;
+      document.getElementById('ui-wish-cast').innerText = pack.wishCast;
+      document.getElementById('ui-wish-cancel').innerText = pack.wishCancel;
+      document.getElementById('ui-nav-ledger').innerText = pack.navLedger;
+      document.getElementById('ui-nav-planner').innerText = pack.navPlanner;
+      document.getElementById('ui-nav-wishlist').innerText = pack.navWishlist;
+      
+      // 記帳編輯框語系
+      document.getElementById('ui-bill-title').innerText = pack.billTitle;
+      document.getElementById('ui-bill-cancel').innerText = pack.billCancel;
+      document.getElementById('ui-bill-merchant').innerText = pack.billMerchant;
+      document.getElementById('ui-bill-paidby').innerText = pack.billPaidby;
+      document.getElementById('ui-bill-items').innerText = pack.billItems;
+      document.getElementById('ui-bill-cost').innerText = pack.billCost;
+      document.getElementById('ui-bill-cat').innerText = pack.billCat;
+      document.getElementById('ui-bill-date').innerText = pack.billDate;
+      document.getElementById('ui-bill-manual').innerText = pack.billManual;
+      document.getElementById('ui-bill-equal').innerText = pack.billEqual;
+      document.getElementById('ui-bill-assigned').innerText = pack.billAssigned;
+      document.getElementById('ui-bill-save').innerText = pack.billSave;
+
+      // 行程編輯框語系
+      document.getElementById('ui-plan-cancel').innerText = pack.planCancel;
+      document.getElementById('ui-plan-time').innerText = pack.planTime;
+      document.getElementById('ui-plan-cat').innerText = pack.planCat;
+      document.getElementById('ui-plan-location').innerText = pack.planLocation;
+      document.getElementById('ui-plan-memo').innerText = pack.planMemo;
+      document.getElementById('ui-plan-sync').innerText = pack.planSync;
+
+      // 重新刷新動態列表
+      renderItinerarySelectOptions();
+      if(db) {
+        refreshItineraryTimelineUI();
+        streamWishesRender();
+      }
+    }
+
+    function renderItinerarySelectOptions() {
+      const select = document.getElementById('edit-itin-type');
+      if(currentLang === 'en') {
+        select.innerHTML = `
+          <option value="Flight">✈️ Flight</option>
+          <option value="Breakfast">🍳 Breakfast</option>
+          <option value="Lunch">🍝 Lunch</option>
+          <option value="Dinner">🥩 Dinner</option>
+          <option value="Activity">🗺️ Activity</option>
+          <option value="Hotel">🏨 Hotel</option>
+        `;
+      } else {
+        select.innerHTML = `
+          <option value="Flight">✈️ Flight (機票班機)</option>
+          <option value="Breakfast">🍳 Breakfast (早餐)</option>
+          <option value="Lunch">🍝 Lunch (午餐)</option>
+          <option value="Dinner">🥩 Dinner (晚餐)</option>
+          <option value="Activity">🗺️ Activity (行程景點)</option>
+          <option value="Hotel">🏨 Hotel (住宿飯店)</option>
+        `;
+      }
+    }
+
+    // 基本面板開關
     function toggleConfigPanel() {
       const el = document.getElementById('section-config');
       el.style.display = (el.style.display === 'none') ? 'block' : 'none';
@@ -247,8 +486,8 @@
       const firebaseJson = document.getElementById('cfg-firebase-json').value.trim();
       const membersStr = document.getElementById('cfg-members').value.trim();
 
-      if (!geminiKey || !firebaseJson) { alert("Missing data."); return; }
-      try { JSON.parse(firebaseJson); } catch (err) { alert("JSON error."); return; }
+      if (!geminiKey || !firebaseJson) { alert("Missing credentials."); return; }
+      try { JSON.parse(firebaseJson); } catch (err) { alert("JSON structural mismatch error."); return; }
 
       const members = membersStr.split(',').map(m => m.trim()).filter(m => m);
       const payload = { geminiKey, firebaseJson, members };
@@ -257,12 +496,14 @@
       try {
         bootCloudNodes(payload);
         document.getElementById('section-config').style.display = 'none';
-        alert("🎉 雲端連線成功！");
+        alert(currentLang === 'en' ? "🎉 Connected to Firebase!" : "🎉 雲端連線部署成功！");
       } catch (bootErr) { alert(bootErr.message); }
     }
     window.saveApplicationConfig = saveApplicationConfig;
 
     function bootstrapConfig() {
+      applyLanguagePack(); // 預設執行語系加載
+      
       const cached = localStorage.getItem('sydney_luxe_config');
       if (cached) {
         const data = JSON.parse(cached);
@@ -282,8 +523,6 @@
     function bootCloudNodes(cfg) {
       config = cfg;
       document.getElementById('dash-members').innerText = config.members.join(', ');
-      
-      // Populate flight member dropdown
       document.getElementById('flight-member-select').innerHTML = config.members.map(m => `<option value="${m}">${m}</option>`).join('');
 
       if (window.MyGoogleGenAIInstance) {
@@ -296,7 +535,6 @@
         db = firebase.firestore(app);
       } else { db = firebase.firestore(); }
 
-      // STREAMS CONNECT
       streamExpenses();
       streamItinerary();
       streamWishes();
@@ -312,8 +550,7 @@
     function saveHotelInfo() {
       const name = document.getElementById('input-hotel-name').value.trim();
       const address = document.getElementById('input-hotel-address').value.trim();
-      db.collection("sydney_luxe_meta").doc("hotel").set({ name, address })
-        .then(() => closeHotelEditor());
+      db.collection("sydney_luxe_meta").doc("hotel").set({ name, address }).then(() => closeHotelEditor());
     }
     window.saveHotelInfo = saveHotelInfo;
 
@@ -349,123 +586,202 @@
           html += `<div class="flex justify-between py-1 border-b border-slate-800/40">
             <span class="font-bold text-amber-300">${d.id}</span>
             <span class="text-zinc-400">${d.data().no || 'QF--'}</span>
-            <span class="font-mono text-zinc-200 font-semibold">${d.data().eta || 'Not Configured'}</span>
+            <span class="font-mono text-zinc-200 font-semibold">${d.data().eta || 'Not Logged'}</span>
           </div>`;
         });
-        box.innerHTML = html || '<p class="text-zinc-500 italic text-[11px]">No flights logged yet.</p>';
+        box.innerHTML = html || `<p class="text-zinc-500 italic text-[11px]">${currentLang==='en'?'No flights logged.':'目前沒有任何航班紀錄'}</p>`;
       });
     }
 
-    // EXPENSES & ITINERARY CORE STREAMS
+    // EXPENSES SCANNER & AUTO-SPLIT
     function streamExpenses() {
       db.collection("sydney_luxe_expenses").onSnapshot((snap) => {
         currentExpenses = []; snap.forEach(d => currentExpenses.push({ id: d.id, ...d.data() }));
         document.getElementById('dash-total').innerText = `A$ ${currentExpenses.reduce((s, e) => s + (e.amountAUD || 0), 0).toFixed(2)}`;
-        document.getElementById('expense-list').innerHTML = currentExpenses.map(exp => `
-          <li class="bg-white border border-gray-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
-            <div><p class="font-bold text-xs text-slate-900">${exp.storeName}</p><p class="text-[10px] text-gray-400">${exp.items || 'Items'}</p></div>
-            <p class="text-xs font-mono font-bold text-pink-600">A$ ${parseFloat(exp.amountAUD).toFixed(2)}</p>
-          </li>
-        `).join('');
-      });
-    }
-
-    function streamItinerary() {
-      db.collection("sydney_luxe_itinerary").onSnapshot((snap) => {
-        currentItinerary = []; snap.forEach(d => currentItinerary.push({ id: d.id, ...d.data() }));
-        currentItinerary.sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
         
-        const badgeStyles = { Flight: "bg-amber-50 text-amber-600", Breakfast: "bg-emerald-50 text-emerald-600", Lunch: "bg-teal-50 text-teal-600", Dinner: "bg-rose-50 text-rose-600", Activity: "bg-pink-50 text-pink-600", Hotel: "bg-indigo-50 text-indigo-600" };
-        document.getElementById('itinerary-cards-container').innerHTML = currentItinerary.map(node => `
-          <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm" onclick="window.triggerEditItineraryNode('${node.id}')">
-            <div class="flex justify-between items-start text-xs">
-              <div><span class="font-mono text-gray-400 font-bold">${node.dateTime}</span><h4 class="font-bold text-slate-900">${node.hubLocation}</h4></div>
-              <span class="text-[8px] font-black px-2 py-0.5 rounded-full ${badgeStyles[node.nodeType] || 'bg-gray-100'}">${node.nodeType}</span>
-            </div>
-            <p class="text-[11px] text-gray-500 mt-2 bg-gray-50 p-2 rounded-lg whitespace-pre-line">${node.activityDetails}</p>
-          </div>
-        `).join('');
-      });
-    }
-
-    // WISHLIST STREAM ENGINE
-    function toggleWishEditor() { const el = document.getElementById('wish-editor'); el.style.display = (el.style.display === 'none')?'block':'none'; }
-    window.toggleWishEditor = toggleWishEditor;
-
-    function saveWishNode() {
-      const title = document.getElementById('wish-input-title').value.trim();
-      const link = document.getElementById('wish-input-link').value.trim();
-      const img = document.getElementById('wish-input-img').value.trim();
-      const author = document.getElementById('wish-input-author').value.trim() || 'Someone';
-
-      if(!title) return;
-      db.collection("sydney_luxe_wishes").add({ title, link, img, author, approvedInPlan: false, timestamp: Date.now() })
-        .then(() => {
-          toggleWishEditor();
-          document.getElementById('wish-input-title').value = '';
-          document.getElementById('wish-input-link').value = '';
-          document.getElementById('wish-input-img').value = '';
-        });
-    }
-    window.saveWishNode = saveWishNode;
-
-    function streamWishes() {
-      db.collection("sydney_luxe_wishes").onSnapshot(snap => {
-        currentWishes = []; snap.forEach(d => currentWishes.push({ id: d.id, ...d.data() }));
-        currentWishes.sort((a,b) => b.timestamp - a.timestamp);
-
-        const container = document.getElementById('wishlist-cards-container');
-        if(currentWishes.length === 0) {
-          container.innerHTML = `<div class="p-6 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-xl">Wish pool empty. Throw a coin!</div>`;
+        const container = document.getElementById('expense-list');
+        if(currentExpenses.length === 0) {
+          container.innerHTML = `<li class="p-5 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm">${currentLang==='en'?'No records in Cloud Vault.':'雲端資料庫目前沒有消費帳目'}</li>`;
           return;
         }
 
-        container.innerHTML = currentWishes.map(wish => {
-          const isUrl = wish.link && (wish.link.startsWith('http://') || wish.link.startsWith('https://'));
-          const linkButton = isUrl ? `<a href="${wish.link}" target="_blank" onclick="event.stopPropagation()" class="inline-block mt-1 text-[10px] text-pink-600 font-bold bg-pink-50 border border-pink-100 px-2 py-0.5 rounded-md">🔗 View Link</a>` : '';
-          const imageBox = wish.img ? `<img src="${wish.img}" class="w-full h-24 object-cover rounded-xl mt-2 border border-gray-100">` : '';
-          
+        const sorted = [...currentExpenses].sort((a,b) => new Date(b.date) - new Date(a.date));
+        container.innerHTML = sorted.map(exp => {
+          const splitBreakdowns = Object.entries(exp.splits || {})
+            .map(([name, money]) => `<span class="bg-gray-100 text-gray-600 border border-gray-200 px-1.5 py-0.5 rounded text-[9px] font-mono">${name}: $${parseFloat(money).toFixed(1)}</span>`)
+            .join(' ');
+
           return `
-            <div class="bg-white border border-gray-200 p-4 rounded-2xl shadow-sm space-y-2 relative">
-              <div class="flex justify-between items-start pr-12">
-                <div>
-                  <h4 class="text-xs font-bold text-slate-900">${wish.title}</h4>
-                  <p class="text-[9px] text-gray-400">Wished by <span class="text-slate-600 font-medium">${wish.author}</span></p>
-                  ${linkButton}
+            <li class="bg-white border border-gray-200 p-4 rounded-2xl flex justify-between items-center relative shadow-sm">
+              <div class="space-y-1.5 flex-1 min-w-0 pr-2">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-slate-900 text-xs truncate tracking-wide">${exp.storeName}</span>
+                  <span class="text-[8px] tracking-widest font-bold uppercase text-pink-600 bg-pink-50 px-2 py-0.5 rounded border border-pink-100">${exp.category}</span>
+                </div>
+                <p class="text-[11px] text-gray-500 truncate font-mono">${exp.items || 'Details'}</p>
+                <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+                  <span class="text-[9px] text-gray-400">${currentLang==='en'?'Paid by':'代付人'} <strong class="text-slate-700">${exp.paidBy}</strong></span>
+                  <div class="flex flex-wrap gap-1">${splitBreakdowns}</div>
                 </div>
               </div>
-              ${imageBox}
-              
-              <!-- 小勾勾控制項：可否排進行程 -->
-              <div class="pt-2 border-t border-gray-100 flex justify-between items-center text-[10px]">
-                <label class="flex items-center gap-1.5 font-bold text-gray-500 cursor-pointer">
-                  <input type="checkbox" ${wish.approvedInPlan ? 'checked':''} onclick="window.toggleWishStatus('${wish.id}', ${wish.approvedInPlan})" class="w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-400">
-                  <span>Approved in Plan (已排進行程)</span>
-                </label>
-                <button onclick="window.nukeWishNode('${wish.id}')" class="text-gray-300 hover:text-red-500">✕ Delete</button>
+              <div class="text-right flex flex-col items-end justify-between space-y-2">
+                <p class="text-sm font-black text-slate-900 font-mono">A$ ${parseFloat(exp.amountAUD).toFixed(2)}</p>
+                <div class="flex gap-3 text-[10px] tracking-wider font-bold uppercase">
+                  <button type="button" onclick="window.initiateBillTweak('${exp.id}')" class="text-pink-600 hover:text-slate-900 transition cursor-pointer">${currentLang==='en'?'Tweak':'調整'}</button>
+                  <button type="button" onclick="window.nukeBillLog('${exp.id}')" class="text-gray-400 hover:text-red-500 transition cursor-pointer">${currentLang==='en'?'Drop':'刪除'}</button>
+                </div>
               </div>
-            </div>
+            </li>
           `;
         }).join('');
       });
     }
 
-    window.toggleWishStatus = function(id, currentStatus) {
-      db.collection("sydney_luxe_wishes").doc(id).update({ approvedInPlan: !currentStatus });
+    document.getElementById('file-input').addEventListener('change', async (ev) => {
+      const file = ev.target.files[0]; if (!file || !db) return;
+      const sBox = document.getElementById('scan-status-box'); const sText = document.getElementById('scan-status-text');
+      sBox.style.display = 'flex'; sText.innerText = "Squeezing raw photo pixels...";
+      try {
+        const b64 = await downscaleImageBytes(file);
+        sText.innerText = "Gemini Flash running OCR (English Strict)...";
+        const generatedJSON = await streamGeminiVisionAI(b64);
+        sBox.style.display = 'none'; openBillPanel(null, generatedJSON);
+      } catch (err) { sBox.style.display = 'none'; alert("OCR Scan error: " + err.message); }
+    });
+
+    function downscaleImageBytes(file) {
+      return new Promise((res) => {
+        const r = new FileReader(); r.readAsDataURL(file);
+        r.onload = (e) => {
+          const i = new Image(); i.src = e.target.result;
+          i.onload = () => {
+            const c = document.createElement("canvas"); let w = i.width, h = i.height;
+            if (w > 1024) { h = Math.round((h * 1024) / w); w = 1024; }
+            c.width = w; c.height = h; c.getContext("2d").drawImage(i, 0, 0, w, h);
+            res(c.toDataURL("image/jpeg", 0.75).split(',')[1]);
+          };
+        };
+      });
+    }
+
+    async function streamGeminiVisionAI(bytes) {
+      const p = `Parse receipt. KEEP STORES/ITEMS RAW ENGLISH. Format json: { "storeName": "Merchant", "items": "Flat items string", "amountAUD": 12.50, "category": "Food", "date": "2026-05-24" }`;
+      const res = await aiModel.generateContent([p, { inlineData: { data: bytes, mimeType: "image/jpeg" } }]);
+      return JSON.parse(res.response.text());
+    }
+
+    function openBillPanel(id, data) {
+      document.getElementById('bill-editor').style.display = 'block';
+      document.getElementById('edit-id').value = id || '';
+      document.getElementById('edit-store').value = data.storeName || '';
+      document.getElementById('edit-items').value = data.items || '';
+      document.getElementById('edit-amount').value = data.amountAUD || 0;
+      document.getElementById('edit-cat').value = data.category || 'Others';
+      document.getElementById('edit-date').value = data.date || '';
+
+      const sel = document.getElementById('edit-paid-by');
+      sel.innerHTML = config.members.map(m => `<option value="${m}" ${data.paidBy === m ? 'selected':''}>${m}</option>`).join('');
+
+      const weightBox = document.getElementById('split-shares-container');
+      const val = parseFloat(data.amountAUD) || 0;
+      
+      let initialMatrix = data.splits || {};
+      if (Object.keys(initialMatrix).length === 0) {
+        const splitQuotient = val / config.members.length;
+        config.members.forEach(m => { initialMatrix[m] = parseFloat(splitQuotient.toFixed(2)); });
+      }
+
+      weightBox.innerHTML = config.members.map(m => `
+        <div class="flex items-center justify-between gap-4">
+          <span class="text-xs text-gray-600 font-medium">${m} ${currentLang==='en'?'owes (A$)':'應付 (A$)'}</span>
+          <input type="number" step="0.01" data-member="${m}" class="split-weight-node w-24 p-2 bg-gray-50 border border-gray-200 rounded-xl text-right text-xs text-pink-600 font-mono" value="${initialMatrix[m] || 0}">
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.split-weight-node').forEach(i => i.addEventListener('input', sumWeightNodes));
+      sumWeightNodes();
+    }
+
+    function sumWeightNodes() {
+      let accum = 0; document.querySelectorAll('.split-weight-node').forEach(i => accum += parseFloat(i.value) || 0);
+      document.getElementById('split-total-assigned').innerText = `A$ ${accum.toFixed(2)}`;
+    }
+
+    document.getElementById('btn-equal-split').addEventListener('click', (ev) => {
+      ev.preventDefault();
+      const grand = parseFloat(document.getElementById('edit-amount').value) || 0;
+      const nodes = document.querySelectorAll('.split-weight-node');
+      const allocation = grand / nodes.length;
+      nodes.forEach(n => n.value = allocation.toFixed(2));
+      sumWeightNodes();
+    });
+
+    function closeBillPanel() { document.getElementById('bill-editor').style.display = 'none'; }
+    window.closeBillPanel = closeBillPanel;
+
+    document.getElementById('btn-save-bill').addEventListener('click', async () => {
+      const id = document.getElementById('edit-id').value;
+      let splits = {};
+      document.querySelectorAll('.split-weight-node').forEach(i => { splits[i.getAttribute('data-member')] = parseFloat(i.value) || 0; });
+
+      const packageObj = {
+        storeName: document.getElementById('edit-store').value.trim(),
+        items: document.getElementById('edit-items').value.trim(),
+        amountAUD: parseFloat(document.getElementById('edit-amount').value) || 0,
+        category: document.getElementById('edit-cat').value.trim(),
+        date: document.getElementById('edit-date').value,
+        paidBy: document.getElementById('edit-paid-by').value,
+        splits
+      };
+
+      if(id) { await db.collection("sydney_luxe_expenses").doc(id).set(packageObj, { merge: true }); }
+      else { await db.collection("sydney_luxe_expenses").add(packageObj); }
+      closeBillPanel();
+    });
+
+    window.initiateBillTweak = function(id) {
+      const target = currentExpenses.find(e => e.id === id); if(target) openBillPanel(id, target);
+    };
+    window.nukeBillLog = function(id) {
+      if(confirm(currentLang==='en'?"Delete permanently?":"確定要永久刪除這筆帳目嗎？")) db.collection("sydney_luxe_expenses").doc(id).delete();
     };
 
-    window.nukeWishNode = function(id) {
-      if(confirm("Expunge this wish row?")) db.collection("sydney_luxe_wishes").doc(id).delete();
-    };
+    // ITINERARY PLANNERS
+    function streamItinerary() {
+      db.collection("sydney_luxe_itinerary").onSnapshot((snap) => {
+        currentItinerary = []; snap.forEach(d => currentItinerary.push({ id: d.id, ...d.data() }));
+        currentItinerary.sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+        refreshItineraryTimelineUI();
+      });
+    }
 
-    // LEGACY REDIRECTS FOR ITINERARY FORWARD
-    window.openItineraryEditorModal = function(id) {
-      const modal = document.getElementById('itinerary-editor');
-      modal.style.display = 'block';
+    function refreshItineraryTimelineUI() {
+      const targetBox = document.getElementById('itinerary-cards-container');
+      if(currentItinerary.length === 0) {
+        targetBox.innerHTML = `<div class="p-8 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-2xl shadow-sm">${currentLang==='en'?'No timeline nodes logged.':'行程表目前空空如也，快點擊按鈕新增活動'}</div>`;
+        return;
+      }
+
+      const badgeStyles = { Flight: "bg-amber-50 text-amber-600 border-amber-200", Breakfast: "bg-emerald-50 text-emerald-600 border-emerald-200", Lunch: "bg-teal-50 text-teal-600 border-teal-200", Dinner: "bg-rose-50 text-rose-600 border-rose-200", Activity: "bg-pink-50 text-pink-600 border-pink-200", Hotel: "bg-indigo-50 text-indigo-600 border-indigo-200" };
+      targetBox.innerHTML = currentItinerary.map(node => {
+        return `
+          <div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm active:bg-gray-50" onclick="window.triggerEditItineraryNode('${node.id}')">
+            <div class="flex justify-between items-start text-xs">
+              <div><span class="font-mono text-gray-400 font-bold">${node.dateTime}</span><h4 class="font-bold text-slate-900">${node.hubLocation}</h4></div>
+              <span class="text-[8px] font-black px-2 py-0.5 rounded-full ${badgeStyles[node.nodeType] || 'bg-gray-100'}">${node.nodeType}</span>
+            </div>
+            <p class="text-[11px] text-gray-500 mt-2 bg-gray-50 p-2 rounded-lg whitespace-pre-line">${node.activityDetails}</p>
+            <div class="text-right text-[9px] text-pink-500 font-bold mt-2 uppercase tracking-wider">${currentLang==='en'?'Tap to Edit':'點擊修改/編輯卡片'}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openItineraryEditorModal(id) {
+      const modal = document.getElementById('itinerary-editor'); modal.style.display = 'block';
       if(id) {
-        document.getElementById('itin-editor-title').innerText = "Modify Schedule Node";
-        document.getElementById('edit-itin-id').value = id;
-        document.getElementById('btn-delete-itin').style.display='block';
+        document.getElementById('itin-editor-title').innerText = currentLang==='en'?"Modify Schedule Node":"修改活動節點內容";
+        document.getElementById('edit-itin-id').value = id; document.getElementById('btn-delete-itin').style.display='block';
         const n = currentItinerary.find(i=>i.id===id);
         if(n){
           document.getElementById('edit-itin-time').value=n.dateTime||'';
@@ -474,30 +790,97 @@
           document.getElementById('edit-itin-details').value=n.activityDetails||'';
         }
       } else {
-        document.getElementById('itin-editor-title').innerText = "Create Schedule Node";
-        document.getElementById('edit-itin-id').value = '';
-        document.getElementById('btn-delete-itin').style.display='none';
+        document.getElementById('itin-editor-title').innerText = currentLang==='en'?"Create Schedule Node":"規劃全新活動卡片";
+        document.getElementById('edit-itin-id').value = ''; document.getElementById('btn-delete-itin').style.display='none';
         document.getElementById('edit-itin-time').value = "09:00 / Day 1";
         document.getElementById('edit-itin-type').value = "Activity";
-        document.getElementById('edit-itin-location').value = "";
-        document.getElementById('edit-itin-details').value = "";
+        document.getElementById('edit-itin-location').value = ""; document.getElementById('edit-itin-details').value = "";
       }
       modal.scrollIntoView({ behavior:'smooth' });
-    };
-    window.triggerEditItineraryNode = window.openItineraryEditorModal;
+    }
+    window.openItineraryEditorModal = openItineraryEditorModal; window.triggerEditItineraryNode = openItineraryEditorModal;
 
-    window.closeItineraryEditor = function() { document.getElementById('itinerary-editor').style.display='none'; };
-    window.saveItineraryNode = function() {
+    function closeItineraryEditor() { document.getElementById('itinerary-editor').style.display='none'; }
+    window.closeItineraryEditor = closeItineraryEditor;
+
+    function saveItineraryNode() {
       const id = document.getElementById('edit-itin-id').value;
       const payload = { dateTime: document.getElementById('edit-itin-time').value.trim(), nodeType: document.getElementById('edit-itin-type').value, hubLocation: document.getElementById('edit-itin-location').value.trim(), activityDetails: document.getElementById('edit-itin-details').value.trim(), orderIndex: id ? (currentItinerary.find(i=>i.id===id)?.orderIndex || Date.now()) : Date.now() };
-      if(id) { db.collection("sydney_luxe_itinerary").doc(id).set(payload, {merge:true}).then(()=>window.closeItineraryEditor()); }
-      else { db.collection("sydney_luxe_itinerary").add(payload).then(()=>window.closeItineraryEditor()); }
-    };
-    window.deleteItineraryNode = function() {
-      const id = document.getElementById('edit-itin-id').value;
-      if(confirm("Delete node?")) db.collection("sydney_luxe_itinerary").doc(id).delete().then(()=>window.closeItineraryEditor());
-    };
+      if(id) { db.collection("sydney_luxe_itinerary").doc(id).set(payload, {merge:true}).then(()=>closeItineraryEditor()); }
+      else { db.collection("sydney_luxe_itinerary").add(payload).then(()=>closeItineraryEditor()); }
+    }
+    window.saveItineraryNode = saveItineraryNode;
 
+    function deleteItineraryNode() {
+      const id = document.getElementById('edit-itin-id').value;
+      if(confirm(currentLang==='en'?"Delete event?":"確定要永久刪除此行程嗎？")) db.collection("sydney_luxe_itinerary").doc(id).delete().then(()=>closeItineraryEditor());
+    }
+    window.deleteItineraryNode = deleteItineraryNode;
+
+    // WISHLIST SECTIONS
+    function toggleWishEditor() { const el = document.getElementById('wish-editor'); el.style.display = (el.style.display === 'none')?'block':'none'; }
+    window.toggleWishEditor = toggleWishEditor;
+
+    function saveWishNode() {
+      const title = document.getElementById('wish-input-title').value.trim();
+      const link = document.getElementById('wish-input-link').value.trim();
+      const img = document.getElementById('wish-input-img').value.trim();
+      const author = document.getElementById('wish-input-author').value.trim() || 'Someone';
+      if(!title) return;
+      db.collection("sydney_luxe_wishes").add({ title, link, img, author, approvedInPlan: false, timestamp: Date.now() })
+        .then(() => {
+          toggleWishEditor();
+          document.getElementById('wish-input-title').value = ''; document.getElementById('wish-input-link').value = ''; document.getElementById('wish-input-img').value = '';
+        });
+    }
+    window.saveWishNode = saveWishNode;
+
+    function streamWishes() {
+      db.collection("sydney_luxe_wishes").onSnapshot(snap => {
+        currentWishes = []; snap.forEach(d => currentWishes.push({ id: d.id, ...d.data() }));
+        currentWishes.sort((a,b) => b.timestamp - a.timestamp);
+        streamWishesRender();
+      });
+    }
+
+    function streamWishesRender() {
+      const container = document.getElementById('wishlist-cards-container');
+      if(currentWishes.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm">${currentLang==='en'?'Wish pool empty. Throw a coin!':'許願池空空如也，快貼 IG 連結來許願！'}</div>`;
+        return;
+      }
+
+      container.innerHTML = currentWishes.map(wish => {
+        const isUrl = wish.link && (wish.link.startsWith('http://') || wish.link.startsWith('https://'));
+        const linkButton = isUrl ? `<a href="${wish.link}" target="_blank" onclick="event.stopPropagation()" class="inline-block mt-1 text-[10px] text-pink-600 font-bold bg-pink-50 border border-pink-100 px-2 py-0.5 rounded-md">🔗 ${currentLang==='en'?'View Link':'打開對外連結'}</a>` : '';
+        const imageBox = wish.img ? `<img src="${wish.img}" class="w-full h-24 object-cover rounded-xl mt-2 border border-gray-100">` : '';
+        
+        return `
+          <div class="bg-white border border-gray-200 p-4 rounded-2xl shadow-sm space-y-2 relative">
+            <div class="flex justify-between items-start pr-12">
+              <div>
+                <h4 class="text-xs font-bold text-slate-900">${wish.title}</h4>
+                <p class="text-[9px] text-gray-400">${currentLang==='en'?'Wished by':'許願人'} <span class="text-slate-600 font-medium">${wish.author}</span></p>
+                ${linkButton}
+              </div>
+            </div>
+            ${imageBox}
+            <div class="pt-2 border-t border-gray-100 flex justify-between items-center text-[10px]">
+              <label class="flex items-center gap-1.5 font-bold text-gray-500 cursor-pointer">
+                <input type="checkbox" ${wish.approvedInPlan ? 'checked':''} onclick="window.toggleWishStatus('${wish.id}', ${wish.approvedInPlan})" class="w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-400">
+                <span>${currentLang==='en'?'Approved in Plan':'已排進行程中 ✔️'}</span>
+              </label>
+              <button onclick="window.nukeWishNode('${wish.id}')" class="text-gray-300 hover:text-red-500">${currentLang==='en'?'✕ Delete':'✕ 撤銷願望'}</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.toggleWishStatus = function(id, currentStatus) { db.collection("sydney_luxe_wishes").doc(id).update({ approvedInPlan: !currentStatus }); };
+    window.nukeWishNode = function(id) { if(confirm(currentLang==='en'?"Delete?":"確定要撤銷這個願望嗎？")) db.collection("sydney_luxe_wishes").doc(id).delete(); };
+
+    // Boot loader pipeline
     setTimeout(bootstrapConfig, 500);
   </script>
 </body>
