@@ -20,7 +20,6 @@
         <span class="w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse"></span>
         <h1 class="text-base font-black tracking-widest uppercase text-slate-900">SYDNEY <span class="text-pink-500">.</span> LUXE</h1>
       </div>
-      <!-- 語系切換：只切換內容，不允許它去動按鈕的結構 -->
       <button onclick="toggleLanguage()" type="button" id="btn-lang-toggle" class="text-[10px] font-black tracking-wider uppercase bg-pink-50 text-pink-600 border border-pink-100 px-3 py-2 rounded-full cursor-pointer shadow-xs">
         🌐 EN
       </button>
@@ -198,7 +197,6 @@
     <div id="tab-wishlist-content" class="space-y-4" style="display: none;">
       <div class="flex justify-between items-center">
         <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-wish-title">🎁 旅伴敲碗許願池</h2>
-        <!-- 🔨 暴力修復 1：直接在 HTML 把 onclick 強硬綁回來，拒絕使用任何會被洗掉的監聽器！ -->
         <button onclick="toggleWishEditor()" type="button" id="ui-wish-btn" class="bg-pink-500 text-white text-[11px] font-bold px-4 py-2 rounded-full hover:bg-slate-900 transition cursor-pointer shadow-sm">
           我要許願
         </button>
@@ -239,14 +237,20 @@
     </div>
   </nav>
 
+  <!-- 🔨 關鍵修改：將 GoogleGenAI 的初始化完全收進全域，確保調用時絕對不是 null -->
   <script type="module">
     import { GoogleGenAI } from "https://esm.run/@google/generative-ai";
-    window.MyGoogleGenAIInstance = GoogleGenAI; 
+    try {
+      const genAI = new GoogleGenAI({ apiKey: window.EMBEDDED_GEMINI_KEY });
+      window.aiModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    } catch(e) {
+      console.error("Gemini init fail:", e);
+    }
   </script>
 
   <script>
-    // 🔒 終極核心：全自働金鑰直通內嵌
-    const EMBEDDED_GEMINI_KEY = "AIzaSyAgCKkT_l1qtwe6-6-kN0PD1loVBwFdLAs";
+    // 🔒 終極核心金鑰內嵌
+    window.EMBEDDED_GEMINI_KEY = "AIzaSyAgCKkT_l1qtwe6-6-kN0PD1loVBwFdLAs";
     const EMBEDDED_FIREBASE_JSON = `{
       "apiKey": "AIzaSyDeP9DNQ66vSIxSfobvszadV-pRkT1pSoc",
       "authDomain": "samuel-st-rent.firebaseapp.com",
@@ -258,7 +262,7 @@
     }`;
     const FIXED_MEMBERS = ['Sabrina', '中偉', '聖聖', '老麥', '倫倫'];
 
-    let db = null; let aiModel = null;
+    let db = null;
     let currentExpenses = []; let currentItinerary = []; let currentWishes = [];
     
     let currentLang = 'zh';
@@ -295,10 +299,7 @@
       document.getElementById('ui-plan-title').innerText = pack.planTitle;
       document.getElementById('ui-plan-add-btn').innerText = pack.planAddBtn;
       document.getElementById('ui-wish-title').innerText = pack.wishTitle;
-      
-      // 🔨 暴力修復 2：如果是中文狀態，直接寫入文字，但絕不去重寫覆蓋按鈕物件本身！
       document.getElementById('ui-wish-btn').innerText = pack.wishBtn;
-      
       document.getElementById('ui-wish-pane-title').innerText = pack.wishPaneTitle;
       document.getElementById('ui-wish-cast').innerText = pack.wishCast;
       document.getElementById('ui-wish-cancel').innerText = pack.wishCancel;
@@ -347,13 +348,10 @@
     window.switchTab = switchTab;
 
     function bootstrapConfig() {
+      applyLanguagePack();
       document.getElementById('dash-members').innerText = FIXED_MEMBERS.join(', ');
       document.getElementById('flight-member-select').innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
       
-      if (window.MyGoogleGenAIInstance) {
-        const genAI = new window.MyGoogleGenAIInstance({ apiKey: EMBEDDED_GEMINI_KEY });
-        aiModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      }
       if (firebase.apps.length === 0) {
         const app = firebase.initializeApp(JSON.parse(EMBEDDED_FIREBASE_JSON));
         db = firebase.firestore(app);
@@ -395,12 +393,19 @@
 
     document.getElementById('file-input').addEventListener('change', async (ev) => {
       const file = ev.target.files[0]; if (!file || !db) return;
+      
+      // 防呆：確認 aiModel 是否真的成功加載
+      if (!window.aiModel) {
+        alert("Gemini AI 引擎正在初始化，請稍等 3 秒後重新上傳圖片！");
+        return;
+      }
+
       const sBox = document.getElementById('scan-status-box'); const sText = document.getElementById('scan-status-text');
       sBox.style.display = 'flex'; sText.innerText = "Processing image...";
       try { const b64 = await downscaleImageBytes(file); const generatedJSON = await streamGeminiVisionAI(b64); sBox.style.display = 'none'; openBillPanel(null, generatedJSON); } catch (err) { sBox.style.display = 'none'; alert("OCR Scan error: " + err.message); }
     });
     function downscaleImageBytes(file) { return new Promise((res) => { const r = new FileReader(); r.readAsDataURL(file); r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement("canvas"); let w = i.width, h = i.height; if (w > 1024) { h = Math.round((h * 1024) / w); w = 1024; } c.width = w; c.height = h; c.getContext("2d").drawImage(i, 0, 0, w, h); res(c.toDataURL("image/jpeg", 0.75).split(',')[1]); }; }; }); }
-    async function streamGeminiVisionAI(bytes) { const p = `Parse receipt. KEEP RAW ENGLISH. Format json: { "storeName": "Merchant", "items": "Flat string", "amountAUD": 12.50, "category": "Food", "date": "2026-05-24" }`; const res = await aiModel.generateContent([p, { inlineData: { data: bytes, mimeType: "image/jpeg" } }]); return JSON.parse(res.response.text()); }
+    async function streamGeminiVisionAI(bytes) { const p = `Parse receipt. KEEP RAW ENGLISH. Format json: { "storeName": "Merchant", "items": "Flat string", "amountAUD": 12.50, "category": "Food", "date": "2026-05-24" }`; const res = await window.aiModel.generateContent([p, { inlineData: { data: bytes, mimeType: "image/jpeg" } }]); return JSON.parse(res.response.text()); }
 
     function openBillPanel(id, data) {
       document.getElementById('bill-editor').style.display = 'block'; document.getElementById('edit-id').value = id || ''; document.getElementById('edit-store').value = data.storeName || ''; document.getElementById('edit-items').value = data.items || ''; document.getElementById('edit-amount').value = data.amountAUD || 0; document.getElementById('edit-cat').value = data.category || 'Others'; document.getElementById('edit-date').value = data.date || '';
@@ -454,12 +459,8 @@
     window.deleteItineraryNode = deleteItineraryNode;
 
     // WISHLIST
-    function toggleWishEditor() { 
-      const el = document.getElementById('wish-editor'); 
-      el.style.display = (el.style.display === 'none') ? 'block' : 'none'; 
-    }
+    function toggleWishEditor() { const el = document.getElementById('wish-editor'); el.style.display = (el.style.display === 'none') ? 'block' : 'none'; }
     window.toggleWishEditor = toggleWishEditor;
-
     function saveWishNode() {
       const title = document.getElementById('wish-input-title').value.trim(); const link = document.getElementById('wish-input-link').value.trim(); const img = document.getElementById('wish-input-img').value.trim(); const author = document.getElementById('wish-input-author').value.trim() || 'Someone';
       if(!title) { alert(currentLang==='en'?"Please fill Wish Title!":"請填寫想要許願的名稱！"); return; }
@@ -477,7 +478,7 @@
     window.toggleWishStatus = function(id, currentStatus) { db.collection("sydney_luxe_wishes").doc(id).update({ approvedInPlan: !currentStatus }); };
     window.nukeWishNode = function(id) { if(confirm(currentLang==='en'?"Delete?":"確定要撤銷這個願望嗎？")) db.collection("sydney_luxe_wishes").doc(id).delete(); };
 
-    // ⚡ 鋼鐵流直接掛載啟動
+    // 立即初始化核心架構
     bootstrapConfig();
   </script>
 </body>
