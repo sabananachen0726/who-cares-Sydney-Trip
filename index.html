@@ -1,1171 +1,648 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Sydney Trip Tracker & Planner</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SYD | Premium Travel Tracker</title>
   <!-- Tailwind CSS v4 CDN -->
-
   <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-
-  <!-- Import Map for Firebase and Gemini Edge SDK -->
-
   <script type="importmap">
-
     {
-
       "imports": {
-
         "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
-
         "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js",
-
         "@google/generative-ai": "https://esm.run/@google/generative-ai"
-
       }
-
     }
-
   </script>
-
+  <style>
+    /* 微調手機原生拉條與高質感過渡 */
+    body { -webkit-tap-highlight-color: transparent; }
+    .pink-glow { box-shadow: 0 0 15px rgba(244, 143, 177, 0.15); }
+  </style>
 </head>
+<body class="bg-black text-white min-h-screen pb-32 font-sans antialiased selection:bg-pink-200 selection:text-black">
 
-<body class="bg-slate-50 text-slate-800 min-h-screen pb-24">
-
-
-
-  <!-- TOP BAR -->
-
-  <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-50">
-
-    <div class="max-w-xl mx-auto px-4 py-3 flex justify-between items-center">
-
-      <h1 class="text-xl font-bold flex items-center gap-1">🦘 Sydney Planner & Tracker</h1>
-
-      <button id="btn-toggle-config" class="text-xs bg-indigo-700 hover:bg-indigo-800 px-3 py-1.5 rounded-lg transition">
-
-        ⚙️ Config Keys
-
+  <!-- PREMIUM HEADER -->
+  <header class="bg-zinc-950/80 backdrop-blur-md border-b border-zinc-900 sticky top-0 z-40">
+    <div class="max-w-md mx-auto px-5 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-pink-400 animate-pulse"></span>
+        <h1 class="text-base font-black tracking-widest uppercase">SYDNEY <span class="text-pink-400">.</span> LUXE</h1>
+      </div>
+      <button id="btn-toggle-config" class="text-[11px] font-bold tracking-wider uppercase bg-zinc-900 border border-zinc-800 text-zinc-400 px-3 py-1.5 rounded-full hover:text-pink-400 hover:border-pink-400/30 transition">
+        ⚙️ Cloud Keys
       </button>
-
     </div>
-
   </header>
 
+  <main class="max-w-md mx-auto px-4 mt-5 space-y-6">
 
-
-  <main class="max-w-xl mx-auto px-4 mt-4 space-y-6">
-
-
-
-    <!-- CONFIG SECTION (Keys & Settings) -->
-
-    <section id="section-config" class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 hidden space-y-3">
-
-      <h2 class="font-bold text-slate-700 flex items-center gap-1">⚙️ Cloud & AI Configurations</h2>
-
-      <p class="text-xs text-slate-400">All data will be directly synced to your Firebase Cloud Database.</p>
-
-      
-
-      <div class="space-y-2">
-
-        <div>
-
-          <label class="block text-[10px] font-bold text-slate-500 uppercase">Gemini API Key</label>
-
-          <input type="password" id="cfg-gemini-key" class="w-full p-2 border border-slate-300 rounded-lg text-xs" placeholder="AIzaSy...">
-
-        </div>
-
-        <div>
-
-          <label class="block text-[10px] font-bold text-slate-500 uppercase">Firebase Config (JSON Object)</label>
-
-          <textarea id="cfg-firebase-json" rows="4" class="w-full p-2 border border-slate-300 rounded-lg text-xs font-mono" placeholder='{ "apiKey": "...", "authDomain": "...", "projectId": "...", "storageBucket": "...", "messagingSenderId": "...", "appId": "..." }'></textarea>
-
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-
-          <div>
-
-            <label class="block text-[10px] font-bold text-slate-500 uppercase">AUD to TWD Rate</label>
-
-            <input type="number" id="cfg-rate" value="21.5" step="0.1" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
-
-          </div>
-
-          <div>
-
-            <label class="block text-[10px] font-bold text-slate-500 uppercase">Trip Members (Comma separated)</label>
-
-            <input type="text" id="cfg-members" value="Alex, Bob, Chris" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
-
-          </div>
-
-        </div>
-
+    <!-- CONFIG SECTION (Luxury Dark Mode) -->
+    <section id="section-config" class="bg-zinc-950 p-5 rounded-2xl border border-zinc-900 hidden space-y-4 pink-glow">
+      <div class="space-y-1">
+        <h2 class="text-sm font-bold tracking-wider uppercase text-pink-400">Cloud Credentials</h2>
+        <p class="text-[11px] text-zinc-500">Syncs everything seamlessly to your private Firebase container.</p>
       </div>
-
-      <button id="btn-save-config" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg text-xs transition">
-
-        Connect & Save to Cloud
-
+      <div class="space-y-3">
+        <div>
+          <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Gemini AI Key</label>
+          <input type="password" id="cfg-gemini-key" class="w-full p-3 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-pink-400 transition" placeholder="AIzaSy...">
+        </div>
+        <div>
+          <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Firebase Configuration JSON</label>
+          <textarea id="cfg-firebase-json" rows="4" class="w-full p-3 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-zinc-300 font-mono focus:outline-none focus:border-pink-400 transition" placeholder='{ "apiKey": "...", "projectId": "..." }'></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-1">AUD → TWD Rate</label>
+            <input type="number" id="cfg-rate" value="21.5" step="0.1" class="w-full p-3 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-pink-400 transition">
+          </div>
+          <div>
+            <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Members (Comma Sep)</label>
+            <input type="text" id="cfg-members" value="Alex, Bob" class="w-full p-3 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-pink-400 transition">
+          </div>
+        </div>
+      </div>
+      <button id="btn-save-config" class="w-full bg-white hover:bg-pink-100 text-black font-bold py-3 rounded-xl text-xs tracking-widest uppercase transition">
+        Initialize Live Server
       </button>
-
     </section>
 
-
-
-    <!-- TAB NAVIGATION -->
-
-    <div class="flex border-b border-slate-200">
-
-      <button id="tab-tracker-btn" class="flex-1 py-2.5 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 transition">🧾 Receipt Tracker</button>
-
-      <button id="tab-itinerary-btn" class="flex-1 py-2.5 text-sm font-medium text-slate-500 hover:text-indigo-600 transition">🗓️ Itinerary Planner</button>
-
+    <!-- LIVE SMART BANNER -->
+    <div class="bg-zinc-950 border border-zinc-900 p-3 rounded-xl flex items-center justify-between text-[11px] text-zinc-400">
+      <div class="flex items-center gap-2">
+        <span class="text-sm">🇦🇺</span>
+        <span>Sydney Active Budget Monitor</span>
+      </div>
+      <span class="text-pink-400 font-bold" id="live-time-badge">Opal Card Enabled</span>
     </div>
 
+    <!-- METRICS CARD -->
+    <section class="bg-zinc-950 border border-zinc-900 rounded-2xl p-5 relative overflow-hidden pink-glow">
+      <div class="absolute -right-10 -top-10 w-32 h-32 bg-pink-500/5 rounded-full blur-2xl"></div>
+      <div class="flex justify-between items-start">
+        <div class="space-y-0.5">
+          <p class="text-[10px] font-bold tracking-widest uppercase text-zinc-500">Gross Trip Investment</p>
+          <p class="text-3xl font-black tracking-tight" id="dash-total">A$ 0.00</p>
+          <p class="text-xs text-pink-400 font-medium" id="dash-total-twd">≈ NT$ 0</p>
+        </div>
+        <div class="text-right space-y-1">
+          <p class="text-[10px] font-bold tracking-widest uppercase text-zinc-500">Crew Status</p>
+          <p class="text-xs font-semibold text-white max-w-[120px] truncate" id="dash-members">Syncing...</p>
+        </div>
+      </div>
+    </section>
 
-
-    <!-- MODULE 1: RECEIPT TRACKER & SPLIT BILL -->
-
+    <!-- MODULE 1: RECEIPT SCANNER & ADJUSTMENT -->
     <div id="tab-tracker-content" class="space-y-4">
-
-      
-
-      <!-- DASHBOARD -->
-
-      <section class="grid grid-cols-2 gap-3">
-
-        <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-4 rounded-xl shadow-sm">
-
-          <p class="text-[10px] uppercase tracking-wider opacity-80">Total Trip Expense</p>
-
-          <p class="text-2xl font-black mt-1" id="dash-total">A$ 0.00</p>
-
-          <p class="text-xs opacity-70 mt-0.5" id="dash-total-twd">≈ NT$ 0</p>
-
-        </div>
-
-        <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-4 rounded-xl shadow-sm">
-
-          <p class="text-[10px] uppercase tracking-wider opacity-80">Active Members</p>
-
-          <p class="text-lg font-bold mt-2 truncate" id="dash-members">Loading...</p>
-
-        </div>
-
-      </section>
-
-
-
-      <!-- CAMERA / UPLOAD ZONE -->
-
-      <section class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-center space-y-3">
-
-        <div class="border-2 border-dashed border-slate-300 rounded-xl p-5 bg-slate-50 hover:bg-slate-100 transition relative cursor-pointer group">
-
-          <input type="file" id="file-input" accept="image/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer">
-
-          <div class="space-y-1">
-
-            <div class="text-3xl">📸</div>
-
-            <p class="text-xs font-bold text-slate-600">Scan Australian Receipt</p>
-
-            <p class="text-[10px] text-slate-400">Keeps original English names & items</p>
-
+      <!-- UPLOAD AREA -->
+      <section class="relative">
+        <div class="border border-dashed border-zinc-800 rounded-2xl p-6 bg-zinc-950/60 hover:bg-zinc-950 transition-all text-center relative cursor-pointer group">
+          <input type="file" id="file-input" accept="image/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer z-20">
+          <div class="space-y-2">
+            <div class="text-2xl text-pink-400 group-hover:scale-110 transition duration-300">📷</div>
+            <p class="text-xs font-bold tracking-wide">Capture Australian Receipt</p>
+            <p class="text-[10px] text-zinc-500">Keeps raw English descriptors flawlessly</p>
           </div>
-
         </div>
-
-        <!-- Scanning Status -->
-
-        <div id="scan-status-box" class="hidden flex items-center gap-3 p-2 bg-slate-50 rounded-lg border border-slate-200 text-left">
-
-          <div class="w-2 h-2 rounded-full bg-indigo-600 animate-ping"></div>
-
-          <p class="text-xs font-medium text-slate-600" id="scan-status-text">Processing image...</p>
-
+        <!-- Upload Status overlay -->
+        <div id="scan-status-box" class="hidden mt-2 p-3 bg-zinc-950 border border-pink-500/20 rounded-xl flex items-center gap-3">
+          <div class="w-2 h-2 rounded-full bg-pink-400 animate-ping"></div>
+          <p class="text-xs font-medium text-zinc-300" id="scan-status-text">Uploading image matrix...</p>
         </div>
-
       </section>
 
-
-
-      <!-- MUTABLE BILL EDITOR (Pops up when scanned or edited) -->
-
-      <section id="bill-editor" class="bg-amber-50 p-4 rounded-xl border border-amber-200 hidden space-y-3">
-
-        <div class="flex justify-between items-center">
-
-          <h3 class="text-xs font-bold text-amber-800 uppercase tracking-wider">✍️ Verify & Adjust Splits</h3>
-
-          <button id="btn-close-editor" class="text-xs text-slate-400 hover:text-slate-600">Cancel</button>
-
+      <!-- MODAL SPLIT SHEET / BILL EDITOR -->
+      <section id="bill-editor" class="bg-zinc-950 p-5 rounded-2xl border border-pink-400/30 hidden space-y-4 pink-glow">
+        <div class="flex justify-between items-center pb-2 border-b border-zinc-900">
+          <h3 class="text-xs font-bold tracking-wider uppercase text-pink-400">Verify & Fine-Tune Split</h3>
+          <button id="btn-close-editor" class="text-xs text-zinc-500 hover:text-white">Close</button>
         </div>
-
         <input type="hidden" id="edit-id">
-
-        <div class="grid grid-cols-2 gap-2">
-
+        <div class="grid grid-cols-2 gap-3">
           <div>
-
-            <label class="block text-[10px] font-bold text-slate-500">Store (Keep English)</label>
-
-            <input type="text" id="edit-store" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs">
-
+            <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Merchant (English)</label>
+            <input type="text" id="edit-store" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white">
           </div>
-
           <div>
-
-            <label class="block text-[10px] font-bold text-slate-500">Paid By</label>
-
-            <select id="edit-paid-by" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs"></select>
-
+            <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Paid Investor</label>
+            <select id="edit-paid-by" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none"></select>
           </div>
-
         </div>
-
         <div>
-
-          <label class="block text-[10px] font-bold text-slate-500">Items Summary</label>
-
-          <input type="text" id="edit-items" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs">
-
+          <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Line Items Overview</label>
+          <input type="text" id="edit-items" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white">
         </div>
-
         <div class="grid grid-cols-3 gap-2">
-
           <div>
-
-            <label class="block text-[10px] font-bold text-slate-500">Amount (AUD)</label>
-
-            <input type="number" id="edit-amount" step="0.01" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs font-bold">
-
+            <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Cost (AUD)</label>
+            <input type="number" id="edit-amount" step="0.01" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs font-bold text-pink-400">
           </div>
-
           <div>
-
-            <label class="block text-[10px] font-bold text-slate-500">Category</label>
-
-            <input type="text" id="edit-cat" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs">
-
+            <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Category</label>
+            <input type="text" id="edit-cat" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white">
           </div>
-
           <div>
-
-            <label class="block text-[10px] font-bold text-slate-500">Date</label>
-
-            <input type="date" id="edit-date" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs">
-
+            <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Timestamp</label>
+            <input type="date" id="edit-date" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white">
           </div>
-
         </div>
 
-
-
-        <!-- Manual Split Adjuster -->
-
-        <div class="bg-white p-3 rounded-lg border border-amber-100 space-y-2">
-
-          <p class="text-[10px] font-bold text-slate-500 uppercase">Split Adjustment (AUD amount per person)</p>
-
-          <div id="split-shares-container" class="space-y-1.5">
-
-            <!-- Dynamic inputs for manual tweaking -->
-
+        <!-- Tweakable Split Controls -->
+        <div class="bg-zinc-900/60 p-4 rounded-xl border border-zinc-900 space-y-3">
+          <div class="flex justify-between items-center">
+            <p class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">Manual Split Weights</p>
+            <button id="btn-equal-split" class="text-[10px] text-pink-400 font-bold hover:underline">Equally Distribute</button>
           </div>
-
-          <div class="flex justify-between items-center text-[10px] text-slate-500 pt-1 border-t border-slate-100">
-
-            <span>Total Assigned: <strong id="split-total-assigned">A$ 0.00</strong></span>
-
-            <button id="btn-equal-split" class="text-indigo-600 hover:underline">Reset to Equal Split</button>
-
+          <div id="split-shares-container" class="space-y-2"></div>
+          <div class="text-[10px] text-zinc-500 pt-2 border-t border-zinc-900 flex justify-between">
+            <span>Aggregated Assignment:</span>
+            <strong id="split-total-assigned" class="text-white">A$ 0.00</strong>
           </div>
-
         </div>
 
-
-
-        <button id="btn-save-bill" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs transition">
-
-          Sync Bill to Cloud
-
+        <button id="btn-save-bill" class="w-full bg-white hover:bg-pink-100 text-black font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition">
+          Commit Financial Log
         </button>
-
       </section>
 
-
-
-      <!-- EXPENSE HISTORY LIST -->
-
-      <section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-
-        <div class="px-4 py-2.5 border-b border-slate-100 bg-slate-50 font-bold text-slate-700 text-xs uppercase tracking-wider">
-
-          🧾 Live Ledger (Cloud)
-
-        </div>
-
-        <ul id="expense-list" class="divide-y divide-slate-100 max-h-96 overflow-y-auto">
-
-          <li class="p-6 text-center text-xs text-slate-400">Waiting for cloud configuration synchronization...</li>
-
+      <!-- LIVE STATEMENT RECYCLER -->
+      <div class="space-y-3">
+        <h3 class="text-[10px] font-bold tracking-widest uppercase text-zinc-500 px-1">Vault Ledgers</h3>
+        <ul id="expense-list" class="space-y-2">
+          <li class="p-6 text-center text-xs text-zinc-600 bg-zinc-950 border border-zinc-900 rounded-2xl">Awaiting server initialization token stream...</li>
         </ul>
+      </div>
+    </div>
 
+    <!-- MODULE 2: HIGH-FIDELITY MOBILE ITINERARY -->
+    <div id="tab-itinerary-content" class="space-y-4 hidden">
+      <div class="flex justify-between items-center px-1">
+        <h2 class="text-[10px] font-bold tracking-widest uppercase text-zinc-500">Live Dynamic Itinerary</h2>
+        <button id="btn-add-schedule" class="bg-zinc-950 border border-zinc-800 text-pink-400 hover:text-white hover:border-pink-400 text-[11px] font-bold px-4 py-2 rounded-full transition">
+          + Add New Event
+        </button>
+      </div>
+
+      <!-- ITINERARY EDITOR DRAWERS CARD (POPS OUT WHEN TRIGGERED) -->
+      <section id="itinerary-editor" class="bg-zinc-950 p-5 rounded-2xl border border-pink-400/40 hidden space-y-4 pink-glow">
+        <div class="flex justify-between items-center pb-2 border-b border-zinc-900">
+          <h3 class="text-xs font-bold tracking-wider uppercase text-pink-400" id="itin-editor-title">Create Schedule Node</h3>
+          <button id="btn-close-itin-editor" class="text-xs text-zinc-500 hover:text-white">Cancel</button>
+        </div>
+        <input type="hidden" id="edit-itin-id">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Time / Index</label>
+            <input type="text" id="edit-itin-time" placeholder="e.g. 09:00 / Day 1" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white">
+          </div>
+          <div>
+            <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Node Type (Badge)</label>
+            <select id="edit-itin-type" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none">
+              <option value="Flight">✈️ Flight (機票)</option>
+              <option value="Breakfast">🍳 Breakfast (早餐)</option>
+              <option value="Lunch">🍝 Lunch (午餐)</option>
+              <option value="Dinner">🥩 Dinner (晚餐)</option>
+              <option value="Activity">🗺️ Activity (行程景點)</option>
+              <option value="Hotel">🏨 Hotel (住宿)</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Hub Location</label>
+          <input type="text" id="edit-itin-location" placeholder="e.g. Sydney Opera House" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white">
+        </div>
+        <div>
+          <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Mission / Action Details</label>
+          <textarea id="edit-itin-details" rows="3" placeholder="Describe plans, tickets confirmation numbers or notes..." class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none"></textarea>
+        </div>
+        <button id="btn-save-itinerary" class="w-full bg-white hover:bg-pink-100 text-black font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition">
+          Sync Node To Cloud
+        </button>
       </section>
 
-    </div>
-
-
-
-    <!-- MODULE 2: EDITABLE ITINERARY PLANNER -->
-
-    <div id="tab-itinerary-content" class="space-y-4 hidden">
-
-      <div class="flex justify-between items-center">
-
-        <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">🗓️ Cloud Schedule Timetable</h2>
-
-        <button id="btn-add-schedule" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition">
-
-          + Add Row
-
-        </button>
-
+      <!-- MOBILE EVENT CARD TIMELINE STREAM -->
+      <div id="itinerary-cards-container" class="space-y-3">
+        <!-- Live stream items fall here instead of non-clickable grid tables -->
       </div>
-
-
-
-      <!-- Live Editable Table -->
-
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-
-        <div class="overflow-x-auto">
-
-          <table class="w-full border-collapse text-left text-xs">
-
-            <thead class="bg-slate-50 font-bold text-slate-600 border-b border-slate-200 uppercase tracking-wider">
-
-              <tr>
-
-                <th class="p-3 w-1/4">Date / Time</th>
-
-                <th class="p-3 w-1/4">Location / Hub</th>
-
-                <th class="p-3 w-5/12">Plan / Activities Details</th>
-
-                <th class="p-3 w-1/12 text-center">Action</th>
-
-              </tr>
-
-            </thead>
-
-            <tbody id="itinerary-table-body" class="divide-y divide-slate-100">
-
-              <!-- Dynamically populated rows -->
-
-            </tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
     </div>
-
-
 
   </main>
 
+  <!-- FIXED FOOTER TAB SWITCHER FOR PROFESSIONAL MOBILE PHONE APP LOOK -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-zinc-950/90 backdrop-blur-lg border-t border-zinc-900 py-3 px-6 z-40">
+    <div class="max-w-md mx-auto flex justify-around items-center">
+      <button id="nav-tab-tracker" class="flex flex-col items-center gap-1 group text-pink-400">
+        <span class="text-lg group-hover:scale-110 transition">🧾</span>
+        <span class="text-[9px] font-bold uppercase tracking-widest">Ledger</span>
+      </button>
+      <button id="nav-tab-itinerary" class="flex flex-col items-center gap-1 group text-zinc-500">
+        <span class="text-lg group-hover:scale-110 transition">🗓️</span>
+        <span class="text-[9px] font-bold uppercase tracking-widest">Planner</span>
+      </button>
+    </div>
+  </nav>
 
-
-  <!-- SCRIPT LOGIC -->
-
+  <!-- APPLICATION CORE CODE -->
   <script type="module">
-
     import { initializeApp } from "firebase/app";
-
-    import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc, deleteDoc } from "firebase/firestore";
-
+    import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc, deleteDoc, query, orderBy } from "firebase/firestore";
     import { GoogleGenAI } from "@google/generative-ai";
 
-
-
     let db, aiModel;
-
-    let config = { geminiKey: '', rate: 21.5, members: ['Alex', 'Bob', 'Chris'] };
-
+    let config = { geminiKey: '', rate: 21.5, members: ['Alex', 'Bob'] };
     let currentExpenses = [];
+    let currentItinerary = [];
 
-
-
-    // TABS CONTROL
-
-    document.getElementById('tab-tracker-btn').addEventListener('click', () => switchTab('tracker'));
-
-    document.getElementById('tab-itinerary-btn').addEventListener('click', () => switchTab('itinerary'));
-
+    // ACTION FOOTER BUTTON ROUTING
+    document.getElementById('nav-tab-tracker').addEventListener('click', () => switchUIMode('tracker'));
+    document.getElementById('nav-tab-itinerary').addEventListener('click', () => switchUIMode('itinerary'));
     document.getElementById('btn-toggle-config').addEventListener('click', () => {
-
       document.getElementById('section-config').classList.toggle('hidden');
-
     });
 
+    function switchUIMode(mode) {
+      const tBtn = document.getElementById('nav-tab-tracker');
+      const iBtn = document.getElementById('nav-tab-itinerary');
+      const tContent = document.getElementById('tab-tracker-content');
+      const iContent = document.getElementById('tab-itinerary-content');
 
-
-    function switchTab(tab) {
-
-      const trackerBtn = document.getElementById('tab-tracker-btn');
-
-      const itineraryBtn = document.getElementById('tab-itinerary-btn');
-
-      const trackerContent = document.getElementById('tab-tracker-content');
-
-      const itineraryContent = document.getElementById('tab-itinerary-content');
-
-
-
-      if (tab === 'tracker') {
-
-        trackerBtn.className = "flex-1 py-2.5 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 transition";
-
-        itineraryBtn.className = "flex-1 py-2.5 text-sm font-medium text-slate-500 hover:text-indigo-600 transition";
-
-        trackerContent.classList.remove('hidden');
-
-        itineraryContent.classList.add('hidden');
-
+      if(mode === 'tracker') {
+        tBtn.className = "flex flex-col items-center gap-1 group text-pink-400";
+        iBtn.className = "flex flex-col items-center gap-1 group text-zinc-500";
+        tContent.classList.remove('hidden');
+        iContent.classList.add('hidden');
       } else {
-
-        itineraryBtn.className = "flex-1 py-2.5 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 transition";
-
-        trackerBtn.className = "flex-1 py-2.5 text-sm font-medium text-slate-500 hover:text-indigo-600 transition";
-
-        itineraryContent.classList.remove('hidden');
-
-        trackerContent.classList.add('hidden');
-
+        iBtn.className = "flex flex-col items-center gap-1 group text-pink-400";
+        tBtn.className = "flex flex-col items-center gap-1 group text-zinc-500";
+        iContent.classList.remove('hidden');
+        tContent.classList.add('hidden');
       }
-
     }
 
-
-
-    // INITIALIZE & READ LOCAL CONFIG TO START CLOUD CONNS
-
-    function loadLocalConfig() {
-
-      const savedConfig = localStorage.getItem('sydney_app_config');
-
-      if (savedConfig) {
-
-        const parsed = JSON.parse(savedConfig);
-
-        document.getElementById('cfg-gemini-key').value = parsed.geminiKey || '';
-
-        document.getElementById('cfg-firebase-json').value = parsed.firebaseJson || '';
-
-        document.getElementById('cfg-rate').value = parsed.rate || 21.5;
-
-        document.getElementById('cfg-members').value = parsed.members ? parsed.members.join(', ') : 'Alex, Bob, Chris';
-
-        
-
-        if (parsed.firebaseJson && parsed.geminiKey) {
-
-          connectToServices(parsed);
-
-        }
-
+    // CLOUD GATEWAY CONFIG PREPARATION
+    function bootstrapConfig() {
+      const cached = localStorage.getItem('sydney_luxe_config');
+      if (cached) {
+        const data = JSON.parse(cached);
+        document.getElementById('cfg-gemini-key').value = data.geminiKey || '';
+        document.getElementById('cfg-firebase-json').value = data.firebaseJson || '';
+        document.getElementById('cfg-rate').value = data.rate || 21.5;
+        document.getElementById('cfg-members').value = data.members ? data.members.join(', ') : 'Alex, Bob';
+        if (data.firebaseJson && data.geminiKey) bootCloudNodes(data);
       } else {
-
         document.getElementById('section-config').classList.remove('hidden');
-
       }
-
     }
-
-
 
     document.getElementById('btn-save-config').addEventListener('click', () => {
-
       const geminiKey = document.getElementById('cfg-gemini-key').value.trim();
-
       const firebaseJson = document.getElementById('cfg-firebase-json').value.trim();
-
       const rate = parseFloat(document.getElementById('cfg-rate').value) || 21.5;
-
       const members = document.getElementById('cfg-members').value.split(',').map(m => m.trim()).filter(m => m);
 
-
-
-      const newConfig = { geminiKey, firebaseJson, rate, members };
-
-      localStorage.setItem('sydney_app_config', JSON.stringify(newConfig));
-
-      alert('Configurations saved! Syncing cloud pipeline...');
-
+      const payload = { geminiKey, firebaseJson, rate, members };
+      localStorage.setItem('sydney_luxe_config', JSON.stringify(payload));
       document.getElementById('section-config').classList.add('hidden');
-
-      connectToServices(newConfig);
-
+      bootCloudNodes(payload);
     });
 
-
-
-    function connectToServices(cfg) {
-
+    function bootCloudNodes(cfg) {
       config = cfg;
-
       document.getElementById('dash-members').innerText = config.members.join(', ');
-
       
-
-      // Init Gemini
-
-      const ai = new GoogleGenAI({ apiKey: config.geminiKey });
-
-      aiModel = ai.getGenerativeModel({ 
-
+      // Load Edge Brain Gemini
+      const genAI = new GoogleGenAI({ apiKey: config.geminiKey });
+      aiModel = genAI.getGenerativeModel({ 
         model: "gemini-2.0-flash",
-
         generationConfig: { responseMimeType: "application/json" }
-
       });
 
-
-
-      // Init Firebase
-
+      // Load Firestore Cloud Database
       try {
-
-        const firebaseApp = initializeApp(JSON.parse(config.firebaseJson));
-
-        db = getFirestore(firebaseApp);
-
-        
-
-        // Start Live Cloud Sync Streams
-
-        syncExpenses();
-
-        syncItinerary();
-
+        const app = initializeApp(JSON.parse(config.firebaseJson));
+        db = getFirestore(app);
+        streamFinancialLogs();
+        streamItineraryPlanner();
       } catch (err) {
-
-        alert("Firebase Connection Error: Please double check your JSON configuration structure.");
-
+        alert("Config matrix parsing error. Check syntax strings.");
       }
-
     }
 
-
-
     // ==========================================
-
-    // MODULE 1: EXPENSE & LIVE BILL SPLITTING
-
+    // DATA STREAM 1: LEDGER RECORDS & MANIPULATION
     // ==========================================
-
-    function syncExpenses() {
-
-      onSnapshot(collection(db, "sydney_expenses"), (snapshot) => {
-
+    function streamFinancialLogs() {
+      onSnapshot(collection(db, "sydney_luxe_expenses"), (snap) => {
         currentExpenses = [];
-
-        snapshot.forEach((doc) => {
-
-          currentExpenses.push({ id: doc.id, ...doc.data() });
-
-        });
-
-        updateDashboard();
-
-        renderExpenseList();
-
+        snap.forEach(d => currentExpenses.push({ id: d.id, ...d.data() }));
+        refreshLedgerDashboard();
       });
-
     }
 
-
-
-    function updateDashboard() {
-
-      const total = currentExpenses.reduce((sum, exp) => sum + (exp.amountAUD || 0), 0);
-
+    function refreshLedgerDashboard() {
+      const total = currentExpenses.reduce((s, e) => s + (e.amountAUD || 0), 0);
       document.getElementById('dash-total').innerText = `A$ ${total.toFixed(2)}`;
-
       document.getElementById('dash-total-twd').innerText = `≈ NT$ ${Math.round(total * config.rate)}`;
 
-    }
-
-
-
-    function renderExpenseList() {
-
-      const listEl = document.getElementById('expense-list');
-
-      if (currentExpenses.length === 0) {
-
-        listEl.innerHTML = `<li class="p-6 text-center text-xs text-slate-400">No receipt logs found in Cloud Database.</li>`;
-
+      const container = document.getElementById('expense-list');
+      if(currentExpenses.length === 0) {
+        container.innerHTML = `<li class="p-6 text-center text-xs text-zinc-600 bg-zinc-950 border border-zinc-900 rounded-2xl">Empty vault records. Start snapshotting.</li>`;
         return;
-
       }
 
-
-
-      const sorted = [...currentExpenses].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-      listEl.innerHTML = sorted.map(exp => {
-
-        const splitsHtml = Object.entries(exp.splits || {})
-
-          .map(([name, amt]) => `<span class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">${name}: A$${parseFloat(amt).toFixed(1)}</span>`)
-
+      const sorted = [...currentExpenses].sort((a,b) => new Date(b.date) - new Date(a.date));
+      container.innerHTML = sorted.map(exp => {
+        const splitBreakdowns = Object.entries(exp.splits || {})
+          .map(([name, money]) => `<span class="bg-zinc-900 text-zinc-400 border border-zinc-800/60 px-1.5 py-0.5 rounded text-[9px] font-mono">${name}: $${parseFloat(money).toFixed(1)}</span>`)
           .join(' ');
 
-
-
         return `
-
-          <li class="p-3.5 flex justify-between items-center hover:bg-slate-50 transition text-xs">
-
-            <div class="space-y-1 flex-1 min-w-0 pr-3">
-
+          <li class="bg-zinc-950 border border-zinc-900 p-4 rounded-2xl flex justify-between items-center relative group">
+            <div class="space-y-1.5 flex-1 min-w-0 pr-2">
               <div class="flex items-center gap-2">
-
-                <span class="font-bold text-slate-900 truncate">${exp.storeName}</span>
-
-                <span class="bg-indigo-50 text-indigo-700 px-1.5 py-0.2 rounded-full font-semibold text-[9px] uppercase">${exp.category}</span>
-
+                <span class="font-bold text-white text-xs truncate tracking-wide">${exp.storeName}</span>
+                <span class="text-[8px] tracking-widest font-bold uppercase text-pink-400 bg-pink-400/5 px-2 py-0.5 rounded border border-pink-500/10">${exp.category}</span>
               </div>
-
-              <p class="text-slate-500 truncate font-mono text-[11px]">${exp.items}</p>
-
-              <div class="text-[10px] flex flex-wrap gap-1 items-center">
-
-                <span class="text-slate-400 font-medium">${exp.date} | Paid by <strong>${exp.paidBy}</strong></span>
-
-                <div class="flex gap-1">${splitsHtml}</div>
-
+              <p class="text-[11px] text-zinc-500 truncate font-mono">${exp.items}</p>
+              <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+                <span class="text-[9px] text-zinc-600">Paid by <strong class="text-zinc-400">${exp.paidBy}</strong></span>
+                <div class="flex flex-wrap gap-1">${splitBreakdowns}</div>
               </div>
-
             </div>
-
-            <div class="text-right flex flex-col items-end gap-1.5">
-
+            <div class="text-right flex flex-col items-end justify-between h-full space-y-2">
               <div>
-
-                <p class="font-bold text-indigo-600">A$ ${parseFloat(exp.amountAUD).toFixed(2)}</p>
-
-                <p class="text-[10px] text-slate-400">NT$ ${Math.round(exp.amountAUD * config.rate)}</p>
-
+                <p class="text-xs font-black text-white font-mono">A$ ${parseFloat(exp.amountAUD).toFixed(2)}</p>
+                <p class="text-[9px] text-zinc-500">NT$ ${Math.round(exp.amountAUD * config.rate)}</p>
               </div>
-
-              <div class="flex gap-2">
-
-                <button onclick="window.triggerEditBill('${exp.id}')" class="text-indigo-600 hover:underline font-medium">Adjust</button>
-
-                <button onclick="window.triggerDeleteBill('${exp.id}')" class="text-red-500 hover:underline font-medium">Delete</button>
-
+              <div class="flex gap-2 text-[10px] tracking-wider font-bold uppercase">
+                <button onclick="window.initiateBillTweak('${exp.id}')" class="text-pink-400 hover:text-white transition">Tweak</button>
+                <button onclick="window.nukeBillLog('${exp.id}')" class="text-zinc-600 hover:text-red-400 transition">Drop</button>
               </div>
-
             </div>
-
           </li>
-
         `;
-
       }).join('');
-
     }
 
-
-
-    // IMAGE ATTACHMENT PROCESSING
-
-    document.getElementById('file-input').addEventListener('change', async (e) => {
-
-      const file = e.target.files[0];
-
+    // IMAGE OCR EXTRACTION & PIPELINE
+    document.getElementById('file-input').addEventListener('change', async (ev) => {
+      const file = ev.target.files[0];
       if (!file || !db) return;
 
-
-
-      const statusBox = document.getElementById('scan-status-box');
-
-      const statusText = document.getElementById('scan-status-text');
-
-      statusBox.classList.remove('hidden');
-
-      statusText.innerText = "Compressing high-resolution photo...";
-
-
+      const sBox = document.getElementById('scan-status-box');
+      const sText = document.getElementById('scan-status-text');
+      sBox.classList.remove('hidden');
+      sText.innerText = "Squeezing raw photo pixels...";
 
       try {
-
-        const compressedBase64 = await compressImage(file);
-
-        statusText.innerText = "Gemini Vision AI extracting parameters (English-Preserved)...";
-
+        const b64 = await downscaleImageBytes(file);
+        sText.innerText = "Gemini Flash running OCR (English Strict)...";
         
-
-        const aiBill = await analyzeReceiptWithGemini(compressedBase64);
-
-        openBillEditor(null, aiBill);
-
-        statusBox.classList.add('hidden');
-
+        const generatedJSON = await streamGeminiVisionAI(b64);
+        sBox.classList.add('hidden');
+        openBillPanel(null, generatedJSON);
       } catch (err) {
-
-        statusBox.classList.add('hidden');
-
-        alert("OCR Scanning Error: " + err.message);
-
+        sBox.classList.add('hidden');
+        alert("OCR Sync Interrupted: " + err.message);
       }
-
     });
 
-
-
-    function compressImage(file) {
-
-      return new Promise((resolve, reject) => {
-
-        const reader = new FileReader();
-
-        reader.readAsDataURL(file);
-
-        reader.onload = (e) => {
-
-          const img = new Image();
-
-          img.src = e.target.result;
-
-          img.onload = () => {
-
-            const canvas = document.createElement("canvas");
-
-            let width = img.width, height = img.height;
-
-            if (width > 1024) { height = Math.round((height * 1024) / width); width = 1024; }
-
-            canvas.width = width; canvas.height = height;
-
-            const ctx = canvas.getContext("2d");
-
-            ctx.drawImage(img, 0, 0, width, height);
-
-            resolve(canvas.toDataURL("image/jpeg", 0.8).split(',')[1]);
-
+    function downscaleImageBytes(file) {
+      return new Promise((res) => {
+        const r = new FileReader(); r.readAsDataURL(file);
+        r.onload = (e) => {
+          const i = new Image(); i.src = e.target.result;
+          i.onload = () => {
+            const c = document.createElement("canvas");
+            let w = i.width, h = i.height;
+            if (w > 1024) { h = Math.round((h * 1024) / w); w = 1024; }
+            c.width = w; c.height = h;
+            c.getContext("2d").drawImage(i, 0, 0, w, h);
+            res(c.toDataURL("image/jpeg", 0.75).split(',')[1]);
           };
-
         };
-
       });
-
     }
 
-
-
-    async function analyzeReceiptWithGemini(base64Data) {
-
-      const prompt = `
-
-        You are an expert expense parser for a trip to Sydney, Australia.
-
-        Analyze this receipt. EXTRACT ALL FIELDS IN ORIGINAL ENGLISH AS SEEN ON THE RECEIPT (DO NOT TRANSLATE stores or items into Chinese).
-
-        Return purely a strict raw JSON matching this format:
-
+    async function streamGeminiVisionAI(bytes) {
+      const p = `
+        Parse this Australian purchase transaction data asset.
+        CRITICAL: YOU MUST PRESERVE STORES & ITEM TERMINOLOGIES IN ABSOLUTE RAW ENGLISH AS WRITTEN. DO NOT TRANSLATE TO CHINESE.
+        Provide standard serialized application/json stream format matching:
         {
-
-          "storeName": "Original English name of store (e.g. Woolworths Metro, Coles, Cafe Name)",
-
-          "items": "Concise summary line of bought items in English (e.g. Milk, Avocado Toast, Coffee)",
-
-          "amountAUD": Grand total price numeric float (e.g. 24.50, exclude changes/cash given metrics),
-
-          "category": "Pick one exactly: Food, Supermarket, Transport, Tickets, Hotel, Shopping, Others",
-
-          "date": "Date found on receipt in YYYY-MM-DD. If completely missing, use today: ${new Date().toISOString().split('T')[0]}"
-
+          "storeName": "Store name strictly matching receipt text exactly (e.g. Coles Central, Woolworths Metro, Sydney Airport Transit)",
+          "items": "Flat summaries list in English text (e.g. 1x Cappuccino, 2x Croissants, Evian Water)",
+          "amountAUD": Numeric exact transaction net float total (e.g. 18.90),
+          "category": "Map into one descriptor precisely: Food, Supermarket, Transport, Tickets, Hotel, Shopping, Others",
+          "date": "Transaction timestamp stamp match format YYYY-MM-DD. Fallback timeline default anchor: ${new Date().toISOString().split('T')[0]}"
         }
-
       `;
-
-      const result = await modelCallWithFallback(prompt, base64Data);
-
-      return JSON.parse(result);
-
+      const res = await aiModel.generateContent([p, { inlineData: { data: bytes, mimeType: "image/jpeg" } }]);
+      return JSON.parse(res.response.text());
     }
 
-
-
-    async function modelCallWithFallback(prompt, base64Data) {
-
-      // Fallback matrix routing logic
-
-      const models = ["gemini-2.0-flash", "gemini-1.5-flash"];
-
-      for (let modelName of models) {
-
-        try {
-
-          const result = await aiModel.generateContent([prompt, { inlineData: { data: base64Data, mimeType: "image/jpeg" } }]);
-
-          return result.response.text();
-
-        } catch (e) {
-
-          console.warn(`Model ${modelName} encountered error. Trying fallback...`);
-
-        }
-
-      }
-
-      throw new Error("All active Gemini endpoints failed.");
-
-    }
-
-
-
-    // BILL SPLIT ADJUSTMENT LOGIC
-
-    function openBillEditor(id, data) {
-
+    // MODAL MANIPULATOR ROUTINES
+    function openBillPanel(id, data) {
       document.getElementById('bill-editor').classList.remove('hidden');
-
       document.getElementById('edit-id').value = id || '';
-
       document.getElementById('edit-store').value = data.storeName || '';
-
       document.getElementById('edit-items').value = data.items || '';
-
       document.getElementById('edit-amount').value = data.amountAUD || 0;
-
       document.getElementById('edit-cat').value = data.category || 'Others';
-
       document.getElementById('edit-date').value = data.date || '';
 
+      const sel = document.getElementById('edit-paid-by');
+      sel.innerHTML = config.members.map(m => `<option value="${m}" ${data.paidBy === m ? 'selected':''}>${m}</option>`).join('');
 
-
-      // Populate Paid By dropdown selectors
-
-      const paidBySel = document.getElementById('edit-paid-by');
-
-      paidBySel.innerHTML = config.members.map(m => `<option value="${m}" ${data.paidBy === m ? 'selected':''}>${m}</option>`).join('');
-
-
-
-      // Build Split Weight Inputs
-
-      const sharesContainer = document.getElementById('split-shares-container');
-
-      const totalAmount = parseFloat(data.amountAUD) || 0;
-
+      const weightBox = document.getElementById('split-shares-container');
+      const val = parseFloat(data.amountAUD) || 0;
       
-
-      // If new, generate equal split weights default matrix
-
-      let currentSplits = data.splits || {};
-
-      if (Object.keys(currentSplits).length === 0) {
-
-        const share = totalAmount / config.members.length;
-
-        config.members.forEach(m => { currentSplits[m] = parseFloat(share.toFixed(2)); });
-
+      let initialMatrix = data.splits || {};
+      if (Object.keys(initialMatrix).length === 0) {
+        const splitQuotient = val / config.members.length;
+        config.members.forEach(m => { initialMatrix[m] = parseFloat(splitQuotient.toFixed(2)); });
       }
 
-
-
-      sharesContainer.innerHTML = config.members.map(m => `
-
-        <div class="flex items-center justify-between gap-2">
-
-          <span class="text-xs font-medium text-slate-600">${m} Share (A$)</span>
-
-          <input type="number" step="0.01" data-member="${m}" class="split-member-input w-24 p-1 text-right border border-slate-300 rounded text-xs" value="${currentSplits[m] || 0}">
-
+      weightBox.innerHTML = config.members.map(m => `
+        <div class="flex items-center justify-between gap-4">
+          <span class="text-xs text-zinc-400 font-medium">${m} owes (A$)</span>
+          <input type="number" step="0.01" data-member="${m}" class="split-weight-node w-24 p-2 bg-zinc-950 border border-zinc-800 rounded-xl text-right text-xs text-pink-400 font-mono" value="${initialMatrix[m] || 0}">
         </div>
-
       `).join('');
 
-
-
-      setupSplitListeners();
-
-      recalculateSplitTotal();
-
+      document.querySelectorAll('.split-weight-node').forEach(i => i.addEventListener('input', sumWeightNodes));
+      sumWeightNodes();
     }
 
-
-
-    function setupSplitListeners() {
-
-      document.querySelectorAll('.split-member-input').forEach(input => {
-
-        input.addEventListener('input', recalculateSplitTotal);
-
-      });
-
+    function sumWeightNodes() {
+      let accum = 0;
+      document.querySelectorAll('.split-weight-node').forEach(i => accum += parseFloat(i.value) || 0);
+      document.getElementById('split-total-assigned').innerText = `A$ ${accum.toFixed(2)}`;
     }
 
-
-
-    function recalculateSplitTotal() {
-
-      let sum = 0;
-
-      document.querySelectorAll('.split-member-input').forEach(input => {
-
-        sum += parseFloat(input.value) || 0;
-
-      });
-
-      document.getElementById('split-total-assigned').innerText = `A$ ${sum.toFixed(2)}`;
-
-    }
-
-
-
-    document.getElementById('btn-equal-split').addEventListener('click', (e) => {
-
-      e.preventDefault();
-
-      const totalAmount = parseFloat(document.getElementById('edit-amount').value) || 0;
-
-      const inputs = document.querySelectorAll('.split-member-input');
-
-      const equalShare = totalAmount / inputs.length;
-
-      inputs.forEach(input => { input.value = equalShare.toFixed(2); });
-
-      recalculateSplitTotal();
-
+    document.getElementById('btn-equal-split').addEventListener('click', (ev) => {
+      ev.preventDefault();
+      const grand = parseFloat(document.getElementById('edit-amount').value) || 0;
+      const nodes = document.querySelectorAll('.split-weight-node');
+      const allocation = grand / nodes.length;
+      nodes.forEach(n => n.value = allocation.toFixed(2));
+      sumWeightNodes();
     });
 
-
-
-    document.getElementById('btn-close-editor').addEventListener('click', () => {
-
-      document.getElementById('bill-editor').classList.add('hidden');
-
-    });
-
-
+    document.getElementById('btn-close-editor').addEventListener('click', () => document.getElementById('bill-editor').classList.add('hidden'));
 
     document.getElementById('btn-save-bill').addEventListener('click', async () => {
-
       const id = document.getElementById('edit-id').value;
-
       const storeName = document.getElementById('edit-store').value.trim();
-
       const items = document.getElementById('edit-items').value.trim();
-
       const amountAUD = parseFloat(document.getElementById('edit-amount').value) || 0;
-
       const category = document.getElementById('edit-cat').value.trim();
-
       const date = document.getElementById('edit-date').value;
-
       const paidBy = document.getElementById('edit-paid-by').value;
 
-
-
-      // Extract split weight tweaks maps
-
       let splits = {};
-
-      document.querySelectorAll('.split-member-input').forEach(input => {
-
-        const mem = input.getAttribute('data-member');
-
-        splits[mem] = parseFloat(input.value) || 0;
-
+      document.querySelectorAll('.split-weight-node').forEach(i => {
+        splits[i.getAttribute('data-member')] = parseFloat(i.value) || 0;
       });
 
+      const packageObj = { storeName, items, amountAUD, category, date, paidBy, splits };
 
-
-      const payload = { storeName, items, amountAUD, category, date, paidBy, splits };
-
-
-
-      if (id) {
-
-        await setDoc(doc(db, "sydney_expenses", id), payload, { merge: true });
-
+      if(id) {
+        await setDoc(doc(db, "sydney_luxe_expenses", id), packageObj, { merge: true });
       } else {
-
-        await addDoc(collection(db, "sydney_expenses"), payload);
-
+        await addDoc(collection(db, "sydney_luxe_expenses"), packageObj);
       }
-
-
-
       document.getElementById('bill-editor').classList.add('hidden');
-
     });
 
+    window.initiateBillTweak = function(id) {
+      const target = currentExpenses.find(e => e.id === id);
+      if(target) openBillPanel(id, target);
+    }
 
-
-    window.triggerEditBill = function(id) {
-
-      const exp = currentExpenses.find(e => e.id === id);
-
-      if (exp) openBillEditor(id, exp);
-
-    };
-
-
-
-    window.triggerDeleteBill = async function(id) {
-
-      if(confirm("Confirm deletion from Cloud Server?")) {
-
-        await deleteDoc(doc(db, "sydney_expenses", id));
-
-      }
-
-    };
-
-
-
-
-
-    // ==========================================
-
-    // MODULE 2: EDITABLE CLOUD ITINERARY
-
-    // ==========================================
-
-    function syncItinerary() {
-
-      onSnapshot(collection(db, "sydney_itinerary"), (snapshot) => {
-
-        const tableBody = document.getElementById('itinerary-table-body');
-
-        let rows = [];
-
-        snapshot.forEach((doc) => { rows.push({ id: doc.id, ...doc.data() }); });
-
-        
-
-        // Chronological sorting metrics
-
-        rows.sort((a, b) => (a.order || 0) - (b.order || 0));
-
-
-
-        if(rows.length === 0) {
-
-          tableBody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400">Itinerary Empty. Press "+ Add Row" to begin planning.</td></tr>`;
-
-          return;
-
-        }
-
-
-
-        tableBody.innerHTML = rows.map(row => `
-
-          <tr class="hover:bg-slate-50 transition" data-id="${row.id}">
-
-            <td class="p-2 border-b border-slate-100">
-
-              <input type="text" value="${row.dateTime || ''}" onblur="window.updateItineraryField('${row.id}', 'dateTime', this.value)" class="w-full bg-transparent p-1 focus:bg-white focus:ring-1 focus:ring-indigo-500 rounded border-0 outline-0">
-
-            </td>
-
-            <td class="p-2 border-b border-slate-100">
-
-              <input type="text" value="${row.hubLocation || ''}" onblur="window.updateItineraryField('${row.id}', 'hubLocation', this.value)" class="w-full bg-transparent p-1 font-bold text-slate-700 focus:bg-white focus:ring-1 focus:ring-indigo-500 rounded border-0 outline-0">
-
-            </td>
-
-            <td class="p-2 border-b border-slate-100">
-
-              <input type="text" value="${row.activityDetails || ''}" onblur="window.updateItineraryField('${row.id}', 'activityDetails', this.value)" class="w-full bg-transparent p-1 focus:bg-white focus:ring-1 focus:ring-indigo-500 rounded border-0 outline-0">
-
-            </td>
-
-            <td class="p-2 border-b border-slate-100 text-center">
-
-              <button onclick="window.deleteItineraryRow('${row.id}')" class="text-red-400 hover:text-red-600 font-bold text-xs">✕</button>
-
-            </td>
-
-          </tr>
-
-        `).join('');
-
-      });
-
+    window.nukeBillLog = async function(id) {
+      if(confirm("Expunge bill from live datastore permanently?")) await deleteDoc(doc(db, "sydney_luxe_expenses", id));
     }
 
 
-
-    document.getElementById('btn-add-schedule').addEventListener('click', async () => {
-
-      const currentRowsCount = document.getElementById('itinerary-table-body').children.length;
-
-      await addDoc(collection(db, "sydney_itinerary"), {
-
-        dateTime: "09:00 / Day X",
-
-        hubLocation: "Circular Quay",
-
-        activityDetails: "Coffee at Ground Control & Ferry to Manly Beach",
-
-        order: currentRowsCount + 1
-
+    // ==========================================
+    // DATA STREAM 2: MOBILE FLUID ITINERARY FLOW
+    // ==========================================
+    function streamItineraryPlanner() {
+      // 依序排列（由 order 權重判定）
+      onSnapshot(collection(db, "sydney_luxe_itinerary"), (snap) => {
+        currentItinerary = [];
+        snap.forEach(d => currentItinerary.push({ id: d.id, ...d.data() }));
+        
+        currentItinerary.sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+        refreshItineraryTimelineUI();
       });
+    }
 
+    function refreshItineraryTimelineUI() {
+      const targetBox = document.getElementById('itinerary-cards-container');
+      if(currentItinerary.length === 0) {
+        targetBox.innerHTML = `<div class="p-8 text-center text-xs text-zinc-600 bg-zinc-950 border border-zinc-900 rounded-2xl">No itinerary segments map. Ignite scheduling matrix below.</div>`;
+        return;
+      }
+
+      // 徽章樣式映射矩陣
+      const badgeStyles = {
+        Flight: "bg-amber-400/10 text-amber-400 border-amber-500/20",
+        Breakfast: "bg-emerald-400/10 text-emerald-400 border-emerald-500/20",
+        Lunch: "bg-teal-400/10 text-teal-400 border-teal-500/20",
+        Dinner: "bg-rose-400/10 text-rose-400 border-rose-500/20",
+        Activity: "bg-pink-400/10 text-pink-400 border-pink-500/20",
+        Hotel: "bg-indigo-400/10 text-indigo-400 border-indigo-500/20"
+      };
+
+      targetBox.innerHTML = currentItinerary.map(node => {
+        const style = badgeStyles[node.nodeType] || "bg-zinc-800 text-zinc-400 border-zinc-700";
+        return `
+          <div class="bg-zinc-950 border border-zinc-900 rounded-2xl p-4 space-y-3 relative active:scale-[0.99] transition duration-150" onclick="window.triggerEditItineraryNode('${node.id}')">
+            <div class="flex justify-between items-start">
+              <div class="space-y-1">
+                <p class="text-xs font-mono text-zinc-400 font-bold tracking-tight">${node.dateTime || '09:00'}</p>
+                <h4 class="text-sm font-bold text-white tracking-wide">${node.hubLocation || 'Unspecified Spot'}</h4>
+              </div>
+              <span class="text-[8px] uppercase tracking-widest font-black border px-2 py-0.5 rounded-full ${style}">${node.nodeType || 'Activity'}</span>
+            </div>
+            ${node.activityDetails ? `<p class="text-[11px] text-zinc-500 leading-relaxed font-sans whitespace-pre-line bg-zinc-900/40 p-2.5 rounded-xl border border-zinc-900/80">${node.activityDetails}</p>` : ''}
+            <div class="flex justify-end gap-3 text-[10px] font-bold uppercase tracking-wider pt-1 text-zinc-600">
+              <span class="text-pink-400/80 group-hover:text-white">Tap to Edit</span>
+              <span class="hover:text-red-400 z-30" onclick="event.stopPropagation(); window.nukeItineraryNode('${node.id}')">✕ Delete</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ITINERARY MODAL ACTIONS
+    document.getElementById('btn-add-schedule').addEventListener('click', () => {
+      openItineraryEditorModal(null, {
+        dateTime: "09:00 / Day 1",
+        nodeType: "Activity",
+        hubLocation: "Circular Quay Wharf",
+        activityDetails: "Take ferry to Taronga Zoo, remember to tap Opal card."
+      });
     });
 
+    function openItineraryEditorModal(id, data) {
+      document.getElementById('itinerary-editor').classList.remove('hidden');
+      document.getElementById('edit-itin-id').value = id || '';
+      document.getElementById('edit-itin-time').value = data.dateTime || '';
+      document.getElementById('edit-itin-type').value = data.nodeType || 'Activity';
+      document.getElementById('edit-itin-location').value = data.hubLocation || '';
+      document.getElementById('edit-itin-details').value = data.activityDetails || '';
+      document.getElementById('itin-editor-title').innerText = id ? "Modify Schedule Node" : "Create Schedule Node";
+      
+      // 自動捲動到編輯框，讓手機視野對焦
+      document.getElementById('itinerary-editor').scrollIntoView({ behavior: 'smooth' });
+    }
 
+    document.getElementById('btn-close-itin-editor').addEventListener('click', () => {
+      document.getElementById('itinerary-editor').add('hidden');
+    });
 
-    window.updateItineraryField = async function(id, field, value) {
+    document.getElementById('btn-save-itinerary').addEventListener('click', async () => {
+      const id = document.getElementById('edit-itin-id').value;
+      const dateTime = document.getElementById('edit-itin-time').value.trim();
+      const nodeType = document.getElementById('edit-itin-type').value;
+      const hubLocation = document.getElementById('edit-itin-location').value.trim();
+      const activityDetails = document.getElementById('edit-itin-details').value.trim();
 
-      let updateObj = {};
+      const payload = {
+        dateTime,
+        nodeType,
+        hubLocation,
+        activityDetails,
+        orderIndex: id ? (currentItinerary.find(i=>i.id === id)?.orderIndex || 0) : (currentItinerary.length + 1)
+      };
 
-      updateObj[field] = value;
+      if(id) {
+        await setDoc(doc(db, "sydney_luxe_itinerary", id), payload, { merge: true });
+      } else {
+        await addDoc(collection(db, "sydney_luxe_itinerary"), payload);
+      }
 
-      await setDoc(doc(db, "sydney_itinerary", id), updateObj, { merge: true });
+      document.getElementById('itinerary-editor').classList.add('hidden');
+    });
 
+    window.triggerEditItineraryNode = function(id) {
+      const target = currentItinerary.find(i => i.id === id);
+      if(target) openItineraryEditorModal(id, target);
     };
 
-
-
-    window.deleteItineraryRow = async function(id) {
-
-      await deleteDoc(doc(db, "sydney_itinerary", id));
-
+    window.nukeItineraryNode = async function(id) {
+      if(confirm("Expunge this itinerary event from live database?")) {
+        await deleteDoc(doc(db, "sydney_luxe_itinerary", id));
+      }
     };
 
-
-
-    // START TRIGGER
-
-    loadLocalConfig();
-
+    // SYSTEM BOOTSTRAPPING CODES
+    bootstrapConfig();
   </script>
-
 </body>
-
 </html>
