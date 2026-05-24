@@ -11,7 +11,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-  <!-- 🔒 針對 iOS 原生時間日期組件的硬核 CSS 補丁 -->
+  <!-- 針對 iOS 原生時間日期組件的硬核 CSS 補丁 -->
   <style>
     input[type="date"], input[type="time"], input[type="datetime-local"] {
       -webkit-appearance: none;
@@ -92,7 +92,7 @@
           <input type="text" id="edit-items" placeholder="e.g. 咖啡、晚餐" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white">
         </div>
         
-        <!-- 消費日期欄位 -->
+        <!-- 消費日期欄位縮進安全優化 -->
         <div class="grid grid-cols-1 gap-3">
           <div>
             <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-cost">總金額 (AUD)</label>
@@ -104,7 +104,6 @@
           </div>
           <div>
             <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-date">消費日期</label>
-            <!-- ⚙️ 安全縮進防溢出 -->
             <input type="date" id="edit-date" class="w-[calc(100%-4px)] box-border p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white">
           </div>
         </div>
@@ -127,10 +126,28 @@
         </button>
       </section>
 
+      <!-- 雲端消費歷史帳目明細 -->
       <div class="space-y-2">
         <h3 class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-ledger-vault">雲端消費歷史帳目明細</h3>
         <ul id="expense-list" class="space-y-2"></ul>
       </div>
+
+      <!-- 📊 🔥 NEW: 本團終極分帳結算面板 (固定擺放在明細最下方) -->
+      <section class="bg-white border-2 border-dashed border-slate-300 p-5 rounded-2xl shadow-xs space-y-3 mt-6">
+        <div class="border-b border-gray-100 pb-2">
+          <span class="text-[8px] font-black tracking-widest text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full uppercase border border-pink-100">FINAL SETTLEMENT</span>
+          <h3 class="text-sm font-black text-slate-900 mt-1.5 flex items-center gap-1.5">
+            <span>📊</span> <span>本團現時動態對帳結算清單</span>
+          </h3>
+          <p class="text-[10px] text-gray-400 mt-0.5">最後一天對帳不燒腦，綠色代表拿回錢，粉色代表需補繳</p>
+        </div>
+        
+        <!-- 對帳核心渲染器 -->
+        <div id="settlement-matrix-box" class="space-y-2.5 pt-1">
+          <!-- JS 自動跑矩陣運算動態渲染 -->
+        </div>
+      </section>
+
     </div>
 
     <!-- TAB 2: PLANNER (行程 & 航班看板) -->
@@ -200,7 +217,6 @@
           </div>
           <input type="hidden" id="edit-itin-id">
           
-          <!-- 🛠️ 這裡也將網格拆成手機友善的單列，防止具體時間凸出 -->
           <div class="grid grid-cols-1 gap-3">
             <div>
               <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">選擇出遊日期</label>
@@ -208,12 +224,11 @@
                 <option value="2026-06-29">6月29日 (星期一) - Day 1</option>
                 <option value="2026-06-30">6月30日 (星期二) - Day 2</option>
                 <option value="2026-07-01">7月01日 (星期三) - Day 3</option>
-                <option value="2026-07-02">7月02日 (星期外) - Day 4</option>
+                <option value="2026-07-02">7月02日 (星期四) - Day 4</option>
               </select>
             </div>
             <div>
               <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">具體時間</label>
-              <!-- ⚙️ 安全縮進防溢出 -->
               <input type="time" id="edit-itin-time" class="w-[calc(100%-4px)] box-border p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 font-mono">
             </div>
           </div>
@@ -237,7 +252,7 @@
           </div>
         </section>
 
-        <!-- 📅 四天獨立包裹區 -->
+        <!-- 四天獨立包裹區 -->
         <div id="itinerary-segmented-days" class="space-y-4">
           <div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-xs space-y-2">
             <h4 class="text-xs font-black text-slate-900 border-b border-gray-100 pb-2">📅 06 / 29 <span class="text-pink-500 font-normal ml-1">Monday (Day 1)</span></h4>
@@ -465,31 +480,27 @@
       } catch(e) { return isoStr; }
     }
 
+    // 航班監聽
     function streamFlights() {
       db.collection("sydney_luxe_arrival").onSnapshot(snap => {
-        const list = document.getElementById('arrival-display-list');
-        let html = '';
+        const list = document.getElementById('arrival-display-list'); let html = '';
         FIXED_MEMBERS.forEach(m => {
-          let matched = { no: '-', timestamp: '' };
-          snap.forEach(d => { if(d.id === m) matched = d.data(); });
+          let matched = { no: '-', timestamp: '' }; snap.forEach(d => { if(d.id === m) matched = d.data(); });
           html += `<tr class="border-b border-slate-800/30"><td class="py-2.5 font-bold text-amber-300">${m}</td><td class="py-2.5 font-mono text-zinc-300">${matched.no}</td><td class="py-2.5 font-mono text-zinc-100 font-semibold">${formatFriendlyDateTime(matched.timestamp)}</td></tr>`;
         });
         list.innerHTML = html;
       });
-
       db.collection("sydney_luxe_departure").onSnapshot(snap => {
-        const list = document.getElementById('departure-display-list');
-        let html = '';
+        const list = document.getElementById('departure-display-list'); let html = '';
         FIXED_MEMBERS.forEach(m => {
-          let matched = { no: '-', timestamp: '' };
-          snap.forEach(d => { if(d.id === m) matched = d.data(); });
+          let matched = { no: '-', timestamp: '' }; snap.forEach(d => { if(d.id === m) matched = d.data(); });
           html += `<tr class="border-b border-slate-800/30"><td class="py-2.5 font-bold text-pink-400">${m}</td><td class="py-2.5 font-mono text-zinc-300">${matched.no}</td><td class="py-2.5 font-mono text-zinc-100 font-semibold">${formatFriendlyDateTime(matched.timestamp)}</td></tr>`;
         });
         list.innerHTML = html;
       });
     }
 
-    // EXPENSES
+    // EXPENSES 記帳核心
     function initStaticBillForm() {
       document.getElementById('edit-date').value = new Date().toISOString().split('T')[0];
       document.getElementById('edit-paid-by').innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
@@ -549,13 +560,98 @@
       db.collection("sydney_luxe_expenses").onSnapshot((snap) => {
         currentExpenses = []; snap.forEach(d => currentExpenses.push({ id: d.id, ...d.data() }));
         document.getElementById('dash-total').innerText = `A$ ${currentExpenses.reduce((s, e) => s + (e.amountAUD || 0), 0).toFixed(2)}`;
-        const container = document.getElementById('expense-list'); if(currentExpenses.length === 0) { container.innerHTML = `<li class="p-5 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm">目前沒有消費帳目</li>`; return; }
+        
+        // 1. 渲染消費歷史帳目明細
+        const container = document.getElementById('expense-list'); 
+        if(currentExpenses.length === 0) { 
+          container.innerHTML = `<li class="p-5 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm">目前沒有消費帳目</li>`; 
+          renderFinalSettlementMatrix(); // 空帳目也刷新結算
+          return; 
+        }
         const sorted = [...currentExpenses].sort((a,b) => new Date(b.date) - new Date(a.date));
         container.innerHTML = sorted.map(exp => {
           const splitBreakdowns = Object.entries(exp.splits || {}).map(([name, money]) => money > 0 ? `<span class="bg-gray-100 text-gray-600 border border-gray-200 px-1.5 py-0.5 rounded text-[9px] font-mono">${name}: $${parseFloat(money).toFixed(1)}</span>` : '').join(' ');
           return `<li class="bg-white border border-gray-200 p-4 rounded-2xl flex justify-between items-center shadow-sm"><div class="space-y-1.5 flex-1 min-w-0 pr-2"><div class="flex items-center gap-2"><span class="font-bold text-slate-900 text-xs truncate">${exp.storeName}</span><span class="text-[8px] tracking-widest font-bold uppercase text-pink-600 bg-pink-50 px-2 py-0.5 rounded border border-pink-100">${exp.category}</span></div><p class="text-[11px] text-gray-500 truncate font-mono">${exp.items || 'Details'}</p><div class="flex flex-wrap items-center gap-1.5 pt-0.5"><span class="text-[9px] text-gray-400">代付人 <strong>${exp.paidBy}</strong></span><div class="flex flex-wrap gap-1">${splitBreakdowns}</div></div></div><div class="text-right flex flex-col items-end justify-between space-y-2"><p class="text-sm font-black text-slate-900 font-mono">A$ ${parseFloat(exp.amountAUD).toFixed(2)}</p><div class="flex gap-3 text-[10px] font-bold uppercase"><button type="button" onclick="window.initiateBillTweak('${exp.id}')" class="text-pink-600 hover:text-slate-900">調整</button><button type="button" onclick="window.nukeBillLog('${exp.id}')" class="text-gray-400 hover:text-red-500">刪除</button></div></div></li>`;
         }).join('');
+
+        // 2. 🔥 每次帳目有變動，秒速重新執行「終極對帳矩陣算法」
+        renderFinalSettlementMatrix();
       });
+    }
+
+    // 📊 🔥 核心算法：全自働計算本團誰該拿錢、誰該掏錢
+    function renderFinalSettlementMatrix() {
+      let paidMap = {}; // 紀錄每個人總共幫大家「墊了多少錢」
+      let oweMap = {};  // 紀錄每個人一路上自己「消費吃了多少錢」
+      
+      // 初始化歸零
+      FIXED_MEMBERS.forEach(m => { paidMap[m] = 0; oweMap[m] = 0; });
+
+      // 遍歷所有消費明細累加
+      currentExpenses.forEach(exp => {
+        const payer = exp.paidBy;
+        const totalCost = parseFloat(exp.amountAUD) || 0;
+        
+        if (FIXED_MEMBERS.includes(payer)) {
+          paidMap[payer] += totalCost;
+        }
+        
+        // 累加每人分帳份額
+        Object.entries(exp.splits || {}).forEach(([mName, shareAmt]) => {
+          if (FIXED_MEMBERS.includes(mName)) {
+            oweMap[mName] += (parseFloat(shareAmt) || 0);
+          }
+        });
+      });
+
+      const matrixContainer = document.getElementById('settlement-matrix-box');
+      let html = '';
+
+      FIXED_MEMBERS.forEach(m => {
+        const totalPaid = paidMap[m];
+        const totalOwe = oweMap[m];
+        const netResult = totalPaid - totalOwe; // 正數代表幫大家墊多了應收回，負數代表欠大家錢應補繳
+
+        let statusBadge = '';
+        if (netResult > 0.01) {
+          // 🟢 綠色：應收回
+          statusBadge = `
+            <div class="flex items-center gap-1.5 text-xs font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-xl">
+              <span>應收回</span>
+              <span class="font-mono text-sm">A$ ${netResult.toFixed(2)}</span>
+            </div>
+          `;
+        } else if (netResult < -0.01) {
+          // 🔴 粉色：應補繳
+          statusBadge = `
+            <div class="flex items-center gap-1.5 text-xs font-black text-pink-600 bg-pink-50 border border-pink-100 px-3 py-1.5 rounded-xl">
+              <span>應補繳</span>
+              <span class="font-mono text-sm">A$ ${Math.abs(netResult).toFixed(2)}</span>
+            </div>
+          `;
+        } else {
+          // ⚪ 灰色：已結清
+          statusBadge = `
+            <div class="text-xs font-bold text-gray-400 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-xl">
+              已兩清 A$ 0.00
+            </div>
+          `;
+        }
+
+        html += `
+          <div class="flex items-center justify-between bg-gray-50/50 p-3 rounded-2xl border border-gray-100">
+            <div>
+              <h4 class="text-xs font-black text-slate-900">${m}</h4>
+              <p class="text-[9px] text-gray-400 mt-0.5 font-mono">
+                已代付: $${totalPaid.toFixed(1)} | 總應付: $${totalOwe.toFixed(1)}
+              </p>
+            </div>
+            ${statusBadge}
+          </div>
+        `;
+      });
+
+      matrixContainer.innerHTML = html;
     }
 
     window.initiateBillTweak = function(id) {
@@ -570,7 +666,7 @@
     };
     window.nukeBillLog = function(id) { if(confirm("確定要永久刪除此帳目嗎？")) db.collection("sydney_luxe_expenses").doc(id).delete(); };
 
-    // ITINERARY
+    // ITINERARY 行程
     function streamItinerary() { db.collection("sydney_luxe_itinerary").onSnapshot((snap) => { currentItinerary = []; snap.forEach(d => currentItinerary.push({ id: d.id, ...d.data() })); refreshItineraryTimelineUI(); }); }
     function refreshItineraryTimelineUI() {
       const days = ['2026-06-29', '2026-06-30', '2026-07-01', '2026-07-02'];
@@ -633,7 +729,7 @@
     function deleteItineraryNode() { const id = document.getElementById('edit-itin-id').value; if(confirm("確定刪除此行程節點？")) db.collection("sydney_luxe_itinerary").doc(id).delete().then(()=>closeItineraryEditor()); }
     window.deleteItineraryNode = deleteItineraryNode;
 
-    // WISHLIST
+    // WISHLIST 許願池
     function toggleWishForm() { const el = document.getElementById('wish-editor-panel'); el.style.display = (el.style.display === 'none') ? 'block' : 'none'; }
     window.toggleWishForm = toggleWishForm;
 
