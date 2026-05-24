@@ -37,8 +37,8 @@
 
   <main class="max-w-md mx-auto px-4 mt-5 space-y-6">
 
-    <!-- CONFIG SECTION (Elegant Light Mode) -->
-    <section id="section-config" class="bg-white p-5 rounded-2xl border border-gray-200 space-y-4 pink-soft-glow" style="display: block;">
+    <!-- CONFIG SECTION (強制顯示直到連線成功) -->
+    <section id="section-config" class="bg-white p-5 rounded-2xl border border-gray-200 space-y-4 pink-soft-glow" style="display: block !important;">
       <div class="space-y-1">
         <h2 class="text-sm font-bold tracking-wider uppercase text-pink-600">Cloud Credentials</h2>
         <p class="text-[11px] text-gray-500">Syncs everything seamlessly to your private Firebase container.</p>
@@ -46,19 +46,19 @@
       <div class="space-y-3">
         <div>
           <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Gemini AI Key</label>
-          <input type="password" id="cfg-gemini-key" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-pink-400 focus:bg-white transition" placeholder="AIzaSy...">
+          <input type="text" id="cfg-gemini-key" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-pink-400 focus:bg-white transition" placeholder="Paste your AIzaSy... here">
         </div>
         <div>
           <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Firebase Configuration JSON</label>
-          <textarea id="cfg-firebase-json" rows="4" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-800 font-mono focus:outline-none focus:border-pink-400 focus:bg-white transition" placeholder='{ "apiKey": "...", "projectId": "..." }'></textarea>
+          <textarea id="cfg-firebase-json" rows="6" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-800 font-mono focus:outline-none focus:border-pink-400 focus:bg-white transition" placeholder='Must start with { and end with }'></textarea>
         </div>
         <div>
           <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Trip Members (Comma Separated)</label>
-          <input type="text" id="cfg-members" value="Alex, Bob, Chris" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-pink-400 focus:bg-white transition">
+          <input type="text" id="cfg-members" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-pink-400 focus:bg-white transition">
         </div>
       </div>
-      <button id="btn-save-config" type="button" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs tracking-widest uppercase transition cursor-pointer hover:bg-pink-600">
-        Connect & Initialize Cloud
+      <button id="btn-save-config" type="button" class="w-full bg-pink-500 text-white font-bold py-3 rounded-xl text-xs tracking-widest uppercase transition cursor-pointer hover:bg-slate-900 shadow-md">
+        ⚡ CONNECT & INITIALIZE LIVE SERVER
       </button>
     </section>
 
@@ -246,20 +246,14 @@
     let currentExpenses = [];
     let currentItinerary = [];
 
-    // ========================================================
-    // UI CORE LOGIC (保證無論如何都能切換、完全脫離雲端卡死風險)
-    // ========================================================
-    
-    // 控制設定面板開關
-    document.getElementById('btn-toggle-config').addEventListener('click', (e) => {
-      e.preventDefault();
+    // 核心按鈕：強制切換分頁 (這段絕對與雲端無關，點下去 100% 要會動)
+    document.getElementById('btn-toggle-config').addEventListener('click', () => {
       const el = document.getElementById('section-config');
       el.style.display = (el.style.display === 'none') ? 'block' : 'none';
     });
 
-    // 控制底部選單切換
-    document.getElementById('nav-tab-tracker').addEventListener('click', (e) => { e.preventDefault(); switchUIMode('tracker'); });
-    document.getElementById('nav-tab-itinerary').addEventListener('click', (e) => { e.preventDefault(); switchUIMode('itinerary'); });
+    document.getElementById('nav-tab-tracker').addEventListener('click', () => switchUIMode('tracker'));
+    document.getElementById('nav-tab-itinerary').addEventListener('click', () => switchUIMode('itinerary'));
 
     function switchUIMode(mode) {
       const tBtn = document.getElementById('nav-tab-tracker');
@@ -280,42 +274,70 @@
       }
     }
 
-    // ========================================================
-    // CLOUD DATABASE & SERVICES CONNECTIONS
-    // ========================================================
+    // ==========================================
+    // 終極防護：儲存與驗證按鈕
+    // ==========================================
+    document.getElementById('btn-save-config').addEventListener('click', () => {
+      const geminiKey = document.getElementById('cfg-gemini-key').value.trim();
+      const firebaseJson = document.getElementById('cfg-firebase-json').value.trim();
+      const membersStr = document.getElementById('cfg-members').value.trim();
+
+      // 檢查 1：有沒有填空
+      if (!geminiKey) {
+        alert("❌ 填寫失敗：你的 Gemini AI Key 是空的！請去 Google AI Studio 複製貼上。");
+        return;
+      }
+      if (!firebaseJson) {
+        alert("❌ 填寫失敗：Firebase JSON 欄位不能是空的！");
+        return;
+      }
+
+      // 檢查 2：JSON 格式測試
+      let parsedJson = null;
+      try {
+        parsedJson = JSON.parse(firebaseJson);
+      } catch (err) {
+        alert("❌ JSON 格式嚴重錯誤！\n\n原因：你的大括號內容中可能漏了符號、引號，或是多複製了不該複製的英文字。請確保裡面【只有純大括號與引號內容】。");
+        console.error(err);
+        return;
+      }
+
+      const members = membersStr.split(',').map(m => m.trim()).filter(m => m);
+      const payload = { geminiKey, firebaseJson, members };
+      
+      // 寫入快取
+      localStorage.setItem('sydney_luxe_config', JSON.stringify(payload));
+      
+      // 嘗試連線
+      try {
+        bootCloudNodes(payload);
+        document.getElementById('section-config').style.display = 'none';
+        alert("🎉 雲端連線成功！設定面板已為您收起，導覽列現在已解凍！");
+      } catch (bootErr) {
+        alert("❌ 密鑰內容與 Firebase 無法對接：" + bootErr.message);
+      }
+    });
+
     function bootstrapConfig() {
       const cached = localStorage.getItem('sydney_luxe_config');
       if (cached) {
         const data = JSON.parse(cached);
         document.getElementById('cfg-gemini-key').value = data.geminiKey || '';
         document.getElementById('cfg-firebase-json').value = data.firebaseJson || '';
-        document.getElementById('cfg-members').value = data.members ? data.members.join(', ') : 'Alex, Bob';
+        document.getElementById('cfg-members').value = data.members ? data.members.join(', ') : 'Sabrina, 中偉, 聖聖, 老麥, 倫倫';
         
-        // 有舊快取就低調隱藏，沒問題
-        document.getElementById('section-config').style.display = 'none';
-        if (data.firebaseJson && data.geminiKey) bootCloudNodes(data);
+        try {
+          bootCloudNodes(data);
+          document.getElementById('section-config').style.display = 'none';
+        } catch(e) {
+          document.getElementById('section-config').style.display = 'block';
+        }
       } else {
-        // 沒快取就強制大開設定面板給使用者填寫
+        // 預設名單
+        document.getElementById('cfg-members').value = 'Sabrina, 中偉, 聖聖, 老麥, 倫倫';
         document.getElementById('section-config').style.display = 'block';
       }
     }
-
-    document.getElementById('btn-save-config').addEventListener('click', (e) => {
-      e.preventDefault();
-      const geminiKey = document.getElementById('cfg-gemini-key').value.trim();
-      const firebaseJson = document.getElementById('cfg-firebase-json').value.trim();
-      const members = document.getElementById('cfg-members').value.split(',').map(m => m.trim()).filter(m => m);
-
-      if(!geminiKey || !firebaseJson) {
-        alert("Please fill in both Gemini Key and Firebase JSON array.");
-        return;
-      }
-
-      const payload = { geminiKey, firebaseJson, members };
-      localStorage.setItem('sydney_luxe_config', JSON.stringify(payload));
-      document.getElementById('section-config').style.display = 'none';
-      bootCloudNodes(payload);
-    });
 
     function bootCloudNodes(cfg) {
       config = cfg;
@@ -327,17 +349,13 @@
         generationConfig: { responseMimeType: "application/json" }
       });
 
-      try {
-        const app = initializeApp(JSON.parse(config.firebaseJson));
-        db = getFirestore(app);
-        streamFinancialLogs();
-        streamItineraryPlanner();
-      } catch (err) {
-        alert("Firebase Bootstrap error! Check JSON string format alignment.");
-      }
+      const app = initializeApp(JSON.parse(config.firebaseJson));
+      db = getFirestore(app);
+      streamFinancialLogs();
+      streamItineraryPlanner();
     }
 
-    // FINANCIAL LOGICS
+    // FINANCIAL SECTIONS
     function streamFinancialLogs() {
       onSnapshot(collection(db, "sydney_luxe_expenses"), (snap) => {
         currentExpenses = [];
@@ -352,7 +370,7 @@
 
       const container = document.getElementById('expense-list');
       if(currentExpenses.length === 0) {
-        container.innerHTML = `<li class="p-6 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-2xl shadow-sm">Empty cloud vault logs.</li>`;
+        container.innerHTML = `<li class="p-6 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-2xl shadow-sm">Empty cloud ledger database.</li>`;
         return;
       }
 
@@ -394,17 +412,17 @@
       const sBox = document.getElementById('scan-status-box');
       const sText = document.getElementById('scan-status-text');
       sBox.style.display = 'flex';
-      sText.innerText = "Squeezing raw photo pixels...";
+      sText.innerText = "Processing image array...";
 
       try {
         const b64 = await downscaleImageBytes(file);
-        sText.innerText = "Gemini Flash running OCR (English Strict)...";
+        sText.innerText = "Gemini Flash OCR scanning...";
         const generatedJSON = await streamGeminiVisionAI(b64);
         sBox.style.display = 'none';
         openBillPanel(null, generatedJSON);
       } catch (err) {
         sBox.style.display = 'none';
-        alert("OCR Scan Error: " + err.message);
+        alert("OCR Scan Broken: " + err.message);
       }
     });
 
@@ -426,17 +444,7 @@
     }
 
     async function streamGeminiVisionAI(bytes) {
-      const p = `
-        Parse this Australian purchase transaction data asset. Keep descriptors in raw English strictly.
-        Provide standard serialized application/json format matching:
-        {
-          "storeName": "Store name text (e.g. Coles Central, Woolworths Metro)",
-          "items": "Flat summaries list in English (e.g. 1x Cappuccino, 2x Croissants)",
-          "amountAUD": Numeric float total (e.g. 18.90),
-          "category": "Food, Supermarket, Transport, Tickets, Hotel, Shopping, Others",
-          "date": "Transaction format YYYY-MM-DD. Fallback: ${new Date().toISOString().split('T')[0]}"
-        }
-      `;
+      const p = `Parse this receipt. Keep names in raw English. Format as json: { "storeName": "Title", "items": "List", "amountAUD": 12.50, "category": "Food", "date": "2026-05-24" }`;
       const res = await aiModel.generateContent([p, { inlineData: { data: bytes, mimeType: "image/jpeg" } }]);
       return JSON.parse(res.response.text());
     }
@@ -507,7 +515,7 @@
       const packageObj = { storeName, items, amountAUD, category, date, paidBy, splits };
 
       if(id) {
-        await setDoc(doc(db, "sydney_luxe_expenses", id), packageObj, { merge: true });
+        await setDoc(doc(doc(db, "sydney_luxe_expenses", id)), packageObj, { merge: true });
       } else {
         await addDoc(collection(db, "sydney_luxe_expenses"), packageObj);
       }
@@ -520,10 +528,10 @@
     }
 
     window.nukeBillLog = async function(id) {
-      if(confirm("Delete bill permanently?")) await deleteDoc(doc(db, "sydney_luxe_expenses", id));
+      if(confirm("Expunge bill record?")) await deleteDoc(doc(db, "sydney_luxe_expenses", id));
     }
 
-    // ITINERARY CORE
+    // ITINERARY SECTIONS
     function streamItineraryPlanner() {
       onSnapshot(collection(db, "sydney_luxe_itinerary"), (snap) => {
         currentItinerary = [];
@@ -536,7 +544,7 @@
     function refreshItineraryTimelineUI() {
       const targetBox = document.getElementById('itinerary-cards-container');
       if(currentItinerary.length === 0) {
-        targetBox.innerHTML = `<div class="p-8 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-2xl shadow-sm">No cloud itinerary sync logs. Click + Add New Event.</div>`;
+        targetBox.innerHTML = `<div class="p-8 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-2xl shadow-sm">No timeline logs found. Click + Add New Event.</div>`;
         return;
       }
 
