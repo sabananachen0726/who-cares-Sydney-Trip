@@ -29,7 +29,7 @@
         <span class="w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse"></span>
         <h1 class="text-base font-black tracking-widest uppercase text-slate-900">SYDNEY <span class="text-pink-500">.</span> LUXE</h1>
       </div>
-      <button id="btn-toggle-config" class="text-[11px] font-bold tracking-wider uppercase bg-slate-900 text-white px-4 py-2 rounded-full hover:bg-pink-500 transition cursor-pointer shadow-sm">
+      <button id="btn-toggle-config" type="button" class="text-[11px] font-bold tracking-wider uppercase bg-slate-900 text-white px-4 py-2 rounded-full hover:bg-pink-500 transition cursor-pointer shadow-sm">
         ⚙️ Cloud Keys
       </button>
     </div>
@@ -38,183 +38,186 @@
   <main class="max-w-md mx-auto px-4 mt-5 space-y-6">
 
     <!-- CONFIG SECTION (Elegant Light Mode) -->
-    <section id="section-config" class="bg-white p-5 rounded-2xl border border-gray-200 hidden space-y-4 pink-soft-glow">
+    <section id="section-config" class="bg-white p-5 rounded-2xl border border-gray-200 space-y-4 pink-soft-glow" style="display: block;">
       <div class="space-y-1">
         <h2 class="text-sm font-bold tracking-wider uppercase text-pink-600">Cloud Credentials</h2>
         <p class="text-[11px] text-gray-500">Syncs everything seamlessly to your private Firebase container.</p>
       </div>
       <div class="space-y-3">
         <div>
-          <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Gemini AI Key</label>
+          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Gemini AI Key</label>
           <input type="password" id="cfg-gemini-key" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-pink-400 focus:bg-white transition" placeholder="AIzaSy...">
         </div>
         <div>
-          <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Firebase Configuration JSON</label>
+          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Firebase Configuration JSON</label>
           <textarea id="cfg-firebase-json" rows="4" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-800 font-mono focus:outline-none focus:border-pink-400 focus:bg-white transition" placeholder='{ "apiKey": "...", "projectId": "..." }'></textarea>
         </div>
         <div>
-          <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Trip Members (Comma Separated)</label>
+          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Trip Members (Comma Separated)</label>
           <input type="text" id="cfg-members" value="Alex, Bob, Chris" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-pink-400 focus:bg-white transition">
         </div>
       </div>
-      <button id="btn-save-config" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs tracking-widest uppercase transition cursor-pointer hover:bg-pink-600">
+      <button id="btn-save-config" type="button" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs tracking-widest uppercase transition cursor-pointer hover:bg-pink-600">
         Connect & Initialize Cloud
       </button>
     </section>
 
-    <!-- LIVE SMART BANNER -->
-    <div class="bg-white border border-gray-200 p-3.5 rounded-xl flex items-center justify-between text-[11px] text-gray-600 shadow-sm">
-      <div class="flex items-center gap-2">
-        <span>🇦🇺</span>
-        <span class="font-medium">Sydney Shared Ledger & Planner</span>
-      </div>
-      <span class="text-pink-600 font-bold bg-pink-50 px-2 py-0.5 rounded-full border border-pink-100">AUD Account</span>
-    </div>
-
-    <!-- METRICS CARD (Clean Light Minimal) -->
-    <section class="bg-white border border-gray-200 rounded-2xl p-5 relative overflow-hidden pink-soft-glow">
-      <div class="absolute -right-10 -top-10 w-32 h-32 bg-pink-400/10 rounded-full blur-2xl"></div>
-      <div class="flex justify-between items-start">
-        <div class="space-y-0.5">
-          <p class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Total Group Expense</p>
-          <p class="text-3xl font-black tracking-tight text-slate-900" id="dash-total">A$ 0.00</p>
-        </div>
-        <div class="text-right space-y-1">
-          <p class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Active Crew</p>
-          <p class="text-xs font-bold text-slate-700 max-w-[140px] truncate" id="dash-members">Syncing...</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- MODULE 1: RECEIPT SCANNER & SPLIT -->
-    <div id="tab-tracker-content" class="space-y-4">
-      <!-- UPLOAD AREA -->
-      <section class="relative">
-        <div class="border-2 border-dashed border-gray-300 rounded-2xl p-6 bg-white hover:bg-gray-50 transition-all text-center relative cursor-pointer group shadow-sm">
-          <input type="file" id="file-input" accept="image/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer z-20">
-          <div class="space-y-2">
-            <div class="text-2xl text-pink-500 group-hover:scale-110 transition duration-300">📷</div>
-            <p class="text-xs font-bold tracking-wide text-slate-700">Scan Receipt to Auto-Split</p>
-            <p class="text-[10px] text-gray-400">Keeps original English merchant titles</p>
+    <!-- CONTAINER FOR BOTH TABS -->
+    <div id="main-app-containers">
+      
+      <!-- MODULE 1: RECEIPT SCANNER & SPLIT -->
+      <div id="tab-tracker-content" class="space-y-4" style="display: block;">
+        <!-- LIVE SMART BANNER -->
+        <div class="bg-white border border-gray-200 p-3.5 rounded-xl flex items-center justify-between text-[11px] text-gray-600 shadow-sm mb-4">
+          <div class="flex items-center gap-2">
+            <span>🇦🇺</span>
+            <span class="font-medium">Sydney Shared Ledger & Planner</span>
           </div>
+          <span class="text-pink-600 font-bold bg-pink-50 px-2 py-0.5 rounded-full border border-pink-100">AUD Account</span>
         </div>
-        <!-- Upload Status overlay -->
-        <div id="scan-status-box" class="hidden mt-2 p-3 bg-white border border-pink-200 rounded-xl flex items-center gap-3 shadow-sm">
-          <div class="w-2 h-2 rounded-full bg-pink-500 animate-ping"></div>
-          <p class="text-xs font-medium text-slate-700" id="scan-status-text">Uploading image matrix...</p>
-        </div>
-      </section>
 
-      <!-- MODAL SPLIT SHEET / BILL EDITOR (Light) -->
-      <section id="bill-editor" class="bg-white p-5 rounded-2xl border border-gray-200 hidden space-y-4 pink-soft-glow">
-        <div class="flex justify-between items-center pb-2 border-b border-gray-100">
-          <h3 class="text-xs font-bold tracking-wider uppercase text-pink-600">Verify & Adjust Splits</h3>
-          <button id="btn-close-editor" class="text-xs text-gray-400 hover:text-slate-900 cursor-pointer">Cancel</button>
-        </div>
-        <input type="hidden" id="edit-id">
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Merchant (English)</label>
-            <input type="text" id="edit-store" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
+        <!-- METRICS CARD -->
+        <section class="bg-white border border-gray-200 rounded-2xl p-5 relative overflow-hidden pink-soft-glow mb-4">
+          <div class="absolute -right-10 -top-10 w-32 h-32 bg-pink-400/10 rounded-full blur-2xl"></div>
+          <div class="flex justify-between items-start">
+            <div class="space-y-0.5">
+              <p class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Total Group Expense</p>
+              <p class="text-3xl font-black tracking-tight text-slate-900" id="dash-total">A$ 0.00</p>
+            </div>
+            <div class="text-right space-y-1">
+              <p class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Active Crew</p>
+              <p class="text-xs font-bold text-slate-700 max-w-[140px] truncate" id="dash-members">Syncing...</p>
+            </div>
           </div>
-          <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Paid By</label>
-            <select id="edit-paid-by" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none"></select>
+        </section>
+
+        <!-- UPLOAD AREA -->
+        <section class="relative">
+          <div class="border-2 border-dashed border-gray-300 rounded-2xl p-6 bg-white hover:bg-gray-50 transition-all text-center relative cursor-pointer group shadow-sm">
+            <input type="file" id="file-input" accept="image/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer z-20">
+            <div class="space-y-2">
+              <div class="text-2xl text-pink-500 group-hover:scale-110 transition duration-300">📷</div>
+              <p class="text-xs font-bold tracking-wide text-slate-700">Scan Receipt to Auto-Split</p>
+              <p class="text-[10px] text-gray-400">Keeps original English merchant titles</p>
+            </div>
           </div>
-        </div>
-        <div>
-          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Items Summary</label>
-          <input type="text" id="edit-items" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
-        </div>
-        <div class="grid grid-cols-3 gap-2">
-          <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Cost (AUD)</label>
-            <input type="number" id="edit-amount" step="0.01" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-pink-600 focus:bg-white focus:outline-pink-400">
+          <div id="scan-status-box" class="mt-2 p-3 bg-white border border-pink-200 rounded-xl flex items-center gap-3 shadow-sm" style="display: none;">
+            <div class="w-2 h-2 rounded-full bg-pink-500 animate-ping"></div>
+            <p class="text-xs font-medium text-slate-700" id="scan-status-text">Uploading image matrix...</p>
+          </div>
+        </section>
+
+        <!-- MODAL SPLIT SHEET / BILL EDITOR -->
+        <section id="bill-editor" class="bg-white p-5 rounded-2xl border border-gray-200 space-y-4 pink-soft-glow" style="display: none;">
+          <div class="flex justify-between items-center pb-2 border-b border-gray-100">
+            <h3 class="text-xs font-bold tracking-wider uppercase text-pink-600">Verify & Adjust Splits</h3>
+            <button id="btn-close-editor" type="button" class="text-xs text-gray-400 hover:text-slate-900 cursor-pointer">Cancel</button>
+          </div>
+          <input type="hidden" id="edit-id">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Merchant (English)</label>
+              <input type="text" id="edit-store" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white">
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Paid By</label>
+              <select id="edit-paid-by" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900"></select>
+            </div>
           </div>
           <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Category</label>
-            <input type="text" id="edit-cat" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Items Summary</label>
+            <input type="text" id="edit-items" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
           </div>
-          <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Date</label>
-            <input type="date" id="edit-date" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Cost (AUD)</label>
+              <input type="number" id="edit-amount" step="0.01" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-pink-600">
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Category</label>
+              <input type="text" id="edit-cat" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Date</label>
+              <input type="date" id="edit-date" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+            </div>
           </div>
+
+          <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3">
+            <div class="flex justify-between items-center">
+              <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Manual Split Weights</p>
+              <button id="btn-equal-split" type="button" class="text-[10px] text-pink-600 font-bold hover:underline cursor-pointer">Split Equally</button>
+            </div>
+            <div id="split-shares-container" class="space-y-2"></div>
+            <div class="text-[10px] text-gray-500 pt-2 border-t border-gray-200 flex justify-between">
+              <span>Assigned Total:</span>
+              <strong id="split-total-assigned" class="text-slate-900">A$ 0.00</strong>
+            </div>
+          </div>
+
+          <button id="btn-save-bill" type="button" class="w-full bg-slate-900 hover:bg-pink-600 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition cursor-pointer">
+            Save Record to Cloud
+          </button>
+        </section>
+
+        <!-- LIVE STATEMENT LIST -->
+        <div class="space-y-3">
+          <h3 class="text-[10px] font-bold tracking-widest uppercase text-gray-400 px-1">Vault Ledgers</h3>
+          <ul id="expense-list" class="space-y-2">
+            <li class="p-6 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-2xl shadow-sm">Please insert your Cloud Keys config above to activate cloud streams.</li>
+          </ul>
         </div>
-
-        <!-- Split Weight Controls -->
-        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3">
-          <div class="flex justify-between items-center">
-            <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Manual Split Weights</p>
-            <button id="btn-equal-split" class="text-[10px] text-pink-600 font-bold hover:underline cursor-pointer">Split Equally</button>
-          </div>
-          <div id="split-shares-container" class="space-y-2"></div>
-          <div class="text-[10px] text-gray-500 pt-2 border-t border-gray-200 flex justify-between">
-            <span>Assigned Total:</span>
-            <strong id="split-total-assigned" class="text-slate-900">A$ 0.00</strong>
-          </div>
-        </div>
-
-        <button id="btn-save-bill" class="w-full bg-slate-900 hover:bg-pink-600 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition cursor-pointer">
-          Save Record to Cloud
-        </button>
-      </section>
-
-      <!-- LIVE STATEMENT RECYCLER -->
-      <div class="space-y-3">
-        <h3 class="text-[10px] font-bold tracking-widest uppercase text-gray-400 px-1">Vault Ledgers</h3>
-        <ul id="expense-list" class="space-y-2">
-          <li class="p-6 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-2xl">Awaiting cloud configuration stream...</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- MODULE 2: HIGH-FIDELITY MOBILE ITINERARY -->
-    <div id="tab-itinerary-content" class="space-y-4 hidden">
-      <div class="flex justify-between items-center px-1">
-        <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Group Itinerary Timeline</h2>
-        <button id="btn-add-schedule" class="bg-slate-900 text-white text-[11px] font-bold px-4 py-2 rounded-full transition cursor-pointer hover:bg-pink-600">
-          + Add New Event
-        </button>
       </div>
 
-      <!-- ITINERARY EDITOR -->
-      <section id="itinerary-editor" class="bg-white p-5 rounded-2xl border border-gray-200 hidden space-y-4 pink-soft-glow">
-        <div class="flex justify-between items-center pb-2 border-b border-gray-100">
-          <h3 class="text-xs font-bold tracking-wider uppercase text-pink-600" id="itin-editor-title">Create Schedule Node</h3>
-          <button id="btn-close-itin-editor" class="text-xs text-gray-400 hover:text-slate-900 cursor-pointer">Cancel</button>
+      <!-- MODULE 2: HIGH-FIDELITY MOBILE ITINERARY -->
+      <div id="tab-itinerary-content" class="space-y-4" style="display: none;">
+        <div class="flex justify-between items-center px-1">
+          <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Group Itinerary Timeline</h2>
+          <button id="btn-add-schedule" type="button" class="bg-slate-900 text-white text-[11px] font-bold px-4 py-2 rounded-full transition cursor-pointer hover:bg-pink-600">
+            + Add New Event
+          </button>
         </div>
-        <input type="hidden" id="edit-itin-id">
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Time / Index</label>
-            <input type="text" id="edit-itin-time" placeholder="e.g. 09:00 / Day 1" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
-          </div>
-          <div>
-            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Node Type (Badge)</label>
-            <select id="edit-itin-type" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none">
-              <option value="Flight">✈️ Flight (機票)</option>
-              <option value="Breakfast">🍳 Breakfast (早餐)</option>
-              <option value="Lunch">🍝 Lunch (午餐)</option>
-              <option value="Dinner">🥩 Dinner (晚餐)</option>
-              <option value="Activity">🗺️ Activity (行程景點)</option>
-              <option value="Hotel">🏨 Hotel (住宿)</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Hub Location</label>
-          <input type="text" id="edit-itin-location" placeholder="e.g. Sydney Opera House" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
-        </div>
-        <div>
-          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Mission / Action Details</label>
-          <textarea id="edit-itin-details" rows="3" placeholder="Describe plans..." class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400"></textarea>
-        </div>
-        <button id="btn-save-itinerary" class="w-full bg-slate-900 hover:bg-pink-600 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition cursor-pointer">
-          Sync Node To Cloud
-        </button>
-      </section>
 
-      <div id="itinerary-cards-container" class="space-y-3"></div>
+        <!-- ITINERARY EDITOR -->
+        <section id="itinerary-editor" class="bg-white p-5 rounded-2xl border border-gray-200 space-y-4 pink-soft-glow" style="display: none;">
+          <div class="flex justify-between items-center pb-2 border-b border-gray-100">
+            <h3 class="text-xs font-bold tracking-wider uppercase text-pink-600" id="itin-editor-title">Create Schedule Node</h3>
+            <button id="btn-close-itin-editor" type="button" class="text-xs text-gray-400 hover:text-slate-900 cursor-pointer">Cancel</button>
+          </div>
+          <input type="hidden" id="edit-itin-id">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Time / Index</label>
+              <input type="text" id="edit-itin-time" placeholder="e.g. 09:00 / Day 1" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white">
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Node Type (Badge)</label>
+              <select id="edit-itin-type" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:outline-none">
+                <option value="Flight">✈️ Flight (機票)</option>
+                <option value="Breakfast">🍳 Breakfast (早餐)</option>
+                <option value="Lunch">🍝 Lunch (午餐)</option>
+                <option value="Dinner">🥩 Dinner (晚餐)</option>
+                <option value="Activity">🗺️ Activity (行程景點)</option>
+                <option value="Hotel">🏨 Hotel (住宿)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Hub Location</label>
+            <input type="text" id="edit-itin-location" placeholder="e.g. Sydney Opera House" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white">
+          </div>
+          <div>
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Mission / Action Details</label>
+            <textarea id="edit-itin-details" rows="3" placeholder="Describe plans..." class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white"></textarea>
+          </div>
+          <button id="btn-save-itinerary" type="button" class="w-full bg-slate-900 hover:bg-pink-600 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition cursor-pointer">
+            Sync Node To Cloud
+          </button>
+        </section>
+
+        <div id="itinerary-cards-container" class="space-y-3"></div>
+      </div>
+
     </div>
 
   </main>
@@ -222,11 +225,11 @@
   <!-- FIXED FOOTER TAB SWITCHER -->
   <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 py-3 px-6 z-40 shadow-lg">
     <div class="max-w-md mx-auto flex justify-around items-center">
-      <button id="nav-tab-tracker" class="flex flex-col items-center gap-1 group text-pink-600 cursor-pointer">
+      <button id="nav-tab-tracker" type="button" class="flex flex-col items-center gap-1 group text-pink-600 cursor-pointer">
         <span class="text-lg group-hover:scale-110 transition">🧾</span>
         <span class="text-[9px] font-bold uppercase tracking-widest">Ledger</span>
       </button>
-      <button id="nav-tab-itinerary" class="flex flex-col items-center gap-1 group text-gray-400 cursor-pointer">
+      <button id="nav-tab-itinerary" type="button" class="flex flex-col items-center gap-1 group text-gray-400 cursor-pointer">
         <span class="text-lg group-hover:scale-110 transition">🗓️</span>
         <span class="text-[9px] font-bold uppercase tracking-widest">Planner</span>
       </button>
@@ -243,12 +246,20 @@
     let currentExpenses = [];
     let currentItinerary = [];
 
-    document.getElementById('btn-toggle-config').addEventListener('click', () => {
-      document.getElementById('section-config').classList.toggle('hidden');
+    // ========================================================
+    // UI CORE LOGIC (保證無論如何都能切換、完全脫離雲端卡死風險)
+    // ========================================================
+    
+    // 控制設定面板開關
+    document.getElementById('btn-toggle-config').addEventListener('click', (e) => {
+      e.preventDefault();
+      const el = document.getElementById('section-config');
+      el.style.display = (el.style.display === 'none') ? 'block' : 'none';
     });
 
-    document.getElementById('nav-tab-tracker').addEventListener('click', () => switchUIMode('tracker'));
-    document.getElementById('nav-tab-itinerary').addEventListener('click', () => switchUIMode('itinerary'));
+    // 控制底部選單切換
+    document.getElementById('nav-tab-tracker').addEventListener('click', (e) => { e.preventDefault(); switchUIMode('tracker'); });
+    document.getElementById('nav-tab-itinerary').addEventListener('click', (e) => { e.preventDefault(); switchUIMode('itinerary'); });
 
     function switchUIMode(mode) {
       const tBtn = document.getElementById('nav-tab-tracker');
@@ -259,16 +270,19 @@
       if(mode === 'tracker') {
         tBtn.className = "flex flex-col items-center gap-1 group text-pink-600 cursor-pointer";
         iBtn.className = "flex flex-col items-center gap-1 group text-gray-400 cursor-pointer";
-        tContent.classList.remove('hidden');
-        iContent.classList.add('hidden');
+        tContent.style.display = 'block';
+        iContent.style.display = 'none';
       } else {
         iBtn.className = "flex flex-col items-center gap-1 group text-pink-600 cursor-pointer";
         tBtn.className = "flex flex-col items-center gap-1 group text-gray-400 cursor-pointer";
-        iContent.classList.remove('hidden');
-        tContent.classList.add('hidden');
+        iContent.style.display = 'block';
+        tContent.style.display = 'none';
       }
     }
 
+    // ========================================================
+    // CLOUD DATABASE & SERVICES CONNECTIONS
+    // ========================================================
     function bootstrapConfig() {
       const cached = localStorage.getItem('sydney_luxe_config');
       if (cached) {
@@ -276,20 +290,30 @@
         document.getElementById('cfg-gemini-key').value = data.geminiKey || '';
         document.getElementById('cfg-firebase-json').value = data.firebaseJson || '';
         document.getElementById('cfg-members').value = data.members ? data.members.join(', ') : 'Alex, Bob';
+        
+        // 有舊快取就低調隱藏，沒問題
+        document.getElementById('section-config').style.display = 'none';
         if (data.firebaseJson && data.geminiKey) bootCloudNodes(data);
       } else {
-        document.getElementById('section-config').classList.remove('hidden');
+        // 沒快取就強制大開設定面板給使用者填寫
+        document.getElementById('section-config').style.display = 'block';
       }
     }
 
-    document.getElementById('btn-save-config').addEventListener('click', () => {
+    document.getElementById('btn-save-config').addEventListener('click', (e) => {
+      e.preventDefault();
       const geminiKey = document.getElementById('cfg-gemini-key').value.trim();
       const firebaseJson = document.getElementById('cfg-firebase-json').value.trim();
       const members = document.getElementById('cfg-members').value.split(',').map(m => m.trim()).filter(m => m);
 
+      if(!geminiKey || !firebaseJson) {
+        alert("Please fill in both Gemini Key and Firebase JSON array.");
+        return;
+      }
+
       const payload = { geminiKey, firebaseJson, members };
       localStorage.setItem('sydney_luxe_config', JSON.stringify(payload));
-      document.getElementById('section-config').classList.add('hidden');
+      document.getElementById('section-config').style.display = 'none';
       bootCloudNodes(payload);
     });
 
@@ -309,10 +333,11 @@
         streamFinancialLogs();
         streamItineraryPlanner();
       } catch (err) {
-        alert("Config connection string failure.");
+        alert("Firebase Bootstrap error! Check JSON string format alignment.");
       }
     }
 
+    // FINANCIAL LOGICS
     function streamFinancialLogs() {
       onSnapshot(collection(db, "sydney_luxe_expenses"), (snap) => {
         currentExpenses = [];
@@ -327,7 +352,7 @@
 
       const container = document.getElementById('expense-list');
       if(currentExpenses.length === 0) {
-        container.innerHTML = `<li class="p-6 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-2xl">Empty vault records. Start snapshotting.</li>`;
+        container.innerHTML = `<li class="p-6 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-2xl shadow-sm">Empty cloud vault logs.</li>`;
         return;
       }
 
@@ -353,8 +378,8 @@
             <div class="text-right flex flex-col items-end justify-between space-y-2">
               <p class="text-sm font-black text-slate-900 font-mono">A$ ${parseFloat(exp.amountAUD).toFixed(2)}</p>
               <div class="flex gap-3 text-[10px] tracking-wider font-bold uppercase">
-                <button onclick="window.initiateBillTweak('${exp.id}')" class="text-pink-600 hover:text-slate-900 transition cursor-pointer">Tweak</button>
-                <button onclick="window.nukeBillLog('${exp.id}')" class="text-gray-400 hover:text-red-500 transition cursor-pointer">Drop</button>
+                <button type="button" onclick="window.initiateBillTweak('${exp.id}')" class="text-pink-600 hover:text-slate-900 transition cursor-pointer">Tweak</button>
+                <button type="button" onclick="window.nukeBillLog('${exp.id}')" class="text-gray-400 hover:text-red-500 transition cursor-pointer">Drop</button>
               </div>
             </div>
           </li>
@@ -368,19 +393,18 @@
 
       const sBox = document.getElementById('scan-status-box');
       const sText = document.getElementById('scan-status-text');
-      sBox.classList.remove('hidden');
+      sBox.style.display = 'flex';
       sText.innerText = "Squeezing raw photo pixels...";
 
       try {
         const b64 = await downscaleImageBytes(file);
         sText.innerText = "Gemini Flash running OCR (English Strict)...";
-        
         const generatedJSON = await streamGeminiVisionAI(b64);
-        sBox.classList.add('hidden');
+        sBox.style.display = 'none';
         openBillPanel(null, generatedJSON);
       } catch (err) {
-        sBox.classList.add('hidden');
-        alert("OCR Sync Interrupted: " + err.message);
+        sBox.style.display = 'none';
+        alert("OCR Scan Error: " + err.message);
       }
     });
 
@@ -403,8 +427,7 @@
 
     async function streamGeminiVisionAI(bytes) {
       const p = `
-        Parse this Australian purchase transaction data asset.
-        CRITICAL: YOU MUST PRESERVE STORES & ITEM TERMINOLOGIES IN ABSOLUTE RAW ENGLISH AS WRITTEN. DO NOT TRANSLATE TO CHINESE.
+        Parse this Australian purchase transaction data asset. Keep descriptors in raw English strictly.
         Provide standard serialized application/json format matching:
         {
           "storeName": "Store name text (e.g. Coles Central, Woolworths Metro)",
@@ -419,7 +442,7 @@
     }
 
     function openBillPanel(id, data) {
-      document.getElementById('bill-editor').classList.remove('hidden');
+      document.getElementById('bill-editor').style.display = 'block';
       document.getElementById('edit-id').value = id || '';
       document.getElementById('edit-store').value = data.storeName || '';
       document.getElementById('edit-items').value = data.items || '';
@@ -442,7 +465,7 @@
       weightBox.innerHTML = config.members.map(m => `
         <div class="flex items-center justify-between gap-4">
           <span class="text-xs text-gray-600 font-medium">${m} owes (A$)</span>
-          <input type="number" step="0.01" data-member="${m}" class="split-weight-node w-24 p-2 bg-gray-50 border border-gray-200 rounded-xl text-right text-xs text-pink-600 font-mono focus:bg-white focus:outline-pink-400" value="${initialMatrix[m] || 0}">
+          <input type="number" step="0.01" data-member="${m}" class="split-weight-node w-24 p-2 bg-gray-50 border border-gray-200 rounded-xl text-right text-xs text-pink-600 font-mono" value="${initialMatrix[m] || 0}">
         </div>
       `).join('');
 
@@ -465,7 +488,7 @@
       sumWeightNodes();
     });
 
-    document.getElementById('btn-close-editor').addEventListener('click', () => document.getElementById('bill-editor').classList.add('hidden'));
+    document.getElementById('btn-close-editor').addEventListener('click', () => document.getElementById('bill-editor').style.display = 'none');
 
     document.getElementById('btn-save-bill').addEventListener('click', async () => {
       const id = document.getElementById('edit-id').value;
@@ -488,7 +511,7 @@
       } else {
         await addDoc(collection(db, "sydney_luxe_expenses"), packageObj);
       }
-      document.getElementById('bill-editor').classList.add('hidden');
+      document.getElementById('bill-editor').style.display = 'none';
     });
 
     window.initiateBillTweak = function(id) {
@@ -497,9 +520,10 @@
     }
 
     window.nukeBillLog = async function(id) {
-      if(confirm("Expunge bill permanently?")) await deleteDoc(doc(db, "sydney_luxe_expenses", id));
+      if(confirm("Delete bill permanently?")) await deleteDoc(doc(db, "sydney_luxe_expenses", id));
     }
 
+    // ITINERARY CORE
     function streamItineraryPlanner() {
       onSnapshot(collection(db, "sydney_luxe_itinerary"), (snap) => {
         currentItinerary = [];
@@ -512,7 +536,7 @@
     function refreshItineraryTimelineUI() {
       const targetBox = document.getElementById('itinerary-cards-container');
       if(currentItinerary.length === 0) {
-        targetBox.innerHTML = `<div class="p-8 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-2xl shadow-sm">No itinerary segments.</div>`;
+        targetBox.innerHTML = `<div class="p-8 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-2xl shadow-sm">No cloud itinerary sync logs. Click + Add New Event.</div>`;
         return;
       }
 
@@ -546,7 +570,8 @@
       }).join('');
     }
 
-    document.getElementById('btn-add-schedule').addEventListener('click', () => {
+    document.getElementById('btn-add-schedule').addEventListener('click', (e) => {
+      e.preventDefault();
       openItineraryEditorModal(null, {
         dateTime: "09:00 / Day 1",
         nodeType: "Activity",
@@ -556,7 +581,7 @@
     });
 
     function openItineraryEditorModal(id, data) {
-      document.getElementById('itinerary-editor').classList.remove('hidden');
+      document.getElementById('itinerary-editor').style.display = 'block';
       document.getElementById('edit-itin-id').value = id || '';
       document.getElementById('edit-itin-time').value = data.dateTime || '';
       document.getElementById('edit-itin-type').value = data.nodeType || 'Activity';
@@ -567,7 +592,7 @@
     }
 
     document.getElementById('btn-close-itin-editor').addEventListener('click', () => {
-      document.getElementById('itinerary-editor').classList.add('hidden');
+      document.getElementById('itinerary-editor').style.display = 'none';
     });
 
     document.getElementById('btn-save-itinerary').addEventListener('click', async () => {
@@ -590,7 +615,7 @@
       } else {
         await addDoc(collection(db, "sydney_luxe_itinerary"), payload);
       }
-      document.getElementById('itinerary-editor').classList.add('hidden');
+      document.getElementById('itinerary-editor').style.display = 'none';
     });
 
     window.triggerEditItineraryNode = function(id) {
@@ -599,7 +624,7 @@
     };
 
     window.nukeItineraryNode = async function(id) {
-      if(confirm("Expunge this event?")) await deleteDoc(doc(db, "sydney_luxe_itinerary", id));
+      if(confirm("Delete this event?")) await deleteDoc(doc(db, "sydney_luxe_itinerary", id));
     };
 
     bootstrapConfig();
