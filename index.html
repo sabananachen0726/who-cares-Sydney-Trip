@@ -21,7 +21,6 @@
         <h1 class="text-base font-black tracking-widest uppercase text-slate-900">SYDNEY <span class="text-pink-500">.</span> LUXE</h1>
       </div>
       <div class="flex items-center gap-2">
-        <!-- 語言切換按鈕 (EN / 繁中) -->
         <button onclick="toggleLanguage()" type="button" id="btn-lang-toggle" class="text-[10px] font-black tracking-wider uppercase bg-pink-50 text-pink-600 border border-pink-100 px-3 py-2 rounded-full cursor-pointer shadow-xs">
           🌐 中文
         </button>
@@ -198,7 +197,7 @@
           <div>
             <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-plan-cat">Category</label>
             <select id="edit-itin-type" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
-              <!-- JS 動態渲染中英標籤 -->
+              <!-- JS 動態語系標籤 -->
             </select>
           </div>
         </div>
@@ -219,23 +218,24 @@
       <div id="itinerary-cards-container" class="space-y-3"></div>
     </div>
 
-    <!-- TAB 3: WISHLIST -->
+    <!-- TAB 3: WISHLIST (許願池) -->
     <div id="tab-wishlist-content" class="space-y-4" style="display: none;">
       <div class="flex justify-between items-center">
         <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-wish-title">🎁 Group Wishlist</h2>
         <button onclick="toggleWishEditor()" class="bg-pink-500 text-white text-[11px] font-bold px-4 py-2 rounded-full hover:bg-slate-900 transition" id="ui-wish-btn">Make a Wish</button>
       </div>
 
-      <!-- WISH DRAWER EDITOR -->
+      <!-- WISH DRAWER EDITOR (修復重點：確保有 style="display: none;") -->
       <section id="wish-editor" class="bg-white p-5 rounded-2xl border-2 border-pink-400 space-y-4 shadow-xl" style="display: none;">
         <h3 class="text-xs font-black uppercase text-pink-600" id="ui-wish-pane-title">Throw in a Wish Node</h3>
         <div class="space-y-2">
           <input type="text" id="wish-input-title" placeholder="What do you want? (e.g. Buy UGG Boots)" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
-          <input type="text" id="wish-input-link" placeholder="Social Link / URL (IG, Facebook, Web...)" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
-          <input type="text" id="wish-input-img" placeholder="Image URL (Optional placeholder snapshot)" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+          <input type="text" id="wish-input-link" placeholder="Social Link / URL (IG, Facebook...)" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
+          <input type="text" id="wish-input-img" placeholder="Image URL (Optional snapshots)" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
           <input type="text" id="wish-input-author" placeholder="Your Name" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
         </div>
         <div class="flex gap-2">
+          <!-- 補齊核心大掃除與防護發送 -->
           <button onclick="saveWishNode()" class="flex-1 bg-slate-900 text-white font-bold py-2 rounded-xl text-xs uppercase" id="ui-wish-cast">Cast Wish</button>
           <button onclick="toggleWishEditor()" class="bg-gray-100 text-gray-600 px-3 rounded-xl text-xs" id="ui-wish-cancel">Cancel</button>
         </div>
@@ -271,100 +271,13 @@
     let config = { geminiKey: '', members: ['Sabrina', '中偉'] };
     let currentExpenses = []; let currentItinerary = []; let currentWishes = [];
     
-    // 雙語語系字典集 (預設為英文)
     let currentLang = 'en';
     const langPack = {
       en: {
-        toggleBtn: "🌐 中文",
-        cfgTitle: "Cloud Credentials",
-        cfgDesc: "Syncs everything seamlessly to your private Firebase container.",
-        cfgMembers: "Trip Members (Comma Separated)",
-        cfgBtn: "⚡ SAVE & INITIALIZE LIVE SERVER",
-        hotelBadge: "🏠 Basecamp / Accommodation",
-        hotelEditBtn: "Edit",
-        hotelSave: "Save Basecamp",
-        hotelCancel: "Cancel",
-        ledgerTitle: "Total Group Expense",
-        ledgerCrew: "Crew:",
-        ledgerScanP1: "Scan Receipt to Auto-Split",
-        ledgerVault: "Vault Ledgers",
-        flightTitle: "✈️ Crew Flight Times",
-        flightBtn: "Update Mine",
-        flightSync: "Sync Flight",
-        planTitle: "Itinerary Timeline",
-        planAddBtn: "+ Add New Event",
-        wishTitle: "🎁 Group Wishlist",
-        wishBtn: "Make a Wish",
-        wishPaneTitle: "Throw in a Wish Node",
-        wishCast: "Cast Wish",
-        wishCancel: "Cancel",
-        navLedger: "Ledger",
-        navPlanner: "Planner",
-        navWishlist: "Wishlist",
-        billTitle: "Verify & Adjust Splits",
-        billCancel: "Cancel",
-        billMerchant: "Merchant (English)",
-        billPaidby: "Paid By",
-        billItems: "Items Summary",
-        billCost: "Cost (AUD)",
-        billCat: "Category",
-        billDate: "Date",
-        billManual: "Manual Split Weights",
-        billEqual: "Split Equally",
-        billAssigned: "Assigned Total:",
-        billSave: "Save Record to Cloud",
-        planCancel: "Cancel",
-        planTime: "Time / Day Index",
-        planCat: "Category",
-        planLocation: "Hub Location",
-        planMemo: "Action & Memo Details",
-        planSync: "Sync To Cloud"
+        toggleBtn: "🌐 中文", cfgTitle: "Cloud Credentials", cfgDesc: "Syncs everything seamlessly to your private Firebase container.", cfgMembers: "Trip Members (Comma Separated)", cfgBtn: "⚡ SAVE & INITIALIZE LIVE SERVER", hotelBadge: "🏠 Basecamp / Accommodation", hotelEditBtn: "Edit", hotelSave: "Save Basecamp", hotelCancel: "Cancel", ledgerTitle: "Total Group Expense", ledgerCrew: "Crew:", ledgerScanP1: "Scan Receipt to Auto-Split", ledgerVault: "Vault Ledgers", flightTitle: "✈️ Crew Flight Times", flightBtn: "Update Mine", flightSync: "Sync Flight", planTitle: "Itinerary Timeline", planAddBtn: "+ Add New Event", wishTitle: "🎁 Group Wishlist", wishBtn: "Make a Wish", wishPaneTitle: "Throw in a Wish Node", wishCast: "Cast Wish", wishCancel: "Cancel", navLedger: "Ledger", navPlanner: "Planner", navWishlist: "Wishlist", billTitle: "Verify & Adjust Splits", billCancel: "Cancel", billMerchant: "Merchant (English)", billPaidby: "Paid By", billItems: "Items Summary", billCost: "Cost (AUD)", billCat: "Category", billDate: "Date", billManual: "Manual Split Weights", billEqual: "Split Equally", billAssigned: "Assigned Total:", billSave: "Save Record to Cloud", planCancel: "Cancel", planTime: "Time / Day Index", planCat: "Category", planLocation: "Hub Location", planMemo: "Action & Memo Details", planSync: "Sync To Cloud"
       },
       zh: {
-        toggleBtn: "🌐 EN",
-        cfgTitle: "雲端連線設定",
-        cfgDesc: "將所有密鑰安全同步至您的私人 Firebase 雲端庫中。",
-        cfgMembers: "本團旅伴成員名單 (用逗號隔開)",
-        cfgBtn: "⚡ 儲存並啟動雲端連線",
-        hotelBadge: "🏠 住宿大本營 / 飯店地址資訊",
-        hotelEditBtn: "修改",
-        hotelSave: "儲存住宿資訊",
-        hotelCancel: "取消",
-        ledgerTitle: "本團澳幣總花費",
-        ledgerCrew: "本團成員:",
-        ledgerScanP1: "拍照或上傳澳洲收據 (自動分帳)",
-        ledgerVault: "雲端消費歷史帳目明細",
-        flightTitle: "✈️ 大家降落雪梨班機時間看板",
-        flightBtn: "更新我的航班",
-        flightSync: "同步航班資訊",
-        planTitle: "雪梨動態行程時間表",
-        planAddBtn: "+ 新增行程活動",
-        wishTitle: "🎁 旅伴敲碗許願池",
-        wishBtn: "我要許願",
-        wishPaneTitle: "填寫你的雪梨願望清單",
-        wishCast: "拋入許願池",
-        wishCancel: "取消",
-        navLedger: "分帳本",
-        navPlanner: "行程表",
-        navWishlist: "許願池",
-        billTitle: "核對並手動微調分帳金額",
-        billCancel: "取消",
-        billMerchant: "店名 (維持英文)",
-        billPaidby: "誰付的錢",
-        billItems: "購買品項摘要",
-        billCost: "總金額 (AUD)",
-        billCat: "消費分類",
-        billDate: "消費日期",
-        billManual: "每人應付金額微調",
-        billEqual: "平分總金額",
-        billAssigned: "已分配總計:",
-        billSave: "將帳目同步至雲端",
-        planCancel: "取消",
-        planTime: "時間 / 天數標記",
-        planCat: "活動分類",
-        planLocation: "地點/樞紐",
-        planMemo: "具體計劃與備忘細節",
-        planSync: "同步行程至雲端"
+        toggleBtn: "🌐 EN", cfgTitle: "雲端連線設定", cfgDesc: "將所有密鑰安全同步至您的私人 Firebase 雲端庫中。", cfgMembers: "本團旅伴成員名單 (用逗號隔開)", cfgBtn: "⚡ 儲存並啟動雲端連線", hotelBadge: "🏠 住宿大本營 / 飯店地址資訊", hotelEditBtn: "修改", hotelSave: "儲存住宿資訊", hotelCancel: "取消", ledgerTitle: "本團澳幣總花費", ledgerCrew: "本團成員:", ledgerScanP1: "拍照或上傳澳洲收據 (自動分帳)", ledgerVault: "雲端消費歷史帳目明細", flightTitle: "✈️ 大家降落雪梨班機時間看板", flightBtn: "更新我的航班", flightSync: "同步航班資訊", planTitle: "雪梨動態行程時間表", planAddBtn: "+ 新增行程活動", wishTitle: "🎁 旅伴敲碗許願池", wishBtn: "我要許願", wishPaneTitle: "填寫你的雪梨願望清單", wishCast: "拋入許願池", wishCancel: "取消", navLedger: "分帳本", navPlanner: "行程表", navWishlist: "許願池", billTitle: "核對並手動微調分帳金額", billCancel: "取消", billMerchant: "店名 (維持英文)", billPaidby: "誰付的錢", billItems: "購買品項摘要", billCost: "總金額 (AUD)", billCat: "消費分類", billDate: "消費日期", billManual: "每人應付金額微調", billEqual: "平分總金額", billAssigned: "已分配總計:", billSave: "將帳目同步至雲端", planCancel: "取消", planTime: "時間 / 天數標記", planCat: "活動分類", planLocation: "地點/樞紐", planMemo: "具體計劃與備忘細節", planSync: "同步行程至雲端"
       }
     };
 
@@ -376,8 +289,6 @@
 
     function applyLanguagePack() {
       const pack = langPack[currentLang];
-      
-      // 替換所有靜態 UI 標籤文本
       document.getElementById('btn-lang-toggle').innerText = pack.toggleBtn;
       document.getElementById('ui-cfg-title').innerText = pack.cfgTitle;
       document.getElementById('ui-cfg-desc').innerText = pack.cfgDesc;
@@ -404,8 +315,6 @@
       document.getElementById('ui-nav-ledger').innerText = pack.navLedger;
       document.getElementById('ui-nav-planner').innerText = pack.navPlanner;
       document.getElementById('ui-nav-wishlist').innerText = pack.navWishlist;
-      
-      // 記帳編輯框語系
       document.getElementById('ui-bill-title').innerText = pack.billTitle;
       document.getElementById('ui-bill-cancel').innerText = pack.billCancel;
       document.getElementById('ui-bill-merchant').innerText = pack.billMerchant;
@@ -418,221 +327,91 @@
       document.getElementById('ui-bill-equal').innerText = pack.billEqual;
       document.getElementById('ui-bill-assigned').innerText = pack.billAssigned;
       document.getElementById('ui-bill-save').innerText = pack.billSave;
-
-      // 行程編輯框語系
       document.getElementById('ui-plan-cancel').innerText = pack.planCancel;
       document.getElementById('ui-plan-time').innerText = pack.planTime;
       document.getElementById('ui-plan-cat').innerText = pack.planCat;
       document.getElementById('ui-plan-location').innerText = pack.planLocation;
       document.getElementById('ui-plan-memo').innerText = pack.planMemo;
       document.getElementById('ui-plan-sync').innerText = pack.planSync;
-
-      // 重新刷新動態列表
       renderItinerarySelectOptions();
-      if(db) {
-        refreshItineraryTimelineUI();
-        streamWishesRender();
-      }
+      if(db) { refreshItineraryTimelineUI(); streamWishesRender(); }
     }
 
     function renderItinerarySelectOptions() {
       const select = document.getElementById('edit-itin-type');
       if(currentLang === 'en') {
-        select.innerHTML = `
-          <option value="Flight">✈️ Flight</option>
-          <option value="Breakfast">🍳 Breakfast</option>
-          <option value="Lunch">🍝 Lunch</option>
-          <option value="Dinner">🥩 Dinner</option>
-          <option value="Activity">🗺️ Activity</option>
-          <option value="Hotel">🏨 Hotel</option>
-        `;
+        select.innerHTML = `<option value="Flight">✈️ Flight</option><option value="Breakfast">🍳 Breakfast</option><option value="Lunch">🍝 Lunch</option><option value="Dinner">🥩 Dinner</option><option value="Activity">🗺️ Activity</option><option value="Hotel">🏨 Hotel</option>`;
       } else {
-        select.innerHTML = `
-          <option value="Flight">✈️ Flight (機票班機)</option>
-          <option value="Breakfast">🍳 Breakfast (早餐)</option>
-          <option value="Lunch">🍝 Lunch (午餐)</option>
-          <option value="Dinner">🥩 Dinner (晚餐)</option>
-          <option value="Activity">🗺️ Activity (行程景點)</option>
-          <option value="Hotel">🏨 Hotel (住宿飯店)</option>
-        `;
+        select.innerHTML = `<option value="Flight">✈️ Flight (機票班機)</option><option value="Breakfast">🍳 Breakfast (早餐)</option><option value="Lunch">🍝 Lunch (午餐)</option><option value="Dinner">🥩 Dinner (晚餐)</option><option value="Activity">🗺️ Activity (行程景點)</option><option value="Hotel">🏨 Hotel (住宿飯店)</option>`;
       }
     }
 
-    // 基本面板開關
-    function toggleConfigPanel() {
-      const el = document.getElementById('section-config');
-      el.style.display = (el.style.display === 'none') ? 'block' : 'none';
-    }
+    function toggleConfigPanel() { const el = document.getElementById('section-config'); el.style.display = (el.style.display === 'none') ? 'block' : 'none'; }
     window.toggleConfigPanel = toggleConfigPanel;
 
     function switchTab(tab) {
       const tabs = ['tracker', 'itinerary', 'wishlist'];
       tabs.forEach(t => {
-        const btn = document.getElementById(`nav-tab-${t}`);
-        const content = document.getElementById(`tab-${t}-content`);
-        if (t === tab) {
-          btn.className = "flex-1 flex flex-col items-center gap-1 text-pink-600 cursor-pointer";
-          content.style.display = 'block';
-        } else {
-          btn.className = "flex-1 flex flex-col items-center gap-1 text-gray-400 cursor-pointer";
-          content.style.display = 'none';
-        }
+        const btn = document.getElementById(`nav-tab-${t}`); const content = document.getElementById(`tab-${t}-content`);
+        if (t === tab) { btn.className = "flex-1 flex flex-col items-center gap-1 text-pink-600 cursor-pointer"; content.style.display = 'block'; }
+        else { btn.className = "flex-1 flex flex-col items-center gap-1 text-gray-400 cursor-pointer"; content.style.display = 'none'; }
       });
     }
     window.switchTab = switchTab;
 
     function saveApplicationConfig() {
-      const geminiKey = document.getElementById('cfg-gemini-key').value.trim();
-      const firebaseJson = document.getElementById('cfg-firebase-json').value.trim();
-      const membersStr = document.getElementById('cfg-members').value.trim();
-
+      const geminiKey = document.getElementById('cfg-gemini-key').value.trim(); const firebaseJson = document.getElementById('cfg-firebase-json').value.trim(); const membersStr = document.getElementById('cfg-members').value.trim();
       if (!geminiKey || !firebaseJson) { alert("Missing credentials."); return; }
-      try { JSON.parse(firebaseJson); } catch (err) { alert("JSON structural mismatch error."); return; }
-
-      const members = membersStr.split(',').map(m => m.trim()).filter(m => m);
-      const payload = { geminiKey, firebaseJson, members };
+      try { JSON.parse(firebaseJson); } catch (err) { alert("JSON error."); return; }
+      const members = membersStr.split(',').map(m => m.trim()).filter(m => m); const payload = { geminiKey, firebaseJson, members };
       localStorage.setItem('sydney_luxe_config', JSON.stringify(payload));
-      
-      try {
-        bootCloudNodes(payload);
-        document.getElementById('section-config').style.display = 'none';
-        alert(currentLang === 'en' ? "🎉 Connected to Firebase!" : "🎉 雲端連線部署成功！");
-      } catch (bootErr) { alert(bootErr.message); }
+      try { bootCloudNodes(payload); document.getElementById('section-config').style.display = 'none'; alert(currentLang === 'en' ? "🎉 Connected!" : "🎉 連線成功！"); } catch (bootErr) { alert(bootErr.message); }
     }
     window.saveApplicationConfig = saveApplicationConfig;
 
     function bootstrapConfig() {
-      applyLanguagePack(); // 預設執行語系加載
-      
+      applyLanguagePack();
       const cached = localStorage.getItem('sydney_luxe_config');
       if (cached) {
         const data = JSON.parse(cached);
-        document.getElementById('cfg-gemini-key').value = data.geminiKey || '';
-        document.getElementById('cfg-firebase-json').value = data.firebaseJson || '';
-        document.getElementById('cfg-members').value = data.members ? data.members.join(', ') : 'Sabrina, 中偉, 聖聖, 老麥, 倫倫';
-        try {
-          bootCloudNodes(data);
-          document.getElementById('section-config').style.display = 'none';
-        } catch(e) { document.getElementById('section-config').style.display = 'block'; }
-      } else {
-        document.getElementById('cfg-members').value = 'Sabrina, 中偉, 聖聖, 老麥, 倫倫';
-        document.getElementById('section-config').style.display = 'block';
-      }
+        document.getElementById('cfg-gemini-key').value = data.geminiKey || ''; document.getElementById('cfg-firebase-json').value = data.firebaseJson || ''; document.getElementById('cfg-members').value = data.members ? data.members.join(', ') : 'Sabrina, 中偉, 聖聖, 老麥, 倫倫';
+        try { bootCloudNodes(data); document.getElementById('section-config').style.display = 'none'; } catch(e) { document.getElementById('section-config').style.display = 'block'; }
+      } else { document.getElementById('cfg-members').value = 'Sabrina, 中偉, 聖聖, 老麥, 倫倫'; document.getElementById('section-config').style.display = 'block'; }
     }
 
     function bootCloudNodes(cfg) {
-      config = cfg;
-      document.getElementById('dash-members').innerText = config.members.join(', ');
+      config = cfg; document.getElementById('dash-members').innerText = config.members.join(', ');
       document.getElementById('flight-member-select').innerHTML = config.members.map(m => `<option value="${m}">${m}</option>`).join('');
-
-      if (window.MyGoogleGenAIInstance) {
-        const genAI = new window.MyGoogleGenAIInstance({ apiKey: config.geminiKey });
-        aiModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      }
-
-      if (firebase.apps.length === 0) {
-        const app = firebase.initializeApp(JSON.parse(config.firebaseJson));
-        db = firebase.firestore(app);
-      } else { db = firebase.firestore(); }
-
-      streamExpenses();
-      streamItinerary();
-      streamWishes();
-      streamHotel();
-      streamFlights();
+      if (window.MyGoogleGenAIInstance) { const genAI = new window.MyGoogleGenAIInstance({ apiKey: config.geminiKey }); aiModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" }); }
+      if (firebase.apps.length === 0) { const app = firebase.initializeApp(JSON.parse(config.firebaseJson)); db = firebase.firestore(app); } else { db = firebase.firestore(); }
+      streamExpenses(); streamItinerary(); streamWishes(); streamHotel(); streamFlights();
     }
 
-    // HOTEL MANAGER
+    // HOTEL
     function openHotelEditor() { document.getElementById('hotel-editor-panel').style.display = 'block'; }
     function closeHotelEditor() { document.getElementById('hotel-editor-panel').style.display = 'none'; }
     window.openHotelEditor = openHotelEditor; window.closeHotelEditor = closeHotelEditor;
-
-    function saveHotelInfo() {
-      const name = document.getElementById('input-hotel-name').value.trim();
-      const address = document.getElementById('input-hotel-address').value.trim();
-      db.collection("sydney_luxe_meta").doc("hotel").set({ name, address }).then(() => closeHotelEditor());
-    }
+    function saveHotelInfo() { const name = document.getElementById('input-hotel-name').value.trim(); const address = document.getElementById('input-hotel-address').value.trim(); db.collection("sydney_luxe_meta").doc("hotel").set({ name, address }).then(() => closeHotelEditor()); }
     window.saveHotelInfo = saveHotelInfo;
+    function streamHotel() { db.collection("sydney_luxe_meta").doc("hotel").onSnapshot(d => { if (d.exists()) { document.getElementById('hotel-display-name').innerText = d.data().name || "Tap to set Hotel"; document.getElementById('hotel-display-address').innerText = d.data().address || "No address provided."; document.getElementById('input-hotel-name').value = d.data().name || ''; document.getElementById('input-hotel-address').value = d.data().address || ''; } }); }
 
-    function streamHotel() {
-      db.collection("sydney_luxe_meta").doc("hotel").onSnapshot(d => {
-        if (d.exists()) {
-          document.getElementById('hotel-display-name').innerText = d.data().name || "Tap to set Hotel Name";
-          document.getElementById('hotel-display-address').innerText = d.data().address || "No address provided.";
-          document.getElementById('input-hotel-name').value = d.data().name || '';
-          document.getElementById('input-hotel-address').value = d.data().address || '';
-        }
-      });
-    }
-
-    // FLIGHT MANAGER
+    // FLIGHTS
     function openFlightEditor() { document.getElementById('flight-editor-box').style.display = 'block'; }
     window.openFlightEditor = openFlightEditor;
-
-    function saveFlightRow() {
-      const name = document.getElementById('flight-member-select').value;
-      const no = document.getElementById('flight-input-no').value.trim();
-      const eta = document.getElementById('flight-input-time').value.trim();
-      db.collection("sydney_luxe_flights").doc(name).set({ no, eta })
-        .then(() => document.getElementById('flight-editor-box').style.display = 'none');
-    }
+    function saveFlightRow() { const name = document.getElementById('flight-member-select').value; const no = document.getElementById('flight-input-no').value.trim(); const eta = document.getElementById('flight-input-time').value.trim(); db.collection("sydney_luxe_flights").doc(name).set({ no, eta }).then(() => document.getElementById('flight-editor-box').style.display = 'none'); }
     window.saveFlightRow = saveFlightRow;
+    function streamFlights() { db.collection("sydney_luxe_flights").onSnapshot(snap => { const box = document.getElementById('flight-display-list'); let html = ''; snap.forEach(d => { html += `<div class="flex justify-between py-1 border-b border-slate-800/40"><span class="font-bold text-amber-300">${d.id}</span><span class="text-zinc-400">${d.data().no || 'QF--'}</span><span class="font-mono text-zinc-200 font-semibold">${d.data().eta || 'Not Logged'}</span></div>`; }); box.innerHTML = html || `<p class="text-zinc-500 italic text-[11px]">${currentLang==='en'?'No flights logged.':'目前沒有任何航班紀錄'}</p>`; }); }
 
-    function streamFlights() {
-      db.collection("sydney_luxe_flights").onSnapshot(snap => {
-        const box = document.getElementById('flight-display-list');
-        let html = '';
-        snap.forEach(d => {
-          html += `<div class="flex justify-between py-1 border-b border-slate-800/40">
-            <span class="font-bold text-amber-300">${d.id}</span>
-            <span class="text-zinc-400">${d.data().no || 'QF--'}</span>
-            <span class="font-mono text-zinc-200 font-semibold">${d.data().eta || 'Not Logged'}</span>
-          </div>`;
-        });
-        box.innerHTML = html || `<p class="text-zinc-500 italic text-[11px]">${currentLang==='en'?'No flights logged.':'目前沒有任何航班紀錄'}</p>`;
-      });
-    }
-
-    // EXPENSES SCANNER & AUTO-SPLIT
+    // EXPENSES
     function streamExpenses() {
       db.collection("sydney_luxe_expenses").onSnapshot((snap) => {
         currentExpenses = []; snap.forEach(d => currentExpenses.push({ id: d.id, ...d.data() }));
         document.getElementById('dash-total').innerText = `A$ ${currentExpenses.reduce((s, e) => s + (e.amountAUD || 0), 0).toFixed(2)}`;
-        
-        const container = document.getElementById('expense-list');
-        if(currentExpenses.length === 0) {
-          container.innerHTML = `<li class="p-5 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm">${currentLang==='en'?'No records in Cloud Vault.':'雲端資料庫目前沒有消費帳目'}</li>`;
-          return;
-        }
-
+        const container = document.getElementById('expense-list'); if(currentExpenses.length === 0) { container.innerHTML = `<li class="p-5 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm">${currentLang==='en'?'No records.':'目前沒有消費帳目'}</li>`; return; }
         const sorted = [...currentExpenses].sort((a,b) => new Date(b.date) - new Date(a.date));
         container.innerHTML = sorted.map(exp => {
-          const splitBreakdowns = Object.entries(exp.splits || {})
-            .map(([name, money]) => `<span class="bg-gray-100 text-gray-600 border border-gray-200 px-1.5 py-0.5 rounded text-[9px] font-mono">${name}: $${parseFloat(money).toFixed(1)}</span>`)
-            .join(' ');
-
-          return `
-            <li class="bg-white border border-gray-200 p-4 rounded-2xl flex justify-between items-center relative shadow-sm">
-              <div class="space-y-1.5 flex-1 min-w-0 pr-2">
-                <div class="flex items-center gap-2">
-                  <span class="font-bold text-slate-900 text-xs truncate tracking-wide">${exp.storeName}</span>
-                  <span class="text-[8px] tracking-widest font-bold uppercase text-pink-600 bg-pink-50 px-2 py-0.5 rounded border border-pink-100">${exp.category}</span>
-                </div>
-                <p class="text-[11px] text-gray-500 truncate font-mono">${exp.items || 'Details'}</p>
-                <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
-                  <span class="text-[9px] text-gray-400">${currentLang==='en'?'Paid by':'代付人'} <strong class="text-slate-700">${exp.paidBy}</strong></span>
-                  <div class="flex flex-wrap gap-1">${splitBreakdowns}</div>
-                </div>
-              </div>
-              <div class="text-right flex flex-col items-end justify-between space-y-2">
-                <p class="text-sm font-black text-slate-900 font-mono">A$ ${parseFloat(exp.amountAUD).toFixed(2)}</p>
-                <div class="flex gap-3 text-[10px] tracking-wider font-bold uppercase">
-                  <button type="button" onclick="window.initiateBillTweak('${exp.id}')" class="text-pink-600 hover:text-slate-900 transition cursor-pointer">${currentLang==='en'?'Tweak':'調整'}</button>
-                  <button type="button" onclick="window.nukeBillLog('${exp.id}')" class="text-gray-400 hover:text-red-500 transition cursor-pointer">${currentLang==='en'?'Drop':'刪除'}</button>
-                </div>
-              </div>
-            </li>
-          `;
+          const splitBreakdowns = Object.entries(exp.splits || {}).map(([name, money]) => `<span class="bg-gray-100 text-gray-600 border border-gray-200 px-1.5 py-0.5 rounded text-[9px] font-mono">${name}: $${parseFloat(money).toFixed(1)}</span>`).join(' ');
+          return `<li class="bg-white border border-gray-200 p-4 rounded-2xl flex justify-between items-center shadow-sm"><div class="space-y-1.5 flex-1 min-w-0 pr-2"><div class="flex items-center gap-2"><span class="font-bold text-slate-900 text-xs truncate">${exp.storeName}</span><span class="text-[8px] tracking-widest font-bold uppercase text-pink-600 bg-pink-50 px-2 py-0.5 rounded border border-pink-100">${exp.category}</span></div><p class="text-[11px] text-gray-500 truncate font-mono">${exp.items || 'Details'}</p><div class="flex flex-wrap items-center gap-1.5 pt-0.5"><span class="text-[9px] text-gray-400">${currentLang==='en'?'Paid by':'代付人'} <strong>${exp.paidBy}</strong></span><div class="flex flex-wrap gap-1">${splitBreakdowns}</div></div></div><div class="text-right flex flex-col items-end justify-between space-y-2"><p class="text-sm font-black text-slate-900 font-mono">A$ ${parseFloat(exp.amountAUD).toFixed(2)}</p><div class="flex gap-3 text-[10px] font-bold uppercase"><button type="button" onclick="window.initiateBillTweak('${exp.id}')" class="text-pink-600 hover:text-slate-900">${currentLang==='en'?'Tweak':'調整'}</button><button type="button" onclick="window.nukeBillLog('${exp.id}')" class="text-gray-400 hover:text-red-500">${currentLang==='en'?'Drop':'刪除'}</button></div></div></li>`;
         }).join('');
       });
     }
@@ -640,185 +419,68 @@
     document.getElementById('file-input').addEventListener('change', async (ev) => {
       const file = ev.target.files[0]; if (!file || !db) return;
       const sBox = document.getElementById('scan-status-box'); const sText = document.getElementById('scan-status-text');
-      sBox.style.display = 'flex'; sText.innerText = "Squeezing raw photo pixels...";
-      try {
-        const b64 = await downscaleImageBytes(file);
-        sText.innerText = "Gemini Flash running OCR (English Strict)...";
-        const generatedJSON = await streamGeminiVisionAI(b64);
-        sBox.style.display = 'none'; openBillPanel(null, generatedJSON);
-      } catch (err) { sBox.style.display = 'none'; alert("OCR Scan error: " + err.message); }
+      sBox.style.display = 'flex'; sText.innerText = "Processing image...";
+      try { const b64 = await downscaleImageBytes(file); const generatedJSON = await streamGeminiVisionAI(b64); sBox.style.display = 'none'; openBillPanel(null, generatedJSON); } catch (err) { sBox.style.display = 'none'; alert("OCR Scan error: " + err.message); }
     });
-
-    function downscaleImageBytes(file) {
-      return new Promise((res) => {
-        const r = new FileReader(); r.readAsDataURL(file);
-        r.onload = (e) => {
-          const i = new Image(); i.src = e.target.result;
-          i.onload = () => {
-            const c = document.createElement("canvas"); let w = i.width, h = i.height;
-            if (w > 1024) { h = Math.round((h * 1024) / w); w = 1024; }
-            c.width = w; c.height = h; c.getContext("2d").drawImage(i, 0, 0, w, h);
-            res(c.toDataURL("image/jpeg", 0.75).split(',')[1]);
-          };
-        };
-      });
-    }
-
-    async function streamGeminiVisionAI(bytes) {
-      const p = `Parse receipt. KEEP STORES/ITEMS RAW ENGLISH. Format json: { "storeName": "Merchant", "items": "Flat items string", "amountAUD": 12.50, "category": "Food", "date": "2026-05-24" }`;
-      const res = await aiModel.generateContent([p, { inlineData: { data: bytes, mimeType: "image/jpeg" } }]);
-      return JSON.parse(res.response.text());
-    }
+    function downscaleImageBytes(file) { return new Promise((res) => { const r = new FileReader(); r.readAsDataURL(file); r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement("canvas"); let w = i.width, h = i.height; if (w > 1024) { h = Math.round((h * 1024) / w); w = 1024; } c.width = w; c.height = h; c.getContext("2d").drawImage(i, 0, 0, w, h); res(c.toDataURL("image/jpeg", 0.75).split(',')[1]); }; }; }); }
+    async function streamGeminiVisionAI(bytes) { const p = `Parse receipt. KEEP RAW ENGLISH. Format json: { "storeName": "Merchant", "items": "Flat string", "amountAUD": 12.50, "category": "Food", "date": "2026-05-24" }`; const res = await aiModel.generateContent([p, { inlineData: { data: bytes, mimeType: "image/jpeg" } }]); return JSON.parse(res.response.text()); }
 
     function openBillPanel(id, data) {
-      document.getElementById('bill-editor').style.display = 'block';
-      document.getElementById('edit-id').value = id || '';
-      document.getElementById('edit-store').value = data.storeName || '';
-      document.getElementById('edit-items').value = data.items || '';
-      document.getElementById('edit-amount').value = data.amountAUD || 0;
-      document.getElementById('edit-cat').value = data.category || 'Others';
-      document.getElementById('edit-date').value = data.date || '';
-
-      const sel = document.getElementById('edit-paid-by');
-      sel.innerHTML = config.members.map(m => `<option value="${m}" ${data.paidBy === m ? 'selected':''}>${m}</option>`).join('');
-
-      const weightBox = document.getElementById('split-shares-container');
-      const val = parseFloat(data.amountAUD) || 0;
-      
-      let initialMatrix = data.splits || {};
-      if (Object.keys(initialMatrix).length === 0) {
-        const splitQuotient = val / config.members.length;
-        config.members.forEach(m => { initialMatrix[m] = parseFloat(splitQuotient.toFixed(2)); });
-      }
-
-      weightBox.innerHTML = config.members.map(m => `
-        <div class="flex items-center justify-between gap-4">
-          <span class="text-xs text-gray-600 font-medium">${m} ${currentLang==='en'?'owes (A$)':'應付 (A$)'}</span>
-          <input type="number" step="0.01" data-member="${m}" class="split-weight-node w-24 p-2 bg-gray-50 border border-gray-200 rounded-xl text-right text-xs text-pink-600 font-mono" value="${initialMatrix[m] || 0}">
-        </div>
-      `).join('');
-
-      document.querySelectorAll('.split-weight-node').forEach(i => i.addEventListener('input', sumWeightNodes));
-      sumWeightNodes();
+      document.getElementById('bill-editor').style.display = 'block'; document.getElementById('edit-id').value = id || ''; document.getElementById('edit-store').value = data.storeName || ''; document.getElementById('edit-items').value = data.items || ''; document.getElementById('edit-amount').value = data.amountAUD || 0; document.getElementById('edit-cat').value = data.category || 'Others'; document.getElementById('edit-date').value = data.date || '';
+      document.getElementById('edit-paid-by').innerHTML = config.members.map(m => `<option value="${m}" ${data.paidBy === m ? 'selected':''}>${m}</option>`).join('');
+      const weightBox = document.getElementById('split-shares-container'); const val = parseFloat(data.amountAUD) || 0;
+      let initialMatrix = data.splits || {}; if (Object.keys(initialMatrix).length === 0) { const splitQuotient = val / config.members.length; config.members.forEach(m => { initialMatrix[m] = parseFloat(splitQuotient.toFixed(2)); }); }
+      weightBox.innerHTML = config.members.map(m => `<div class="flex items-center justify-between gap-4"><span class="text-xs text-gray-600 font-medium">${m}</span><input type="number" step="0.01" data-member="${m}" class="split-weight-node w-24 p-2 bg-gray-50 border border-gray-200 rounded-xl text-right text-xs text-pink-600 font-mono" value="${initialMatrix[m] || 0}"></div>`).join('');
+      document.querySelectorAll('.split-weight-node').forEach(i => i.addEventListener('input', sumWeightNodes)); sumWeightNodes();
     }
-
-    function sumWeightNodes() {
-      let accum = 0; document.querySelectorAll('.split-weight-node').forEach(i => accum += parseFloat(i.value) || 0);
-      document.getElementById('split-total-assigned').innerText = `A$ ${accum.toFixed(2)}`;
-    }
-
-    document.getElementById('btn-equal-split').addEventListener('click', (ev) => {
-      ev.preventDefault();
-      const grand = parseFloat(document.getElementById('edit-amount').value) || 0;
-      const nodes = document.querySelectorAll('.split-weight-node');
-      const allocation = grand / nodes.length;
-      nodes.forEach(n => n.value = allocation.toFixed(2));
-      sumWeightNodes();
-    });
-
+    function sumWeightNodes() { let accum = 0; document.querySelectorAll('.split-weight-node').forEach(i => accum += parseFloat(i.value) || 0); document.getElementById('split-total-assigned').innerText = `A$ ${accum.toFixed(2)}`; }
+    document.getElementById('btn-equal-split').addEventListener('click', (ev) => { ev.preventDefault(); const grand = parseFloat(document.getElementById('edit-amount').value) || 0; const nodes = document.querySelectorAll('.split-weight-node'); const allocation = grand / nodes.length; nodes.forEach(n => n.value = allocation.toFixed(2)); sumWeightNodes(); });
     function closeBillPanel() { document.getElementById('bill-editor').style.display = 'none'; }
     window.closeBillPanel = closeBillPanel;
-
     document.getElementById('btn-save-bill').addEventListener('click', async () => {
-      const id = document.getElementById('edit-id').value;
-      let splits = {};
-      document.querySelectorAll('.split-weight-node').forEach(i => { splits[i.getAttribute('data-member')] = parseFloat(i.value) || 0; });
-
-      const packageObj = {
-        storeName: document.getElementById('edit-store').value.trim(),
-        items: document.getElementById('edit-items').value.trim(),
-        amountAUD: parseFloat(document.getElementById('edit-amount').value) || 0,
-        category: document.getElementById('edit-cat').value.trim(),
-        date: document.getElementById('edit-date').value,
-        paidBy: document.getElementById('edit-paid-by').value,
-        splits
-      };
-
-      if(id) { await db.collection("sydney_luxe_expenses").doc(id).set(packageObj, { merge: true }); }
-      else { await db.collection("sydney_luxe_expenses").add(packageObj); }
+      const id = document.getElementById('edit-id').value; let splits = {}; document.querySelectorAll('.split-weight-node').forEach(i => { splits[i.getAttribute('data-member')] = parseFloat(i.value) || 0; });
+      const packageObj = { storeName: document.getElementById('edit-store').value.trim(), items: document.getElementById('edit-items').value.trim(), amountAUD: parseFloat(document.getElementById('edit-amount').value) || 0, category: document.getElementById('edit-cat').value.trim(), date: document.getElementById('edit-date').value, paidBy: document.getElementById('edit-paid-by').value, splits };
+      if(id) { await db.collection("sydney_luxe_expenses").doc(id).set(packageObj, { merge: true }); } else { await db.collection("sydney_luxe_expenses").add(packageObj); }
       closeBillPanel();
     });
+    window.initiateBillTweak = function(id) { const target = currentExpenses.find(e => e.id === id); if(target) openBillPanel(id, target); };
+    window.nukeBillLog = function(id) { if(confirm(currentLang==='en'?"Delete?":"確定要永久刪除此帳目嗎？")) db.collection("sydney_luxe_expenses").doc(id).delete(); };
 
-    window.initiateBillTweak = function(id) {
-      const target = currentExpenses.find(e => e.id === id); if(target) openBillPanel(id, target);
-    };
-    window.nukeBillLog = function(id) {
-      if(confirm(currentLang==='en'?"Delete permanently?":"確定要永久刪除這筆帳目嗎？")) db.collection("sydney_luxe_expenses").doc(id).delete();
-    };
-
-    // ITINERARY PLANNERS
-    function streamItinerary() {
-      db.collection("sydney_luxe_itinerary").onSnapshot((snap) => {
-        currentItinerary = []; snap.forEach(d => currentItinerary.push({ id: d.id, ...d.data() }));
-        currentItinerary.sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
-        refreshItineraryTimelineUI();
-      });
-    }
-
+    // ITINERARY
+    function streamItinerary() { db.collection("sydney_luxe_itinerary").onSnapshot((snap) => { currentItinerary = []; snap.forEach(d => currentItinerary.push({ id: d.id, ...d.data() })); currentItinerary.sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0)); refreshItineraryTimelineUI(); }); }
     function refreshItineraryTimelineUI() {
-      const targetBox = document.getElementById('itinerary-cards-container');
-      if(currentItinerary.length === 0) {
-        targetBox.innerHTML = `<div class="p-8 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-2xl shadow-sm">${currentLang==='en'?'No timeline nodes logged.':'行程表目前空空如也，快點擊按鈕新增活動'}</div>`;
-        return;
-      }
-
-      const badgeStyles = { Flight: "bg-amber-50 text-amber-600 border-amber-200", Breakfast: "bg-emerald-50 text-emerald-600 border-emerald-200", Lunch: "bg-teal-50 text-teal-600 border-teal-200", Dinner: "bg-rose-50 text-rose-600 border-rose-200", Activity: "bg-pink-50 text-pink-600 border-pink-200", Hotel: "bg-indigo-50 text-indigo-600 border-indigo-200" };
-      targetBox.innerHTML = currentItinerary.map(node => {
-        return `
-          <div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm active:bg-gray-50" onclick="window.triggerEditItineraryNode('${node.id}')">
-            <div class="flex justify-between items-start text-xs">
-              <div><span class="font-mono text-gray-400 font-bold">${node.dateTime}</span><h4 class="font-bold text-slate-900">${node.hubLocation}</h4></div>
-              <span class="text-[8px] font-black px-2 py-0.5 rounded-full ${badgeStyles[node.nodeType] || 'bg-gray-100'}">${node.nodeType}</span>
-            </div>
-            <p class="text-[11px] text-gray-500 mt-2 bg-gray-50 p-2 rounded-lg whitespace-pre-line">${node.activityDetails}</p>
-            <div class="text-right text-[9px] text-pink-500 font-bold mt-2 uppercase tracking-wider">${currentLang==='en'?'Tap to Edit':'點擊修改/編輯卡片'}</div>
-          </div>
-        `;
-      }).join('');
+      const targetBox = document.getElementById('itinerary-cards-container'); if(currentItinerary.length === 0) { targetBox.innerHTML = `<div class="p-8 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm">${currentLang==='en'?'No nodes.':'行程表目前沒有活動'}</div>`; return; }
+      const badgeStyles = { Flight: "bg-amber-50 text-amber-600", Breakfast: "bg-emerald-50 text-emerald-600", Lunch: "bg-teal-50 text-teal-600", Dinner: "bg-rose-50 text-rose-600", Activity: "bg-pink-50 text-pink-600", Hotel: "bg-indigo-50 text-indigo-600" };
+      targetBox.innerHTML = currentItinerary.map(node => `<div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm active:bg-gray-50" onclick="window.triggerEditItineraryNode('${node.id}')"><div class="flex justify-between items-start text-xs"><div><span class="font-mono text-gray-400 font-bold">${node.dateTime}</span><h4 class="font-bold text-slate-900">${node.hubLocation}</h4></div><span class="text-[8px] font-black px-2 py-0.5 rounded-full ${badgeStyles[node.nodeType] || 'bg-gray-100'}">${node.nodeType}</span></div><p class="text-[11px] text-gray-500 mt-2 bg-gray-50 p-2 rounded-lg whitespace-pre-line">${node.activityDetails}</p><div class="text-right text-[9px] text-pink-500 font-bold mt-2 uppercase">${currentLang==='en'?'Tap to Edit':'點擊修改卡片'}</div></div>`).join('');
     }
-
     function openItineraryEditorModal(id) {
       const modal = document.getElementById('itinerary-editor'); modal.style.display = 'block';
       if(id) {
-        document.getElementById('itin-editor-title').innerText = currentLang==='en'?"Modify Schedule Node":"修改活動節點內容";
-        document.getElementById('edit-itin-id').value = id; document.getElementById('btn-delete-itin').style.display='block';
-        const n = currentItinerary.find(i=>i.id===id);
-        if(n){
-          document.getElementById('edit-itin-time').value=n.dateTime||'';
-          document.getElementById('edit-itin-type').value=n.nodeType||'Activity';
-          document.getElementById('edit-itin-location').value=n.hubLocation||'';
-          document.getElementById('edit-itin-details').value=n.activityDetails||'';
-        }
+        document.getElementById('itin-editor-title').innerText = currentLang==='en'?"Modify Node":"修改行程活動"; document.getElementById('edit-itin-id').value = id; document.getElementById('btn-delete-itin').style.display='block';
+        const n = currentItinerary.find(i=>i.id===id); if(n){ document.getElementById('edit-itin-time').value=n.dateTime||''; document.getElementById('edit-itin-type').value=n.nodeType||'Activity'; document.getElementById('edit-itin-location').value=n.hubLocation||''; document.getElementById('edit-itin-details').value=n.activityDetails||''; }
       } else {
-        document.getElementById('itin-editor-title').innerText = currentLang==='en'?"Create Schedule Node":"規劃全新活動卡片";
-        document.getElementById('edit-itin-id').value = ''; document.getElementById('btn-delete-itin').style.display='none';
-        document.getElementById('edit-itin-time').value = "09:00 / Day 1";
-        document.getElementById('edit-itin-type').value = "Activity";
-        document.getElementById('edit-itin-location').value = ""; document.getElementById('edit-itin-details').value = "";
+        document.getElementById('itin-editor-title').innerText = currentLang==='en'?"Create Node":"規劃活動卡片"; document.getElementById('edit-itin-id').value = ''; document.getElementById('btn-delete-itin').style.display='none';
+        document.getElementById('edit-itin-time').value = "09:00 / Day 1"; document.getElementById('edit-itin-type').value = "Activity"; document.getElementById('edit-itin-location').value = ""; document.getElementById('edit-itin-details').value = "";
       }
       modal.scrollIntoView({ behavior:'smooth' });
     }
     window.openItineraryEditorModal = openItineraryEditorModal; window.triggerEditItineraryNode = openItineraryEditorModal;
-
     function closeItineraryEditor() { document.getElementById('itinerary-editor').style.display='none'; }
     window.closeItineraryEditor = closeItineraryEditor;
-
     function saveItineraryNode() {
       const id = document.getElementById('edit-itin-id').value;
       const payload = { dateTime: document.getElementById('edit-itin-time').value.trim(), nodeType: document.getElementById('edit-itin-type').value, hubLocation: document.getElementById('edit-itin-location').value.trim(), activityDetails: document.getElementById('edit-itin-details').value.trim(), orderIndex: id ? (currentItinerary.find(i=>i.id===id)?.orderIndex || Date.now()) : Date.now() };
-      if(id) { db.collection("sydney_luxe_itinerary").doc(id).set(payload, {merge:true}).then(()=>closeItineraryEditor()); }
-      else { db.collection("sydney_luxe_itinerary").add(payload).then(()=>closeItineraryEditor()); }
+      if(id) { db.collection("sydney_luxe_itinerary").doc(id).set(payload, {merge:true}).then(()=>closeItineraryEditor()); } else { db.collection("sydney_luxe_itinerary").add(payload).then(()=>closeItineraryEditor()); }
     }
     window.saveItineraryNode = saveItineraryNode;
-
-    function deleteItineraryNode() {
-      const id = document.getElementById('edit-itin-id').value;
-      if(confirm(currentLang==='en'?"Delete event?":"確定要永久刪除此行程嗎？")) db.collection("sydney_luxe_itinerary").doc(id).delete().then(()=>closeItineraryEditor());
-    }
+    function deleteItineraryNode() { const id = document.getElementById('edit-itin-id').value; if(confirm("Delete event?")) db.collection("sydney_luxe_itinerary").doc(id).delete().then(()=>closeItineraryEditor()); }
     window.deleteItineraryNode = deleteItineraryNode;
 
-    // WISHLIST SECTIONS
-    function toggleWishEditor() { const el = document.getElementById('wish-editor'); el.style.display = (el.style.display === 'none')?'block':'none'; }
+    // WISHLIST (核心修復：這段有完整綁定到全域)
+    function toggleWishEditor() {
+      const el = document.getElementById('wish-editor');
+      el.style.display = (el.style.display === 'none') ? 'block' : 'none';
+    }
     window.toggleWishEditor = toggleWishEditor;
 
     function saveWishNode() {
@@ -826,12 +488,20 @@
       const link = document.getElementById('wish-input-link').value.trim();
       const img = document.getElementById('wish-input-img').value.trim();
       const author = document.getElementById('wish-input-author').value.trim() || 'Someone';
-      if(!title) return;
+
+      if(!title) { alert(currentLang==='en'?"Please fill Wish Title!":"請填寫想要許願的名稱！"); return; }
+      
       db.collection("sydney_luxe_wishes").add({ title, link, img, author, approvedInPlan: false, timestamp: Date.now() })
         .then(() => {
-          toggleWishEditor();
-          document.getElementById('wish-input-title').value = ''; document.getElementById('wish-input-link').value = ''; document.getElementById('wish-input-img').value = '';
-        });
+          // ⚡ 終極防護大掃除指令：送出成功一秒洗白輸入框，絕不留殘影！
+          document.getElementById('wish-input-title').value = '';
+          document.getElementById('wish-input-link').value = '';
+          document.getElementById('wish-input-img').value = '';
+          document.getElementById('wish-input-author').value = '';
+          
+          toggleWishEditor(); // 收起抽屜
+        })
+        .catch(err => alert("Wish error: " + err.message));
     }
     window.saveWishNode = saveWishNode;
 
@@ -845,42 +515,18 @@
 
     function streamWishesRender() {
       const container = document.getElementById('wishlist-cards-container');
-      if(currentWishes.length === 0) {
-        container.innerHTML = `<div class="p-6 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm">${currentLang==='en'?'Wish pool empty. Throw a coin!':'許願池空空如也，快貼 IG 連結來許願！'}</div>`;
-        return;
-      }
-
+      if(currentWishes.length === 0) { container.innerHTML = `<div class="p-6 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm">${currentLang==='en'?'Wish pool empty.':'許願池空空如也，快丟 IG 連結來許願吧！'}</div>`; return; }
       container.innerHTML = currentWishes.map(wish => {
         const isUrl = wish.link && (wish.link.startsWith('http://') || wish.link.startsWith('https://'));
         const linkButton = isUrl ? `<a href="${wish.link}" target="_blank" onclick="event.stopPropagation()" class="inline-block mt-1 text-[10px] text-pink-600 font-bold bg-pink-50 border border-pink-100 px-2 py-0.5 rounded-md">🔗 ${currentLang==='en'?'View Link':'打開對外連結'}</a>` : '';
         const imageBox = wish.img ? `<img src="${wish.img}" class="w-full h-24 object-cover rounded-xl mt-2 border border-gray-100">` : '';
-        
-        return `
-          <div class="bg-white border border-gray-200 p-4 rounded-2xl shadow-sm space-y-2 relative">
-            <div class="flex justify-between items-start pr-12">
-              <div>
-                <h4 class="text-xs font-bold text-slate-900">${wish.title}</h4>
-                <p class="text-[9px] text-gray-400">${currentLang==='en'?'Wished by':'許願人'} <span class="text-slate-600 font-medium">${wish.author}</span></p>
-                ${linkButton}
-              </div>
-            </div>
-            ${imageBox}
-            <div class="pt-2 border-t border-gray-100 flex justify-between items-center text-[10px]">
-              <label class="flex items-center gap-1.5 font-bold text-gray-500 cursor-pointer">
-                <input type="checkbox" ${wish.approvedInPlan ? 'checked':''} onclick="window.toggleWishStatus('${wish.id}', ${wish.approvedInPlan})" class="w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-400">
-                <span>${currentLang==='en'?'Approved in Plan':'已排進行程中 ✔️'}</span>
-              </label>
-              <button onclick="window.nukeWishNode('${wish.id}')" class="text-gray-300 hover:text-red-500">${currentLang==='en'?'✕ Delete':'✕ 撤銷願望'}</button>
-            </div>
-          </div>
-        `;
+        return `<div class="bg-white border border-gray-200 p-4 rounded-2xl shadow-sm space-y-2 relative"><div><h4 class="text-xs font-bold text-slate-900">${wish.title}</h4><p class="text-[9px] text-gray-400">${currentLang==='en'?'Wished by':'許願人'} <span class="text-slate-600 font-medium">${wish.author}</span></p>${linkButton}</div>${imageBox}<div class="pt-2 border-t border-gray-100 flex justify-between items-center text-[10px]"><label class="flex items-center gap-1.5 font-bold text-gray-500 cursor-pointer"><input type="checkbox" ${wish.approvedInPlan ? 'checked':''} onclick="window.toggleWishStatus('${wish.id}', ${wish.approvedInPlan})" class="w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-400"><span>${currentLang==='en'?'Approved in Plan':'已排進行程中 ✔️'}</span></label><button onclick="window.nukeWishNode('${wish.id}')" class="text-gray-300 hover:text-red-500">${currentLang==='en'?'✕ Delete':'✕ 撤銷願望'}</button></div></div>`;
       }).join('');
     }
 
     window.toggleWishStatus = function(id, currentStatus) { db.collection("sydney_luxe_wishes").doc(id).update({ approvedInPlan: !currentStatus }); };
     window.nukeWishNode = function(id) { if(confirm(currentLang==='en'?"Delete?":"確定要撤銷這個願望嗎？")) db.collection("sydney_luxe_wishes").doc(id).delete(); };
 
-    // Boot loader pipeline
     setTimeout(bootstrapConfig, 500);
   </script>
 </body>
