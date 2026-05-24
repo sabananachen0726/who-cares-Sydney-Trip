@@ -10,6 +10,17 @@
   <!-- Firebase CDN Legacy Stables -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- 🔒 針對 iOS 原生時間日期組件的硬核 CSS 補丁 -->
+  <style>
+    input[type="date"], input[type="time"], input[type="datetime-local"] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+    }
+  </style>
 </head>
 <body class="bg-gray-50 text-slate-900 min-h-screen pb-32 font-sans antialiased">
 
@@ -81,8 +92,8 @@
           <input type="text" id="edit-items" placeholder="e.g. 咖啡、晚餐" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white">
         </div>
         
-        <!-- 🛠️ 徹底修復：手機版將三列改為彈性單列，消費日期絕對不會再凸出去 -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <!-- 消費日期欄位 -->
+        <div class="grid grid-cols-1 gap-3">
           <div>
             <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-cost">總金額 (AUD)</label>
             <input type="number" id="edit-amount" step="0.01" value="0.00" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-pink-600 focus:bg-white">
@@ -93,7 +104,8 @@
           </div>
           <div>
             <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-bill-date">消費日期</label>
-            <input type="date" id="edit-date" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white">
+            <!-- ⚙️ 安全縮進防溢出 -->
+            <input type="date" id="edit-date" class="w-[calc(100%-4px)] box-border p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white">
           </div>
         </div>
 
@@ -133,7 +145,6 @@
           <button onclick="openFlightEditor('arrival')" class="text-[10px] bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-full text-zinc-300 font-bold">更新我的抵達班機</button>
         </div>
         
-        <!-- 航班對齊表格化 -->
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs divide-y divide-slate-800">
             <thead>
@@ -143,14 +154,12 @@
                 <th class="pb-2 font-black w-1/2">預計降落時間 (固定格式)</th>
               </tr>
             </thead>
-            <tbody id="arrival-display-list" class="divide-y divide-slate-800/50 text-zinc-200">
-              <!-- JS 動態完美對齊對齊注入 -->
-            </tbody>
+            <tbody id="arrival-display-list" class="divide-y divide-slate-800/50 text-zinc-200"></tbody>
           </table>
         </div>
       </section>
 
-      <!-- 🛠️ 航班集中修改編輯器 (改用 datetime-local 強制格式) -->
+      <!-- 🛠️ 航班修改編輯器 -->
       <div id="flight-editor-box" class="bg-white border-2 border-amber-400 p-4 rounded-2xl space-y-3 shadow-xl" style="display: none;">
         <h4 id="flight-editor-title-text" class="text-xs font-black uppercase text-amber-600">更新航班</h4>
         <input type="hidden" id="flight-type-mode" value="arrival">
@@ -166,8 +175,7 @@
         </div>
         <div>
           <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">時間 (點擊右側選單精準選擇)</label>
-          <!-- 🕒 使用原生時間選擇器，徹底杜絕亂打字 -->
-          <input type="datetime-local" id="flight-input-time" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-xl text-xs text-slate-900 font-mono">
+          <input type="datetime-local" id="flight-input-time" class="w-[calc(100%-4px)] box-border bg-gray-50 border border-gray-200 p-2.5 rounded-xl text-xs text-slate-900 font-mono">
         </div>
         <div class="flex gap-2 pt-1">
           <button onclick="saveFlightRowCloud()" class="flex-1 bg-slate-900 text-white font-bold py-2 rounded-xl text-xs uppercase tracking-wider">同步航班至雲端</button>
@@ -191,22 +199,25 @@
             <button onclick="closeItineraryEditor()" type="button" class="text-xs text-gray-400 hover:text-slate-900 cursor-pointer">取消</button>
           </div>
           <input type="hidden" id="edit-itin-id">
-          <div class="grid grid-cols-2 gap-3">
+          
+          <!-- 🛠️ 這裡也將網格拆成手機友善的單列，防止具體時間凸出 -->
+          <div class="grid grid-cols-1 gap-3">
             <div>
               <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">選擇出遊日期</label>
               <select id="edit-itin-date" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
                 <option value="2026-06-29">6月29日 (星期一) - Day 1</option>
                 <option value="2026-06-30">6月30日 (星期二) - Day 2</option>
                 <option value="2026-07-01">7月01日 (星期三) - Day 3</option>
-                <option value="2026-07-02">7月02日 (星期四) - Day 4</option>
+                <option value="2026-07-02">7月02日 (星期外) - Day 4</option>
               </select>
             </div>
             <div>
               <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">具體時間</label>
-              <input type="time" id="edit-itin-time" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 font-mono">
+              <!-- ⚙️ 安全縮進防溢出 -->
+              <input type="time" id="edit-itin-time" class="w-[calc(100%-4px)] box-border p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 font-mono">
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 gap-3">
             <div>
               <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">活動地點樞紐</label>
               <input type="text" id="edit-itin-location" placeholder="e.g. Opera House" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
@@ -226,40 +237,28 @@
           </div>
         </section>
 
-        <!-- 📅 四天獨立分流大區塊 -->
+        <!-- 📅 四天獨立包裹區 -->
         <div id="itinerary-segmented-days" class="space-y-4">
-          <!-- 6/29 包裹區 -->
           <div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-xs space-y-2">
-            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-              <h4 class="text-xs font-black text-slate-900">📅 06 / 29 <span class="text-pink-500 font-normal ml-1">Monday (Day 1)</span></h4>
-            </div>
+            <h4 class="text-xs font-black text-slate-900 border-b border-gray-100 pb-2">📅 06 / 29 <span class="text-pink-500 font-normal ml-1">Monday (Day 1)</span></h4>
             <div id="day-box-2026-06-29" class="space-y-2"></div>
           </div>
-          <!-- 6/30 包裹區 -->
           <div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-xs space-y-2">
-            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-              <h4 class="text-xs font-black text-slate-900">📅 06 / 30 <span class="text-pink-500 font-normal ml-1">Tuesday (Day 2)</span></h4>
-            </div>
+            <h4 class="text-xs font-black text-slate-900 border-b border-gray-100 pb-2">📅 06 / 30 <span class="text-pink-500 font-normal ml-1">Tuesday (Day 2)</span></h4>
             <div id="day-box-2026-06-30" class="space-y-2"></div>
           </div>
-          <!-- 7/1 包裹區 -->
           <div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-xs space-y-2">
-            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-              <h4 class="text-xs font-black text-slate-900">📅 07 / 01 <span class="text-pink-500 font-normal ml-1">Wednesday (Day 3)</span></h4>
-            </div>
+            <h4 class="text-xs font-black text-slate-900 border-b border-gray-100 pb-2">📅 07 / 01 <span class="text-pink-500 font-normal ml-1">Wednesday (Day 3)</span></h4>
             <div id="day-box-2026-07-01" class="space-y-2"></div>
           </div>
-          <!-- 7/2 包裹區 -->
           <div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-xs space-y-2">
-            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-              <h4 class="text-xs font-black text-slate-900">📅 07 / 02 <span class="text-pink-500 font-normal ml-1">Thursday (Day 4)</span></h4>
-            </div>
+            <h4 class="text-xs font-black text-slate-900 border-b border-gray-100 pb-2">📅 07 / 02 <span class="text-pink-500 font-normal ml-1">Thursday (Day 4)</span></h4>
             <div id="day-box-2026-07-02" class="space-y-2"></div>
           </div>
         </div>
       </div>
 
-      <!-- 🛫 BOTTOM: 離開雪梨時間看板 (Departure) -->
+      <!-- 🛫 BOTTOM: 離開雪梨時間看板 -->
       <section class="bg-slate-900 text-white rounded-2xl p-4 shadow-sm space-y-3 mt-4">
         <div class="flex justify-between items-center">
           <h3 class="text-[10px] font-black tracking-widest uppercase text-pink-400 flex items-center gap-1">
@@ -268,7 +267,6 @@
           <button onclick="openFlightEditor('departure')" class="text-[10px] bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-full text-zinc-300 font-bold">更新我的離開班機</button>
         </div>
         
-        <!-- 航班對齊表格化 -->
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs divide-y divide-slate-800">
             <thead>
@@ -278,9 +276,7 @@
                 <th class="pb-2 font-black w-1/2">預計起飛時間 (固定格式)</th>
               </tr>
             </thead>
-            <tbody id="departure-display-list" class="divide-y divide-slate-800/50 text-zinc-200">
-              <!-- JS 動態完美對齊對齊注入 -->
-            </tbody>
+            <tbody id="departure-display-list" class="divide-y divide-slate-800/50 text-zinc-200"></tbody>
           </table>
         </div>
       </section>
@@ -332,7 +328,6 @@
   </nav>
 
   <script>
-    // 🔒 內嵌連線金鑰，免填直通
     const EMBEDDED_FIREBASE_JSON = `{
       "apiKey": "AIzaSyDeP9DNQ66vSIxSfobvszadV-pRkT1pSoc",
       "authDomain": "samuel-st-rent.firebaseapp.com",
@@ -439,7 +434,7 @@
     window.saveHotelInfo = saveHotelInfo;
     function streamHotel() { db.collection("sydney_luxe_meta").doc("hotel").onSnapshot(d => { if (d.exists()) { document.getElementById('hotel-display-name').innerText = d.data().name || "點擊設定飯店名稱與資訊"; document.getElementById('hotel-display-address').innerText = d.data().address || "目前尚未提供地址資訊"; document.getElementById('input-hotel-name').value = d.data().name || ''; document.getElementById('input-hotel-address').value = d.data().address || ''; } }); }
 
-    // ✈️ FLIGHTS MATRIX (雙區塊：抵達與離開，固定時間格式且完美對齊)
+    // FLIGHTS
     function openFlightEditor(typeMode) {
       document.getElementById('flight-editor-box').style.display = 'block';
       document.getElementById('flight-type-mode').value = typeMode;
@@ -452,7 +447,7 @@
       const typeMode = document.getElementById('flight-type-mode').value;
       const name = document.getElementById('flight-member-select').value;
       const no = document.getElementById('flight-input-no').value.trim() || 'QF--';
-      const rawTime = document.getElementById('flight-input-time').value; // ISO String format
+      const rawTime = document.getElementById('flight-input-time').value;
       
       db.collection(typeMode === 'arrival' ? "sydney_luxe_arrival" : "sydney_luxe_departure").doc(name).set({ no, timestamp: rawTime }).then(() => {
         document.getElementById('flight-input-no').value = '';
@@ -471,26 +466,24 @@
     }
 
     function streamFlights() {
-      // 監聽抵達看板
       db.collection("sydney_luxe_arrival").onSnapshot(snap => {
         const list = document.getElementById('arrival-display-list');
         let html = '';
         FIXED_MEMBERS.forEach(m => {
           let matched = { no: '-', timestamp: '' };
           snap.forEach(d => { if(d.id === m) matched = d.data(); });
-          html += `<tr class="border-b border-slate-800/30"><td class="py-2.5 font-bold text-amber-300 font-sans">${m}</td><td class="py-2.5 font-mono text-zinc-300">${matched.no || '-'}</td><td class="py-2.5 font-mono text-zinc-100 font-semibold">${formatFriendlyDateTime(matched.timestamp)}</td></tr>`;
+          html += `<tr class="border-b border-slate-800/30"><td class="py-2.5 font-bold text-amber-300">${m}</td><td class="py-2.5 font-mono text-zinc-300">${matched.no}</td><td class="py-2.5 font-mono text-zinc-100 font-semibold">${formatFriendlyDateTime(matched.timestamp)}</td></tr>`;
         });
         list.innerHTML = html;
       });
 
-      // 監聽離開看板
       db.collection("sydney_luxe_departure").onSnapshot(snap => {
         const list = document.getElementById('departure-display-list');
         let html = '';
         FIXED_MEMBERS.forEach(m => {
           let matched = { no: '-', timestamp: '' };
           snap.forEach(d => { if(d.id === m) matched = d.data(); });
-          html += `<tr class="border-b border-slate-800/30"><td class="py-2.5 font-bold text-pink-400 font-sans">${m}</td><td class="py-2.5 font-mono text-zinc-300">${matched.no || '-'}</td><td class="py-2.5 font-mono text-zinc-100 font-semibold">${formatFriendlyDateTime(matched.timestamp)}</td></tr>`;
+          html += `<tr class="border-b border-slate-800/30"><td class="py-2.5 font-bold text-pink-400">${m}</td><td class="py-2.5 font-mono text-zinc-300">${matched.no}</td><td class="py-2.5 font-mono text-zinc-100 font-semibold">${formatFriendlyDateTime(matched.timestamp)}</td></tr>`;
         });
         list.innerHTML = html;
       });
@@ -577,24 +570,13 @@
     };
     window.nukeBillLog = function(id) { if(confirm("確定要永久刪除此帳目嗎？")) db.collection("sydney_luxe_expenses").doc(id).delete(); };
 
-    // 🗓️ ITINERARY CORE (動態按日期自動切流歸類)
-    function streamItinerary() { 
-      db.collection("sydney_luxe_itinerary").onSnapshot((snap) => { 
-        currentItinerary = []; 
-        snap.forEach(d => currentItinerary.push({ id: d.id, ...d.data() })); 
-        refreshItineraryTimelineUI(); 
-      }); 
-    }
-
+    // ITINERARY
+    function streamItinerary() { db.collection("sydney_luxe_itinerary").onSnapshot((snap) => { currentItinerary = []; snap.forEach(d => currentItinerary.push({ id: d.id, ...d.data() })); refreshItineraryTimelineUI(); }); }
     function refreshItineraryTimelineUI() {
       const days = ['2026-06-29', '2026-06-30', '2026-07-01', '2026-07-02'];
       days.forEach(day => { document.getElementById(`day-box-${day}`).innerHTML = ''; });
-
       const badgeStyles = { Breakfast: "bg-emerald-50 text-emerald-600", Lunch: "bg-teal-50 text-teal-600", Dinner: "bg-rose-50 text-rose-600", Activity: "bg-pink-50 text-pink-600", Hotel: "bg-indigo-50 text-indigo-600" };
-
-      // 按時間排序
       const sortedNodes = [...currentItinerary].sort((a,b) => (a.timeStr || '').localeCompare(b.timeStr || ''));
-
       let counters = { '2026-06-29': 0, '2026-06-30': 0, '2026-07-01': 0, '2026-07-02': 0 };
 
       sortedNodes.forEach(node => {
@@ -616,13 +598,7 @@
           targetBox.insertAdjacentHTML('beforeend', cardHtml);
         }
       });
-
-      // 填充空白提示
-      days.forEach(day => {
-        if(counters[day] === 0) {
-          document.getElementById(`day-box-${day}`).innerHTML = `<p class="text-[11px] text-gray-400 italic py-1 text-center">今天目前沒有安排行程活動</p>`;
-        }
-      });
+      days.forEach(day => { if(counters[day] === 0) document.getElementById(`day-box-${day}`).innerHTML = `<p class="text-[11px] text-gray-400 italic py-1 text-center">今天目前沒有安排行程活動</p>`; });
     }
 
     function openItineraryEditorModal(id) {
@@ -649,13 +625,7 @@
 
     function saveItineraryNode() {
       const id = document.getElementById('edit-itin-id').value;
-      const payload = { 
-        dateStr: document.getElementById('edit-itin-date').value,
-        timeStr: document.getElementById('edit-itin-time').value,
-        nodeType: document.getElementById('edit-itin-type').value, 
-        hubLocation: document.getElementById('edit-itin-location').value.trim() || '未填地點', 
-        activityDetails: document.getElementById('edit-itin-details').value.trim() || ''
-      };
+      const payload = { dateStr: document.getElementById('edit-itin-date').value, timeStr: document.getElementById('edit-itin-time').value, nodeType: document.getElementById('edit-itin-type').value, hubLocation: document.getElementById('edit-itin-location').value.trim() || '未填地點', activityDetails: document.getElementById('edit-itin-details').value.trim() || '' };
       if(id) { db.collection("sydney_luxe_itinerary").doc(id).set(payload, {merge:true}).then(()=>closeItineraryEditor()); } 
       else { db.collection("sydney_luxe_itinerary").add(payload).then(()=>closeItineraryEditor()); }
     }
@@ -663,7 +633,7 @@
     function deleteItineraryNode() { const id = document.getElementById('edit-itin-id').value; if(confirm("確定刪除此行程節點？")) db.collection("sydney_luxe_itinerary").doc(id).delete().then(()=>closeItineraryEditor()); }
     window.deleteItineraryNode = deleteItineraryNode;
 
-    // 🎁 WISHLIST 許願池模組 (完全獨立)
+    // WISHLIST
     function toggleWishForm() { const el = document.getElementById('wish-editor-panel'); el.style.display = (el.style.display === 'none') ? 'block' : 'none'; }
     window.toggleWishForm = toggleWishForm;
 
