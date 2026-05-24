@@ -20,6 +20,7 @@
         <span class="w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse"></span>
         <h1 class="text-base font-black tracking-widest uppercase text-slate-900">SYDNEY <span class="text-pink-500">.</span> LUXE</h1>
       </div>
+      <!-- 語系切換：只切換內容，不允許它去動按鈕的結構 -->
       <button onclick="toggleLanguage()" type="button" id="btn-lang-toggle" class="text-[10px] font-black tracking-wider uppercase bg-pink-50 text-pink-600 border border-pink-100 px-3 py-2 rounded-full cursor-pointer shadow-xs">
         🌐 EN
       </button>
@@ -193,12 +194,12 @@
       <div id="itinerary-cards-container" class="space-y-3"></div>
     </div>
 
-    <!-- TAB 3: WISHLIST -->
+    <!-- TAB 3: WISHLIST (許願池) -->
     <div id="tab-wishlist-content" class="space-y-4" style="display: none;">
       <div class="flex justify-between items-center">
         <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-wish-title">🎁 旅伴敲碗許願池</h2>
-        <!-- 移除 HTML 中的舊 onclick，改用下方高強度 EventListener 監聽 -->
-        <button type="button" id="ui-wish-btn" class="bg-pink-500 text-white text-[11px] font-bold px-4 py-2 rounded-full hover:bg-slate-900 transition cursor-pointer shadow-sm">
+        <!-- 🔨 暴力修復 1：直接在 HTML 把 onclick 強硬綁回來，拒絕使用任何會被洗掉的監聽器！ -->
+        <button onclick="toggleWishEditor()" type="button" id="ui-wish-btn" class="bg-pink-500 text-white text-[11px] font-bold px-4 py-2 rounded-full hover:bg-slate-900 transition cursor-pointer shadow-sm">
           我要許願
         </button>
       </div>
@@ -244,9 +245,7 @@
   </script>
 
   <script>
-    // ==========================================
     // 🔒 終極核心：全自働金鑰直通內嵌
-    // ==========================================
     const EMBEDDED_GEMINI_KEY = "AIzaSyAgCKkT_l1qtwe6-6-kN0PD1loVBwFdLAs";
     const EMBEDDED_FIREBASE_JSON = `{
       "apiKey": "AIzaSyDeP9DNQ66vSIxSfobvszadV-pRkT1pSoc",
@@ -297,8 +296,8 @@
       document.getElementById('ui-plan-add-btn').innerText = pack.planAddBtn;
       document.getElementById('ui-wish-title').innerText = pack.wishTitle;
       
-      // 🔒 鐵血修復：改用 innerHTML 確保不影響基礎層，並在下方用原生 JavaScript 再次強力補鎖功能！
-      document.getElementById('ui-wish-btn').innerHTML = pack.wishBtn;
+      // 🔨 暴力修復 2：如果是中文狀態，直接寫入文字，但絕不去重寫覆蓋按鈕物件本身！
+      document.getElementById('ui-wish-btn').innerText = pack.wishBtn;
       
       document.getElementById('ui-wish-pane-title').innerText = pack.wishPaneTitle;
       document.getElementById('ui-wish-cast').innerText = pack.wishCast;
@@ -348,7 +347,6 @@
     window.switchTab = switchTab;
 
     function bootstrapConfig() {
-      applyLanguagePack();
       document.getElementById('dash-members').innerText = FIXED_MEMBERS.join(', ');
       document.getElementById('flight-member-select').innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
       
@@ -362,12 +360,6 @@
       } else { db = firebase.firestore(); }
 
       streamExpenses(); streamItinerary(); streamWishes(); streamHotel(); streamFlights();
-      
-      // 🔒 鐵血雙重鎖定：不管任何語系怎麼重寫，強制把開關事件焊死在按鈕上！
-      document.getElementById('ui-wish-btn').addEventListener('click', (e) => {
-        e.preventDefault();
-        toggleWishEditor();
-      });
     }
 
     // HOTEL
@@ -462,8 +454,12 @@
     window.deleteItineraryNode = deleteItineraryNode;
 
     // WISHLIST
-    function toggleWishEditor() { const el = document.getElementById('wish-editor'); el.style.display = (el.style.display === 'none') ? 'block' : 'none'; }
+    function toggleWishEditor() { 
+      const el = document.getElementById('wish-editor'); 
+      el.style.display = (el.style.display === 'none') ? 'block' : 'none'; 
+    }
     window.toggleWishEditor = toggleWishEditor;
+
     function saveWishNode() {
       const title = document.getElementById('wish-input-title').value.trim(); const link = document.getElementById('wish-input-link').value.trim(); const img = document.getElementById('wish-input-img').value.trim(); const author = document.getElementById('wish-input-author').value.trim() || 'Someone';
       if(!title) { alert(currentLang==='en'?"Please fill Wish Title!":"請填寫想要許願的名稱！"); return; }
@@ -481,7 +477,8 @@
     window.toggleWishStatus = function(id, currentStatus) { db.collection("sydney_luxe_wishes").doc(id).update({ approvedInPlan: !currentStatus }); };
     window.nukeWishNode = function(id) { if(confirm(currentLang==='en'?"Delete?":"確定要撤銷這個願望嗎？")) db.collection("sydney_luxe_wishes").doc(id).delete(); };
 
-    setTimeout(bootstrapConfig, 400);
+    // ⚡ 鋼鐵流直接掛載啟動
+    bootstrapConfig();
   </script>
 </body>
 </html>
