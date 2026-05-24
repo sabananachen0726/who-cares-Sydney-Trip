@@ -20,7 +20,6 @@
         <span class="w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse"></span>
         <h1 class="text-base font-black tracking-widest uppercase text-slate-900">SYDNEY <span class="text-pink-500">.</span> LUXE</h1>
       </div>
-      <!-- 預設直接是中文版，讓大家點開最親切 -->
       <button onclick="toggleLanguage()" type="button" id="btn-lang-toggle" class="text-[10px] font-black tracking-wider uppercase bg-pink-50 text-pink-600 border border-pink-100 px-3 py-2 rounded-full cursor-pointer shadow-xs">
         🌐 EN
       </button>
@@ -28,8 +27,6 @@
   </header>
 
   <main class="max-w-md mx-auto px-4 mt-5 space-y-6">
-
-    <!-- 🔒 黃色設定面板已徹底移除！大家再也不會被這個擋住 🔒 -->
 
     <!-- LIVE HOTEL MANAGER -->
     <section class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm relative group" onclick="openHotelEditor()">
@@ -176,7 +173,6 @@
           <div>
             <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1" id="ui-plan-cat">活動分類</label>
             <select id="edit-itin-type" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900">
-              <!-- JS 動態語系標籤 -->
             </select>
           </div>
         </div>
@@ -201,7 +197,10 @@
     <div id="tab-wishlist-content" class="space-y-4" style="display: none;">
       <div class="flex justify-between items-center">
         <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-wish-title">🎁 旅伴敲碗許願池</h2>
-        <button onclick="toggleWishEditor()" class="bg-pink-500 text-white text-[11px] font-bold px-4 py-2 rounded-full hover:bg-slate-900 transition" id="ui-wish-btn">我要許願</button>
+        <!-- 移除 HTML 中的舊 onclick，改用下方高強度 EventListener 監聽 -->
+        <button type="button" id="ui-wish-btn" class="bg-pink-500 text-white text-[11px] font-bold px-4 py-2 rounded-full hover:bg-slate-900 transition cursor-pointer shadow-sm">
+          我要許願
+        </button>
       </div>
 
       <!-- WISH DRAWER EDITOR -->
@@ -246,7 +245,7 @@
 
   <script>
     // ==========================================
-    // 🔒 終極核心：直接把開發金鑰寫死嵌入程式最底層！
+    // 🔒 終極核心：全自働金鑰直通內嵌
     // ==========================================
     const EMBEDDED_GEMINI_KEY = "AIzaSyAgCKkT_l1qtwe6-6-kN0PD1loVBwFdLAs";
     const EMBEDDED_FIREBASE_JSON = `{
@@ -263,7 +262,6 @@
     let db = null; let aiModel = null;
     let currentExpenses = []; let currentItinerary = []; let currentWishes = [];
     
-    // 旅伴點開網頁，預設直接進入中文最親切
     let currentLang = 'zh';
     const langPack = {
       en: {
@@ -298,7 +296,10 @@
       document.getElementById('ui-plan-title').innerText = pack.planTitle;
       document.getElementById('ui-plan-add-btn').innerText = pack.planAddBtn;
       document.getElementById('ui-wish-title').innerText = pack.wishTitle;
-      document.getElementById('ui-wish-btn').innerText = pack.wishBtn;
+      
+      // 🔒 鐵血修復：改用 innerHTML 確保不影響基礎層，並在下方用原生 JavaScript 再次強力補鎖功能！
+      document.getElementById('ui-wish-btn').innerHTML = pack.wishBtn;
+      
       document.getElementById('ui-wish-pane-title').innerText = pack.wishPaneTitle;
       document.getElementById('ui-wish-cast').innerText = pack.wishCast;
       document.getElementById('ui-wish-cancel').innerText = pack.wishCancel;
@@ -346,13 +347,11 @@
     }
     window.switchTab = switchTab;
 
-    // 直接啟動內嵌金鑰
     function bootstrapConfig() {
       applyLanguagePack();
       document.getElementById('dash-members').innerText = FIXED_MEMBERS.join(', ');
       document.getElementById('flight-member-select').innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
       
-      // 初始化超級大腦與資料庫
       if (window.MyGoogleGenAIInstance) {
         const genAI = new window.MyGoogleGenAIInstance({ apiKey: EMBEDDED_GEMINI_KEY });
         aiModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
@@ -363,6 +362,12 @@
       } else { db = firebase.firestore(); }
 
       streamExpenses(); streamItinerary(); streamWishes(); streamHotel(); streamFlights();
+      
+      // 🔒 鐵血雙重鎖定：不管任何語系怎麼重寫，強制把開關事件焊死在按鈕上！
+      document.getElementById('ui-wish-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleWishEditor();
+      });
     }
 
     // HOTEL
@@ -403,7 +408,7 @@
       try { const b64 = await downscaleImageBytes(file); const generatedJSON = await streamGeminiVisionAI(b64); sBox.style.display = 'none'; openBillPanel(null, generatedJSON); } catch (err) { sBox.style.display = 'none'; alert("OCR Scan error: " + err.message); }
     });
     function downscaleImageBytes(file) { return new Promise((res) => { const r = new FileReader(); r.readAsDataURL(file); r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement("canvas"); let w = i.width, h = i.height; if (w > 1024) { h = Math.round((h * 1024) / w); w = 1024; } c.width = w; c.height = h; c.getContext("2d").drawImage(i, 0, 0, w, h); res(c.toDataURL("image/jpeg", 0.75).split(',')[1]); }; }; }); }
-    async function streamGeminiVisionAI(bytes) { const p = `Parse receipt. KEEP STORES/ITEMS IN RAW ENGLISH STRICTLY. Format json: { "storeName": "Merchant", "items": "Flat string", "amountAUD": 12.50, "category": "Food", "date": "2026-05-24" }`; const res = await aiModel.generateContent([p, { inlineData: { data: bytes, mimeType: "image/jpeg" } }]); return JSON.parse(res.response.text()); }
+    async function streamGeminiVisionAI(bytes) { const p = `Parse receipt. KEEP RAW ENGLISH. Format json: { "storeName": "Merchant", "items": "Flat string", "amountAUD": 12.50, "category": "Food", "date": "2026-05-24" }`; const res = await aiModel.generateContent([p, { inlineData: { data: bytes, mimeType: "image/jpeg" } }]); return JSON.parse(res.response.text()); }
 
     function openBillPanel(id, data) {
       document.getElementById('bill-editor').style.display = 'block'; document.getElementById('edit-id').value = id || ''; document.getElementById('edit-store').value = data.storeName || ''; document.getElementById('edit-items').value = data.items || ''; document.getElementById('edit-amount').value = data.amountAUD || 0; document.getElementById('edit-cat').value = data.category || 'Others'; document.getElementById('edit-date').value = data.date || '';
@@ -476,7 +481,6 @@
     window.toggleWishStatus = function(id, currentStatus) { db.collection("sydney_luxe_wishes").doc(id).update({ approvedInPlan: !currentStatus }); };
     window.nukeWishNode = function(id) { if(confirm(currentLang==='en'?"Delete?":"確定要撤銷這個願望嗎？")) db.collection("sydney_luxe_wishes").doc(id).delete(); };
 
-    // 啟動加載
     setTimeout(bootstrapConfig, 400);
   </script>
 </body>
