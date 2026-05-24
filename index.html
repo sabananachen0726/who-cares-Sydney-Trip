@@ -1,0 +1,604 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2113.65">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    span.s1 {font: 12.0px 'Apple Color Emoji'}
+    span.s2 {font: 12.0px 'Zapf Dingbats'}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;Sydney Trip Tracker &amp; Planner&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Tailwind CSS v4 CDN --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://unpkg.com/@tailwindcss/browser@4"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Import Map for Firebase and Gemini Edge SDK --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script type="importmap"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{</p>
+<p class="p1"><span class="Apple-converted-space">      </span>"imports": {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"@google/generative-ai": "https://esm.run/@google/generative-ai"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body class="bg-slate-50 text-slate-800 min-h-screen pb-24"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- TOP BAR --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;header class="bg-indigo-600 text-white shadow-md sticky top-0 z-50"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="max-w-xl mx-auto px-4 py-3 flex justify-between items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h1 class="text-xl font-bold flex items-center gap-1"&gt;<span class="s1">🦘</span> Sydney Planner &amp; Tracker&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button id="btn-toggle-config" class="text-xs bg-indigo-700 hover:bg-indigo-800 px-3 py-1.5 rounded-lg transition"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span><span class="s1">⚙️</span> Config Keys</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/header&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;main class="max-w-xl mx-auto px-4 mt-4 space-y-6"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- CONFIG SECTION (Keys &amp; Settings) --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="section-config" class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 hidden space-y-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h2 class="font-bold text-slate-700 flex items-center gap-1"&gt;<span class="s1">⚙️</span> Cloud &amp; AI Configurations&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;p class="text-xs text-slate-400"&gt;All data will be directly synced to your Firebase Cloud Database.&lt;/p&gt;</p>
+<p class="p2"><span class="Apple-converted-space">      </span></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="space-y-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;label class="block text-[10px] font-bold text-slate-500 uppercase"&gt;Gemini API Key&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;input type="password" id="cfg-gemini-key" class="w-full p-2 border border-slate-300 rounded-lg text-xs" placeholder="AIzaSy..."&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;label class="block text-[10px] font-bold text-slate-500 uppercase"&gt;Firebase Config (JSON Object)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;textarea id="cfg-firebase-json" rows="4" class="w-full p-2 border border-slate-300 rounded-lg text-xs font-mono" placeholder='{ "apiKey": "...", "authDomain": "...", "projectId": "...", "storageBucket": "...", "messagingSenderId": "...", "appId": "..." }'&gt;&lt;/textarea&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="grid grid-cols-2 gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label class="block text-[10px] font-bold text-slate-500 uppercase"&gt;AUD to TWD Rate&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="number" id="cfg-rate" value="21.5" step="0.1" class="w-full p-2 border border-slate-300 rounded-lg text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label class="block text-[10px] font-bold text-slate-500 uppercase"&gt;Trip Members (Comma separated)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="text" id="cfg-members" value="Alex, Bob, Chris" class="w-full p-2 border border-slate-300 rounded-lg text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button id="btn-save-config" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg text-xs transition"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>Connect &amp; Save to Cloud</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- TAB NAVIGATION --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="flex border-b border-slate-200"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button id="tab-tracker-btn" class="flex-1 py-2.5 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 transition"&gt;<span class="s1">🧾</span> Receipt Tracker&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button id="tab-itinerary-btn" class="flex-1 py-2.5 text-sm font-medium text-slate-500 hover:text-indigo-600 transition"&gt;<span class="s1">🗓️</span> Itinerary Planner&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- MODULE 1: RECEIPT TRACKER &amp; SPLIT BILL --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="tab-tracker-content" class="space-y-4"&gt;</p>
+<p class="p2"><span class="Apple-converted-space">      </span></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- DASHBOARD --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;section class="grid grid-cols-2 gap-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-4 rounded-xl shadow-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-[10px] uppercase tracking-wider opacity-80"&gt;Total Trip Expense&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-2xl font-black mt-1" id="dash-total"&gt;A$ 0.00&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-xs opacity-70 mt-0.5" id="dash-total-twd"&gt;≈ NT$ 0&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-4 rounded-xl shadow-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-[10px] uppercase tracking-wider opacity-80"&gt;Active Members&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-lg font-bold mt-2 truncate" id="dash-members"&gt;Loading...&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- CAMERA / UPLOAD ZONE --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;section class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-center space-y-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="border-2 border-dashed border-slate-300 rounded-xl p-5 bg-slate-50 hover:bg-slate-100 transition relative cursor-pointer group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;input type="file" id="file-input" accept="image/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="space-y-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="text-3xl"&gt;<span class="s1">📸</span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-xs font-bold text-slate-600"&gt;Scan Australian Receipt&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-[10px] text-slate-400"&gt;Keeps original English names &amp; items&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Scanning Status --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="scan-status-box" class="hidden flex items-center gap-3 p-2 bg-slate-50 rounded-lg border border-slate-200 text-left"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="w-2 h-2 rounded-full bg-indigo-600 animate-ping"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-xs font-medium text-slate-600" id="scan-status-text"&gt;Processing image...&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- MUTABLE BILL EDITOR (Pops up when scanned or edited) --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;section id="bill-editor" class="bg-amber-50 p-4 rounded-xl border border-amber-200 hidden space-y-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-between items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3 class="text-xs font-bold text-amber-800 uppercase tracking-wider"&gt;<span class="s1">✍️</span> Verify &amp; Adjust Splits&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button id="btn-close-editor" class="text-xs text-slate-400 hover:text-slate-600"&gt;Cancel&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="hidden" id="edit-id"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="grid grid-cols-2 gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label class="block text-[10px] font-bold text-slate-500"&gt;Store (Keep English)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="text" id="edit-store" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label class="block text-[10px] font-bold text-slate-500"&gt;Paid By&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;select id="edit-paid-by" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs"&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;label class="block text-[10px] font-bold text-slate-500"&gt;Items Summary&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;input type="text" id="edit-items" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="grid grid-cols-3 gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label class="block text-[10px] font-bold text-slate-500"&gt;Amount (AUD)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="number" id="edit-amount" step="0.01" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs font-bold"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label class="block text-[10px] font-bold text-slate-500"&gt;Category&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="text" id="edit-cat" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label class="block text-[10px] font-bold text-slate-500"&gt;Date&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="date" id="edit-date" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Manual Split Adjuster --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bg-white p-3 rounded-lg border border-amber-100 space-y-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-[10px] font-bold text-slate-500 uppercase"&gt;Split Adjustment (AUD amount per person)&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div id="split-shares-container" class="space-y-1.5"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;!-- Dynamic inputs for manual tweaking --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="flex justify-between items-center text-[10px] text-slate-500 pt-1 border-t border-slate-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;span&gt;Total Assigned: &lt;strong id="split-total-assigned"&gt;A$ 0.00&lt;/strong&gt;&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button id="btn-equal-split" class="text-indigo-600 hover:underline"&gt;Reset to Equal Split&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button id="btn-save-bill" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs transition"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>Sync Bill to Cloud</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- EXPENSE HISTORY LIST --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="px-4 py-2.5 border-b border-slate-100 bg-slate-50 font-bold text-slate-700 text-xs uppercase tracking-wider"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span><span class="s1">🧾</span> Live Ledger (Cloud)</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;ul id="expense-list" class="divide-y divide-slate-100 max-h-96 overflow-y-auto"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;li class="p-6 text-center text-xs text-slate-400"&gt;Waiting for cloud configuration synchronization...&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/section&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- MODULE 2: EDITABLE ITINERARY PLANNER --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="tab-itinerary-content" class="space-y-4 hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="flex justify-between items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider"&gt;<span class="s1">🗓️</span> Cloud Schedule Timetable&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button id="btn-add-schedule" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>+ Add Row</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- Live Editable Table --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="overflow-x-auto"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;table class="w-full border-collapse text-left text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;thead class="bg-slate-50 font-bold text-slate-600 border-b border-slate-200 uppercase tracking-wider"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th class="p-3 w-1/4"&gt;Date / Time&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th class="p-3 w-1/4"&gt;Location / Hub&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th class="p-3 w-5/12"&gt;Plan / Activities Details&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th class="p-3 w-1/12 text-center"&gt;Action&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;tbody id="itinerary-table-body" class="divide-y divide-slate-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;!-- Dynamically populated rows --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/main&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- SCRIPT LOGIC --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script type="module"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>import { initializeApp } from "firebase/app";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc, deleteDoc } from "firebase/firestore";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>import { GoogleGenAI } from "@google/generative-ai";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>let db, aiModel;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let config = { geminiKey: '', rate: 21.5, members: ['Alex', 'Bob', 'Chris'] };</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let currentExpenses = [];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// TABS CONTROL</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('tab-tracker-btn').addEventListener('click', () =&gt; switchTab('tracker'));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('tab-itinerary-btn').addEventListener('click', () =&gt; switchTab('itinerary'));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('btn-toggle-config').addEventListener('click', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('section-config').classList.toggle('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function switchTab(tab) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const trackerBtn = document.getElementById('tab-tracker-btn');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const itineraryBtn = document.getElementById('tab-itinerary-btn');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const trackerContent = document.getElementById('tab-tracker-content');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const itineraryContent = document.getElementById('tab-itinerary-content');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (tab === 'tracker') {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>trackerBtn.className = "flex-1 py-2.5 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 transition";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>itineraryBtn.className = "flex-1 py-2.5 text-sm font-medium text-slate-500 hover:text-indigo-600 transition";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>trackerContent.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>itineraryContent.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>itineraryBtn.className = "flex-1 py-2.5 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 transition";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>trackerBtn.className = "flex-1 py-2.5 text-sm font-medium text-slate-500 hover:text-indigo-600 transition";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>itineraryContent.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>trackerContent.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// INITIALIZE &amp; READ LOCAL CONFIG TO START CLOUD CONNS</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function loadLocalConfig() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const savedConfig = localStorage.getItem('sydney_app_config');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (savedConfig) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const parsed = JSON.parse(savedConfig);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('cfg-gemini-key').value = parsed.geminiKey || '';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('cfg-firebase-json').value = parsed.firebaseJson || '';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('cfg-rate').value = parsed.rate || 21.5;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('cfg-members').value = parsed.members ? parsed.members.join(', ') : 'Alex, Bob, Chris';</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (parsed.firebaseJson &amp;&amp; parsed.geminiKey) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>connectToServices(parsed);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('section-config').classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('btn-save-config').addEventListener('click', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const geminiKey = document.getElementById('cfg-gemini-key').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const firebaseJson = document.getElementById('cfg-firebase-json').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const rate = parseFloat(document.getElementById('cfg-rate').value) || 21.5;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const members = document.getElementById('cfg-members').value.split(',').map(m =&gt; m.trim()).filter(m =&gt; m);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const newConfig = { geminiKey, firebaseJson, rate, members };</p>
+<p class="p1"><span class="Apple-converted-space">      </span>localStorage.setItem('sydney_app_config', JSON.stringify(newConfig));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>alert('Configurations saved! Syncing cloud pipeline...');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('section-config').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>connectToServices(newConfig);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function connectToServices(cfg) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>config = cfg;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('dash-members').innerText = config.members.join(', ');</p>
+<p class="p2"><span class="Apple-converted-space">      </span></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Init Gemini</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const ai = new GoogleGenAI({ apiKey: config.geminiKey });</p>
+<p class="p1"><span class="Apple-converted-space">      </span>aiModel = ai.getGenerativeModel({<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>model: "gemini-2.0-flash",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>generationConfig: { responseMimeType: "application/json" }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Init Firebase</p>
+<p class="p1"><span class="Apple-converted-space">      </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const firebaseApp = initializeApp(JSON.parse(config.firebaseJson));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>db = getFirestore(firebaseApp);</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Start Live Cloud Sync Streams</p>
+<p class="p1"><span class="Apple-converted-space">        </span>syncExpenses();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>syncItinerary();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} catch (err) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>alert("Firebase Connection Error: Please double check your JSON configuration structure.");</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// ==========================================</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// MODULE 1: EXPENSE &amp; LIVE BILL SPLITTING</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// ==========================================</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function syncExpenses() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>onSnapshot(collection(db, "sydney_expenses"), (snapshot) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>currentExpenses = [];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>snapshot.forEach((doc) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>currentExpenses.push({ id: doc.id, ...doc.data() });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>updateDashboard();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>renderExpenseList();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function updateDashboard() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const total = currentExpenses.reduce((sum, exp) =&gt; sum + (exp.amountAUD || 0), 0);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('dash-total').innerText = `A$ ${total.toFixed(2)}`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('dash-total-twd').innerText = `≈ NT$ ${Math.round(total * config.rate)}`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderExpenseList() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const listEl = document.getElementById('expense-list');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (currentExpenses.length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>listEl.innerHTML = `&lt;li class="p-6 text-center text-xs text-slate-400"&gt;No receipt logs found in Cloud Database.&lt;/li&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const sorted = [...currentExpenses].sort((a, b) =&gt; new Date(b.date) - new Date(a.date));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>listEl.innerHTML = sorted.map(exp =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const splitsHtml = Object.entries(exp.splits || {})</p>
+<p class="p1"><span class="Apple-converted-space">          </span>.map(([name, amt]) =&gt; `&lt;span class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-600"&gt;${name}: A$${parseFloat(amt).toFixed(1)}&lt;/span&gt;`)</p>
+<p class="p1"><span class="Apple-converted-space">          </span>.join(' ');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>return `</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;li class="p-3.5 flex justify-between items-center hover:bg-slate-50 transition text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="space-y-1 flex-1 min-w-0 pr-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="flex items-center gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span class="font-bold text-slate-900 truncate"&gt;${exp.storeName}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span class="bg-indigo-50 text-indigo-700 px-1.5 py-0.2 rounded-full font-semibold text-[9px] uppercase"&gt;${exp.category}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;p class="text-slate-500 truncate font-mono text-[11px]"&gt;${exp.items}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="text-[10px] flex flex-wrap gap-1 items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span class="text-slate-400 font-medium"&gt;${exp.date} | Paid by &lt;strong&gt;${exp.paidBy}&lt;/strong&gt;&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex gap-1"&gt;${splitsHtml}&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="text-right flex flex-col items-end gap-1.5"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="font-bold text-indigo-600"&gt;A$ ${parseFloat(exp.amountAUD).toFixed(2)}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-[10px] text-slate-400"&gt;NT$ ${Math.round(exp.amountAUD * config.rate)}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="flex gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button onclick="window.triggerEditBill('${exp.id}')" class="text-indigo-600 hover:underline font-medium"&gt;Adjust&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button onclick="window.triggerDeleteBill('${exp.id}')" class="text-red-500 hover:underline font-medium"&gt;Delete&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}).join('');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// IMAGE ATTACHMENT PROCESSING</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('file-input').addEventListener('change', async (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const file = e.target.files[0];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!file || !db) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const statusBox = document.getElementById('scan-status-box');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const statusText = document.getElementById('scan-status-text');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>statusBox.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>statusText.innerText = "Compressing high-resolution photo...";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const compressedBase64 = await compressImage(file);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>statusText.innerText = "Gemini Vision AI extracting parameters (English-Preserved)...";</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const aiBill = await analyzeReceiptWithGemini(compressedBase64);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>openBillEditor(null, aiBill);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>statusBox.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} catch (err) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>statusBox.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>alert("OCR Scanning Error: " + err.message);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function compressImage(file) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return new Promise((resolve, reject) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const reader = new FileReader();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>reader.readAsDataURL(file);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>reader.onload = (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>const img = new Image();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>img.src = e.target.result;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>img.onload = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const canvas = document.createElement("canvas");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let width = img.width, height = img.height;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (width &gt; 1024) { height = Math.round((height * 1024) / width); width = 1024; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>canvas.width = width; canvas.height = height;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const ctx = canvas.getContext("2d");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>ctx.drawImage(img, 0, 0, width, height);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>resolve(canvas.toDataURL("image/jpeg", 0.8).split(',')[1]);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>};</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>async function analyzeReceiptWithGemini(base64Data) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const prompt = `</p>
+<p class="p1"><span class="Apple-converted-space">        </span>You are an expert expense parser for a trip to Sydney, Australia.</p>
+<p class="p1"><span class="Apple-converted-space">        </span>Analyze this receipt. EXTRACT ALL FIELDS IN ORIGINAL ENGLISH AS SEEN ON THE RECEIPT (DO NOT TRANSLATE stores or items into Chinese).</p>
+<p class="p1"><span class="Apple-converted-space">        </span>Return purely a strict raw JSON matching this format:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{</p>
+<p class="p1"><span class="Apple-converted-space">          </span>"storeName": "Original English name of store (e.g. Woolworths Metro, Coles, Cafe Name)",</p>
+<p class="p1"><span class="Apple-converted-space">          </span>"items": "Concise summary line of bought items in English (e.g. Milk, Avocado Toast, Coffee)",</p>
+<p class="p1"><span class="Apple-converted-space">          </span>"amountAUD": Grand total price numeric float (e.g. 24.50, exclude changes/cash given metrics),</p>
+<p class="p1"><span class="Apple-converted-space">          </span>"category": "Pick one exactly: Food, Supermarket, Transport, Tickets, Hotel, Shopping, Others",</p>
+<p class="p1"><span class="Apple-converted-space">          </span>"date": "Date found on receipt in YYYY-MM-DD. If completely missing, use today: ${new Date().toISOString().split('T')[0]}"</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const result = await modelCallWithFallback(prompt, base64Data);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return JSON.parse(result);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>async function modelCallWithFallback(prompt, base64Data) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Fallback matrix routing logic</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const models = ["gemini-2.0-flash", "gemini-1.5-flash"];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (let modelName of models) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>const result = await aiModel.generateContent([prompt, { inlineData: { data: base64Data, mimeType: "image/jpeg" } }]);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>return result.response.text();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} catch (e) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>console.warn(`Model ${modelName} encountered error. Trying fallback...`);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>throw new Error("All active Gemini endpoints failed.");</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// BILL SPLIT ADJUSTMENT LOGIC</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function openBillEditor(id, data) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('bill-editor').classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('edit-id').value = id || '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('edit-store').value = data.storeName || '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('edit-items').value = data.items || '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('edit-amount').value = data.amountAUD || 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('edit-cat').value = data.category || 'Others';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('edit-date').value = data.date || '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Populate Paid By dropdown selectors</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const paidBySel = document.getElementById('edit-paid-by');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>paidBySel.innerHTML = config.members.map(m =&gt; `&lt;option value="${m}" ${data.paidBy === m ? 'selected':''}&gt;${m}&lt;/option&gt;`).join('');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Build Split Weight Inputs</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const sharesContainer = document.getElementById('split-shares-container');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const totalAmount = parseFloat(data.amountAUD) || 0;</p>
+<p class="p2"><span class="Apple-converted-space">      </span></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// If new, generate equal split weights default matrix</p>
+<p class="p1"><span class="Apple-converted-space">      </span>let currentSplits = data.splits || {};</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (Object.keys(currentSplits).length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const share = totalAmount / config.members.length;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>config.members.forEach(m =&gt; { currentSplits[m] = parseFloat(share.toFixed(2)); });</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>sharesContainer.innerHTML = config.members.map(m =&gt; `</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex items-center justify-between gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="text-xs font-medium text-slate-600"&gt;${m} Share (A$)&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;input type="number" step="0.01" data-member="${m}" class="split-member-input w-24 p-1 text-right border border-slate-300 rounded text-xs" value="${currentSplits[m] || 0}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>`).join('');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>setupSplitListeners();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>recalculateSplitTotal();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function setupSplitListeners() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.querySelectorAll('.split-member-input').forEach(input =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>input.addEventListener('input', recalculateSplitTotal);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function recalculateSplitTotal() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>let sum = 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.querySelectorAll('.split-member-input').forEach(input =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>sum += parseFloat(input.value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('split-total-assigned').innerText = `A$ ${sum.toFixed(2)}`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('btn-equal-split').addEventListener('click', (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>e.preventDefault();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const totalAmount = parseFloat(document.getElementById('edit-amount').value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const inputs = document.querySelectorAll('.split-member-input');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const equalShare = totalAmount / inputs.length;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>inputs.forEach(input =&gt; { input.value = equalShare.toFixed(2); });</p>
+<p class="p1"><span class="Apple-converted-space">      </span>recalculateSplitTotal();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('btn-close-editor').addEventListener('click', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('bill-editor').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('btn-save-bill').addEventListener('click', async () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const id = document.getElementById('edit-id').value;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const storeName = document.getElementById('edit-store').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const items = document.getElementById('edit-items').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const amountAUD = parseFloat(document.getElementById('edit-amount').value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const category = document.getElementById('edit-cat').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const date = document.getElementById('edit-date').value;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const paidBy = document.getElementById('edit-paid-by').value;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Extract split weight tweaks maps</p>
+<p class="p1"><span class="Apple-converted-space">      </span>let splits = {};</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.querySelectorAll('.split-member-input').forEach(input =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const mem = input.getAttribute('data-member');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>splits[mem] = parseFloat(input.value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const payload = { storeName, items, amountAUD, category, date, paidBy, splits };</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (id) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>await setDoc(doc(db, "sydney_expenses", id), payload, { merge: true });</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>await addDoc(collection(db, "sydney_expenses"), payload);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('bill-editor').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>window.triggerEditBill = function(id) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const exp = currentExpenses.find(e =&gt; e.id === id);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (exp) openBillEditor(id, exp);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>window.triggerDeleteBill = async function(id) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(confirm("Confirm deletion from Cloud Server?")) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>await deleteDoc(doc(db, "sydney_expenses", id));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// ==========================================</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// MODULE 2: EDITABLE CLOUD ITINERARY</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// ==========================================</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function syncItinerary() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>onSnapshot(collection(db, "sydney_itinerary"), (snapshot) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const tableBody = document.getElementById('itinerary-table-body');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let rows = [];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>snapshot.forEach((doc) =&gt; { rows.push({ id: doc.id, ...doc.data() }); });</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Chronological sorting metrics</p>
+<p class="p1"><span class="Apple-converted-space">        </span>rows.sort((a, b) =&gt; (a.order || 0) - (b.order || 0));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if(rows.length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>tableBody.innerHTML = `&lt;tr&gt;&lt;td colspan="4" class="p-6 text-center text-slate-400"&gt;Itinerary Empty. Press "+ Add Row" to begin planning.&lt;/td&gt;&lt;/tr&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>tableBody.innerHTML = rows.map(row =&gt; `</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;tr class="hover:bg-slate-50 transition" data-id="${row.id}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;td class="p-2 border-b border-slate-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;input type="text" value="${row.dateTime || ''}" onblur="window.updateItineraryField('${row.id}', 'dateTime', this.value)" class="w-full bg-transparent p-1 focus:bg-white focus:ring-1 focus:ring-indigo-500 rounded border-0 outline-0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;td class="p-2 border-b border-slate-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;input type="text" value="${row.hubLocation || ''}" onblur="window.updateItineraryField('${row.id}', 'hubLocation', this.value)" class="w-full bg-transparent p-1 font-bold text-slate-700 focus:bg-white focus:ring-1 focus:ring-indigo-500 rounded border-0 outline-0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;td class="p-2 border-b border-slate-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;input type="text" value="${row.activityDetails || ''}" onblur="window.updateItineraryField('${row.id}', 'activityDetails', this.value)" class="w-full bg-transparent p-1 focus:bg-white focus:ring-1 focus:ring-indigo-500 rounded border-0 outline-0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;td class="p-2 border-b border-slate-100 text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;button onclick="window.deleteItineraryRow('${row.id}')" class="text-red-400 hover:text-red-600 font-bold text-xs"&gt;<span class="s2">✕</span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>`).join('');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('btn-add-schedule').addEventListener('click', async () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const currentRowsCount = document.getElementById('itinerary-table-body').children.length;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>await addDoc(collection(db, "sydney_itinerary"), {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dateTime: "09:00 / Day X",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>hubLocation: "Circular Quay",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>activityDetails: "Coffee at Ground Control &amp; Ferry to Manly Beach",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>order: currentRowsCount + 1</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>window.updateItineraryField = async function(id, field, value) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>let updateObj = {};</p>
+<p class="p1"><span class="Apple-converted-space">      </span>updateObj[field] = value;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>await setDoc(doc(db, "sydney_itinerary", id), updateObj, { merge: true });</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>window.deleteItineraryRow = async function(id) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>await deleteDoc(doc(db, "sydney_itinerary", id));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// START TRIGGER</p>
+<p class="p1"><span class="Apple-converted-space">    </span>loadLocalConfig();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
