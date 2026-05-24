@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SYD | Premium Travel Tracker</title>
+  <title>SYD | Premium Local Tracker</title>
   <!-- Tailwind CSS v4 CDN -->
   <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
   <script type="importmap">
@@ -16,21 +16,20 @@
     }
   </script>
   <style>
-    /* 微調手機原生拉條與高質感過渡 */
     body { -webkit-tap-highlight-color: transparent; }
-    .pink-glow { box-shadow: 0 0 15px rgba(244, 143, 177, 0.15); }
+    .pink-soft-glow { box-shadow: 0 4px 20px rgba(244, 143, 177, 0.12); }
   </style>
 </head>
-<body class="bg-black text-white min-h-screen pb-32 font-sans antialiased selection:bg-pink-200 selection:text-black">
+<body class="bg-gray-50 text-slate-900 min-h-screen pb-32 font-sans antialiased selection:bg-pink-100">
 
-  <!-- PREMIUM HEADER -->
-  <header class="bg-zinc-950/80 backdrop-blur-md border-b border-zinc-900 sticky top-0 z-40">
+  <!-- PREMIUM WHITE & PINK HEADER -->
+  <header class="bg-white/90 backdrop-blur-md border-b border-gray-200 sticky top-0 z-40">
     <div class="max-w-md mx-auto px-5 py-4 flex justify-between items-center">
       <div class="flex items-center gap-2">
-        <span class="w-2.5 h-2.5 rounded-full bg-pink-400 animate-pulse"></span>
-        <h1 class="text-base font-black tracking-widest uppercase">SYDNEY <span class="text-pink-400">.</span> LUXE</h1>
+        <span class="w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse"></span>
+        <h1 class="text-base font-black tracking-widest uppercase text-slate-900">SYDNEY <span class="text-pink-500">.</span> LUXE</h1>
       </div>
-      <button id="btn-toggle-config" class="text-[11px] font-bold tracking-wider uppercase bg-zinc-900 border border-zinc-800 text-zinc-400 px-3 py-1.5 rounded-full hover:text-pink-400 hover:border-pink-400/30 transition">
+      <button id="btn-toggle-config" class="text-[11px] font-bold tracking-wider uppercase bg-slate-900 text-white px-4 py-2 rounded-full hover:bg-pink-500 transition cursor-pointer shadow-sm">
         ⚙️ Cloud Keys
       </button>
     </div>
@@ -38,140 +37,133 @@
 
   <main class="max-w-md mx-auto px-4 mt-5 space-y-6">
 
-    <!-- CONFIG SECTION (Luxury Dark Mode) -->
-    <section id="section-config" class="bg-zinc-950 p-5 rounded-2xl border border-zinc-900 hidden space-y-4 pink-glow">
+    <!-- CONFIG SECTION (Elegant Light Mode) -->
+    <section id="section-config" class="bg-white p-5 rounded-2xl border border-gray-200 hidden space-y-4 pink-soft-glow">
       <div class="space-y-1">
-        <h2 class="text-sm font-bold tracking-wider uppercase text-pink-400">Cloud Credentials</h2>
-        <p class="text-[11px] text-zinc-500">Syncs everything seamlessly to your private Firebase container.</p>
+        <h2 class="text-sm font-bold tracking-wider uppercase text-pink-600">Cloud Credentials</h2>
+        <p class="text-[11px] text-gray-500">Syncs everything seamlessly to your private Firebase container.</p>
       </div>
       <div class="space-y-3">
         <div>
-          <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Gemini AI Key</label>
-          <input type="password" id="cfg-gemini-key" class="w-full p-3 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-pink-400 transition" placeholder="AIzaSy...">
+          <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Gemini AI Key</label>
+          <input type="password" id="cfg-gemini-key" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-pink-400 focus:bg-white transition" placeholder="AIzaSy...">
         </div>
         <div>
-          <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Firebase Configuration JSON</label>
-          <textarea id="cfg-firebase-json" rows="4" class="w-full p-3 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-zinc-300 font-mono focus:outline-none focus:border-pink-400 transition" placeholder='{ "apiKey": "...", "projectId": "..." }'></textarea>
+          <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Firebase Configuration JSON</label>
+          <textarea id="cfg-firebase-json" rows="4" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-800 font-mono focus:outline-none focus:border-pink-400 focus:bg-white transition" placeholder='{ "apiKey": "...", "projectId": "..." }'></textarea>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-1">AUD → TWD Rate</label>
-            <input type="number" id="cfg-rate" value="21.5" step="0.1" class="w-full p-3 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-pink-400 transition">
-          </div>
-          <div>
-            <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Members (Comma Sep)</label>
-            <input type="text" id="cfg-members" value="Alex, Bob" class="w-full p-3 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-pink-400 transition">
-          </div>
+        <div>
+          <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Trip Members (Comma Separated)</label>
+          <input type="text" id="cfg-members" value="Alex, Bob, Chris" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-pink-400 focus:bg-white transition">
         </div>
       </div>
-      <button id="btn-save-config" class="w-full bg-white hover:bg-pink-100 text-black font-bold py-3 rounded-xl text-xs tracking-widest uppercase transition">
-        Initialize Live Server
+      <button id="btn-save-config" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs tracking-widest uppercase transition cursor-pointer hover:bg-pink-600">
+        Connect & Initialize Cloud
       </button>
     </section>
 
     <!-- LIVE SMART BANNER -->
-    <div class="bg-zinc-950 border border-zinc-900 p-3 rounded-xl flex items-center justify-between text-[11px] text-zinc-400">
+    <div class="bg-white border border-gray-200 p-3.5 rounded-xl flex items-center justify-between text-[11px] text-gray-600 shadow-sm">
       <div class="flex items-center gap-2">
-        <span class="text-sm">🇦🇺</span>
-        <span>Sydney Active Budget Monitor</span>
+        <span>🇦🇺</span>
+        <span class="font-medium">Sydney Shared Ledger & Planner</span>
       </div>
-      <span class="text-pink-400 font-bold" id="live-time-badge">Opal Card Enabled</span>
+      <span class="text-pink-600 font-bold bg-pink-50 px-2 py-0.5 rounded-full border border-pink-100">AUD Account</span>
     </div>
 
-    <!-- METRICS CARD -->
-    <section class="bg-zinc-950 border border-zinc-900 rounded-2xl p-5 relative overflow-hidden pink-glow">
-      <div class="absolute -right-10 -top-10 w-32 h-32 bg-pink-500/5 rounded-full blur-2xl"></div>
+    <!-- METRICS CARD (Clean Light Minimal) -->
+    <section class="bg-white border border-gray-200 rounded-2xl p-5 relative overflow-hidden pink-soft-glow">
+      <div class="absolute -right-10 -top-10 w-32 h-32 bg-pink-400/10 rounded-full blur-2xl"></div>
       <div class="flex justify-between items-start">
         <div class="space-y-0.5">
-          <p class="text-[10px] font-bold tracking-widest uppercase text-zinc-500">Gross Trip Investment</p>
-          <p class="text-3xl font-black tracking-tight" id="dash-total">A$ 0.00</p>
-          <p class="text-xs text-pink-400 font-medium" id="dash-total-twd">≈ NT$ 0</p>
+          <p class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Total Group Expense</p>
+          <p class="text-3xl font-black tracking-tight text-slate-900" id="dash-total">A$ 0.00</p>
         </div>
         <div class="text-right space-y-1">
-          <p class="text-[10px] font-bold tracking-widest uppercase text-zinc-500">Crew Status</p>
-          <p class="text-xs font-semibold text-white max-w-[120px] truncate" id="dash-members">Syncing...</p>
+          <p class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Active Crew</p>
+          <p class="text-xs font-bold text-slate-700 max-w-[140px] truncate" id="dash-members">Syncing...</p>
         </div>
       </div>
     </section>
 
-    <!-- MODULE 1: RECEIPT SCANNER & ADJUSTMENT -->
+    <!-- MODULE 1: RECEIPT SCANNER & SPLIT -->
     <div id="tab-tracker-content" class="space-y-4">
       <!-- UPLOAD AREA -->
       <section class="relative">
-        <div class="border border-dashed border-zinc-800 rounded-2xl p-6 bg-zinc-950/60 hover:bg-zinc-950 transition-all text-center relative cursor-pointer group">
+        <div class="border-2 border-dashed border-gray-300 rounded-2xl p-6 bg-white hover:bg-gray-50 transition-all text-center relative cursor-pointer group shadow-sm">
           <input type="file" id="file-input" accept="image/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer z-20">
           <div class="space-y-2">
-            <div class="text-2xl text-pink-400 group-hover:scale-110 transition duration-300">📷</div>
-            <p class="text-xs font-bold tracking-wide">Capture Australian Receipt</p>
-            <p class="text-[10px] text-zinc-500">Keeps raw English descriptors flawlessly</p>
+            <div class="text-2xl text-pink-500 group-hover:scale-110 transition duration-300">📷</div>
+            <p class="text-xs font-bold tracking-wide text-slate-700">Scan Receipt to Auto-Split</p>
+            <p class="text-[10px] text-gray-400">Keeps original English merchant titles</p>
           </div>
         </div>
         <!-- Upload Status overlay -->
-        <div id="scan-status-box" class="hidden mt-2 p-3 bg-zinc-950 border border-pink-500/20 rounded-xl flex items-center gap-3">
-          <div class="w-2 h-2 rounded-full bg-pink-400 animate-ping"></div>
-          <p class="text-xs font-medium text-zinc-300" id="scan-status-text">Uploading image matrix...</p>
+        <div id="scan-status-box" class="hidden mt-2 p-3 bg-white border border-pink-200 rounded-xl flex items-center gap-3 shadow-sm">
+          <div class="w-2 h-2 rounded-full bg-pink-500 animate-ping"></div>
+          <p class="text-xs font-medium text-slate-700" id="scan-status-text">Uploading image matrix...</p>
         </div>
       </section>
 
-      <!-- MODAL SPLIT SHEET / BILL EDITOR -->
-      <section id="bill-editor" class="bg-zinc-950 p-5 rounded-2xl border border-pink-400/30 hidden space-y-4 pink-glow">
-        <div class="flex justify-between items-center pb-2 border-b border-zinc-900">
-          <h3 class="text-xs font-bold tracking-wider uppercase text-pink-400">Verify & Fine-Tune Split</h3>
-          <button id="btn-close-editor" class="text-xs text-zinc-500 hover:text-white">Close</button>
+      <!-- MODAL SPLIT SHEET / BILL EDITOR (Light) -->
+      <section id="bill-editor" class="bg-white p-5 rounded-2xl border border-gray-200 hidden space-y-4 pink-soft-glow">
+        <div class="flex justify-between items-center pb-2 border-b border-gray-100">
+          <h3 class="text-xs font-bold tracking-wider uppercase text-pink-600">Verify & Adjust Splits</h3>
+          <button id="btn-close-editor" class="text-xs text-gray-400 hover:text-slate-900 cursor-pointer">Cancel</button>
         </div>
         <input type="hidden" id="edit-id">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Merchant (English)</label>
-            <input type="text" id="edit-store" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white">
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Merchant (English)</label>
+            <input type="text" id="edit-store" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
           </div>
           <div>
-            <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Paid Investor</label>
-            <select id="edit-paid-by" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none"></select>
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Paid By</label>
+            <select id="edit-paid-by" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none"></select>
           </div>
         </div>
         <div>
-          <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Line Items Overview</label>
-          <input type="text" id="edit-items" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white">
+          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Items Summary</label>
+          <input type="text" id="edit-items" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
         </div>
         <div class="grid grid-cols-3 gap-2">
           <div>
-            <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Cost (AUD)</label>
-            <input type="number" id="edit-amount" step="0.01" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs font-bold text-pink-400">
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Cost (AUD)</label>
+            <input type="number" id="edit-amount" step="0.01" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-pink-600 focus:bg-white focus:outline-pink-400">
           </div>
           <div>
-            <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Category</label>
-            <input type="text" id="edit-cat" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white">
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Category</label>
+            <input type="text" id="edit-cat" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
           </div>
           <div>
-            <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Timestamp</label>
-            <input type="date" id="edit-date" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white">
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Date</label>
+            <input type="date" id="edit-date" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
           </div>
         </div>
 
-        <!-- Tweakable Split Controls -->
-        <div class="bg-zinc-900/60 p-4 rounded-xl border border-zinc-900 space-y-3">
+        <!-- Split Weight Controls -->
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3">
           <div class="flex justify-between items-center">
-            <p class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">Manual Split Weights</p>
-            <button id="btn-equal-split" class="text-[10px] text-pink-400 font-bold hover:underline">Equally Distribute</button>
+            <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Manual Split Weights</p>
+            <button id="btn-equal-split" class="text-[10px] text-pink-600 font-bold hover:underline cursor-pointer">Split Equally</button>
           </div>
           <div id="split-shares-container" class="space-y-2"></div>
-          <div class="text-[10px] text-zinc-500 pt-2 border-t border-zinc-900 flex justify-between">
-            <span>Aggregated Assignment:</span>
-            <strong id="split-total-assigned" class="text-white">A$ 0.00</strong>
+          <div class="text-[10px] text-gray-500 pt-2 border-t border-gray-200 flex justify-between">
+            <span>Assigned Total:</span>
+            <strong id="split-total-assigned" class="text-slate-900">A$ 0.00</strong>
           </div>
         </div>
 
-        <button id="btn-save-bill" class="w-full bg-white hover:bg-pink-100 text-black font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition">
-          Commit Financial Log
+        <button id="btn-save-bill" class="w-full bg-slate-900 hover:bg-pink-600 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition cursor-pointer">
+          Save Record to Cloud
         </button>
       </section>
 
       <!-- LIVE STATEMENT RECYCLER -->
       <div class="space-y-3">
-        <h3 class="text-[10px] font-bold tracking-widest uppercase text-zinc-500 px-1">Vault Ledgers</h3>
+        <h3 class="text-[10px] font-bold tracking-widest uppercase text-gray-400 px-1">Vault Ledgers</h3>
         <ul id="expense-list" class="space-y-2">
-          <li class="p-6 text-center text-xs text-zinc-600 bg-zinc-950 border border-zinc-900 rounded-2xl">Awaiting server initialization token stream...</li>
+          <li class="p-6 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-2xl">Awaiting cloud configuration stream...</li>
         </ul>
       </div>
     </div>
@@ -179,27 +171,27 @@
     <!-- MODULE 2: HIGH-FIDELITY MOBILE ITINERARY -->
     <div id="tab-itinerary-content" class="space-y-4 hidden">
       <div class="flex justify-between items-center px-1">
-        <h2 class="text-[10px] font-bold tracking-widest uppercase text-zinc-500">Live Dynamic Itinerary</h2>
-        <button id="btn-add-schedule" class="bg-zinc-950 border border-zinc-800 text-pink-400 hover:text-white hover:border-pink-400 text-[11px] font-bold px-4 py-2 rounded-full transition">
+        <h2 class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Group Itinerary Timeline</h2>
+        <button id="btn-add-schedule" class="bg-slate-900 text-white text-[11px] font-bold px-4 py-2 rounded-full transition cursor-pointer hover:bg-pink-600">
           + Add New Event
         </button>
       </div>
 
-      <!-- ITINERARY EDITOR DRAWERS CARD (POPS OUT WHEN TRIGGERED) -->
-      <section id="itinerary-editor" class="bg-zinc-950 p-5 rounded-2xl border border-pink-400/40 hidden space-y-4 pink-glow">
-        <div class="flex justify-between items-center pb-2 border-b border-zinc-900">
-          <h3 class="text-xs font-bold tracking-wider uppercase text-pink-400" id="itin-editor-title">Create Schedule Node</h3>
-          <button id="btn-close-itin-editor" class="text-xs text-zinc-500 hover:text-white">Cancel</button>
+      <!-- ITINERARY EDITOR -->
+      <section id="itinerary-editor" class="bg-white p-5 rounded-2xl border border-gray-200 hidden space-y-4 pink-soft-glow">
+        <div class="flex justify-between items-center pb-2 border-b border-gray-100">
+          <h3 class="text-xs font-bold tracking-wider uppercase text-pink-600" id="itin-editor-title">Create Schedule Node</h3>
+          <button id="btn-close-itin-editor" class="text-xs text-gray-400 hover:text-slate-900 cursor-pointer">Cancel</button>
         </div>
         <input type="hidden" id="edit-itin-id">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Time / Index</label>
-            <input type="text" id="edit-itin-time" placeholder="e.g. 09:00 / Day 1" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white">
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Time / Index</label>
+            <input type="text" id="edit-itin-time" placeholder="e.g. 09:00 / Day 1" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
           </div>
           <div>
-            <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Node Type (Badge)</label>
-            <select id="edit-itin-type" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none">
+            <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Node Type (Badge)</label>
+            <select id="edit-itin-type" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none">
               <option value="Flight">✈️ Flight (機票)</option>
               <option value="Breakfast">🍳 Breakfast (早餐)</option>
               <option value="Lunch">🍝 Lunch (午餐)</option>
@@ -210,57 +202,53 @@
           </div>
         </div>
         <div>
-          <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Hub Location</label>
-          <input type="text" id="edit-itin-location" placeholder="e.g. Sydney Opera House" class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white">
+          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Hub Location</label>
+          <input type="text" id="edit-itin-location" placeholder="e.g. Sydney Opera House" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400">
         </div>
         <div>
-          <label class="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Mission / Action Details</label>
-          <textarea id="edit-itin-details" rows="3" placeholder="Describe plans, tickets confirmation numbers or notes..." class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none"></textarea>
+          <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Mission / Action Details</label>
+          <textarea id="edit-itin-details" rows="3" placeholder="Describe plans..." class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-pink-400"></textarea>
         </div>
-        <button id="btn-save-itinerary" class="w-full bg-white hover:bg-pink-100 text-black font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition">
+        <button id="btn-save-itinerary" class="w-full bg-slate-900 hover:bg-pink-600 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition cursor-pointer">
           Sync Node To Cloud
         </button>
       </section>
 
-      <!-- MOBILE EVENT CARD TIMELINE STREAM -->
-      <div id="itinerary-cards-container" class="space-y-3">
-        <!-- Live stream items fall here instead of non-clickable grid tables -->
-      </div>
+      <div id="itinerary-cards-container" class="space-y-3"></div>
     </div>
 
   </main>
 
-  <!-- FIXED FOOTER TAB SWITCHER FOR PROFESSIONAL MOBILE PHONE APP LOOK -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-zinc-950/90 backdrop-blur-lg border-t border-zinc-900 py-3 px-6 z-40">
+  <!-- FIXED FOOTER TAB SWITCHER -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 py-3 px-6 z-40 shadow-lg">
     <div class="max-w-md mx-auto flex justify-around items-center">
-      <button id="nav-tab-tracker" class="flex flex-col items-center gap-1 group text-pink-400">
+      <button id="nav-tab-tracker" class="flex flex-col items-center gap-1 group text-pink-600 cursor-pointer">
         <span class="text-lg group-hover:scale-110 transition">🧾</span>
         <span class="text-[9px] font-bold uppercase tracking-widest">Ledger</span>
       </button>
-      <button id="nav-tab-itinerary" class="flex flex-col items-center gap-1 group text-zinc-500">
+      <button id="nav-tab-itinerary" class="flex flex-col items-center gap-1 group text-gray-400 cursor-pointer">
         <span class="text-lg group-hover:scale-110 transition">🗓️</span>
         <span class="text-[9px] font-bold uppercase tracking-widest">Planner</span>
       </button>
     </div>
   </nav>
 
-  <!-- APPLICATION CORE CODE -->
   <script type="module">
     import { initializeApp } from "firebase/app";
-    import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc, deleteDoc, query, orderBy } from "firebase/firestore";
+    import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc, deleteDoc } from "firebase/firestore";
     import { GoogleGenAI } from "@google/generative-ai";
 
     let db, aiModel;
-    let config = { geminiKey: '', rate: 21.5, members: ['Alex', 'Bob'] };
+    let config = { geminiKey: '', members: ['Alex', 'Bob'] };
     let currentExpenses = [];
     let currentItinerary = [];
 
-    // ACTION FOOTER BUTTON ROUTING
-    document.getElementById('nav-tab-tracker').addEventListener('click', () => switchUIMode('tracker'));
-    document.getElementById('nav-tab-itinerary').addEventListener('click', () => switchUIMode('itinerary'));
     document.getElementById('btn-toggle-config').addEventListener('click', () => {
       document.getElementById('section-config').classList.toggle('hidden');
     });
+
+    document.getElementById('nav-tab-tracker').addEventListener('click', () => switchUIMode('tracker'));
+    document.getElementById('nav-tab-itinerary').addEventListener('click', () => switchUIMode('itinerary'));
 
     function switchUIMode(mode) {
       const tBtn = document.getElementById('nav-tab-tracker');
@@ -269,26 +257,24 @@
       const iContent = document.getElementById('tab-itinerary-content');
 
       if(mode === 'tracker') {
-        tBtn.className = "flex flex-col items-center gap-1 group text-pink-400";
-        iBtn.className = "flex flex-col items-center gap-1 group text-zinc-500";
+        tBtn.className = "flex flex-col items-center gap-1 group text-pink-600 cursor-pointer";
+        iBtn.className = "flex flex-col items-center gap-1 group text-gray-400 cursor-pointer";
         tContent.classList.remove('hidden');
         iContent.classList.add('hidden');
       } else {
-        iBtn.className = "flex flex-col items-center gap-1 group text-pink-400";
-        tBtn.className = "flex flex-col items-center gap-1 group text-zinc-500";
+        iBtn.className = "flex flex-col items-center gap-1 group text-pink-600 cursor-pointer";
+        tBtn.className = "flex flex-col items-center gap-1 group text-gray-400 cursor-pointer";
         iContent.classList.remove('hidden');
         tContent.classList.add('hidden');
       }
     }
 
-    // CLOUD GATEWAY CONFIG PREPARATION
     function bootstrapConfig() {
       const cached = localStorage.getItem('sydney_luxe_config');
       if (cached) {
         const data = JSON.parse(cached);
         document.getElementById('cfg-gemini-key').value = data.geminiKey || '';
         document.getElementById('cfg-firebase-json').value = data.firebaseJson || '';
-        document.getElementById('cfg-rate').value = data.rate || 21.5;
         document.getElementById('cfg-members').value = data.members ? data.members.join(', ') : 'Alex, Bob';
         if (data.firebaseJson && data.geminiKey) bootCloudNodes(data);
       } else {
@@ -299,10 +285,9 @@
     document.getElementById('btn-save-config').addEventListener('click', () => {
       const geminiKey = document.getElementById('cfg-gemini-key').value.trim();
       const firebaseJson = document.getElementById('cfg-firebase-json').value.trim();
-      const rate = parseFloat(document.getElementById('cfg-rate').value) || 21.5;
       const members = document.getElementById('cfg-members').value.split(',').map(m => m.trim()).filter(m => m);
 
-      const payload = { geminiKey, firebaseJson, rate, members };
+      const payload = { geminiKey, firebaseJson, members };
       localStorage.setItem('sydney_luxe_config', JSON.stringify(payload));
       document.getElementById('section-config').classList.add('hidden');
       bootCloudNodes(payload);
@@ -312,27 +297,22 @@
       config = cfg;
       document.getElementById('dash-members').innerText = config.members.join(', ');
       
-      // Load Edge Brain Gemini
       const genAI = new GoogleGenAI({ apiKey: config.geminiKey });
       aiModel = genAI.getGenerativeModel({ 
         model: "gemini-2.0-flash",
         generationConfig: { responseMimeType: "application/json" }
       });
 
-      // Load Firestore Cloud Database
       try {
         const app = initializeApp(JSON.parse(config.firebaseJson));
         db = getFirestore(app);
         streamFinancialLogs();
         streamItineraryPlanner();
       } catch (err) {
-        alert("Config matrix parsing error. Check syntax strings.");
+        alert("Config connection string failure.");
       }
     }
 
-    // ==========================================
-    // DATA STREAM 1: LEDGER RECORDS & MANIPULATION
-    // ==========================================
     function streamFinancialLogs() {
       onSnapshot(collection(db, "sydney_luxe_expenses"), (snap) => {
         currentExpenses = [];
@@ -344,41 +324,37 @@
     function refreshLedgerDashboard() {
       const total = currentExpenses.reduce((s, e) => s + (e.amountAUD || 0), 0);
       document.getElementById('dash-total').innerText = `A$ ${total.toFixed(2)}`;
-      document.getElementById('dash-total-twd').innerText = `≈ NT$ ${Math.round(total * config.rate)}`;
 
       const container = document.getElementById('expense-list');
       if(currentExpenses.length === 0) {
-        container.innerHTML = `<li class="p-6 text-center text-xs text-zinc-600 bg-zinc-950 border border-zinc-900 rounded-2xl">Empty vault records. Start snapshotting.</li>`;
+        container.innerHTML = `<li class="p-6 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-2xl">Empty vault records. Start snapshotting.</li>`;
         return;
       }
 
       const sorted = [...currentExpenses].sort((a,b) => new Date(b.date) - new Date(a.date));
       container.innerHTML = sorted.map(exp => {
         const splitBreakdowns = Object.entries(exp.splits || {})
-          .map(([name, money]) => `<span class="bg-zinc-900 text-zinc-400 border border-zinc-800/60 px-1.5 py-0.5 rounded text-[9px] font-mono">${name}: $${parseFloat(money).toFixed(1)}</span>`)
+          .map(([name, money]) => `<span class="bg-gray-100 text-gray-600 border border-gray-200 px-1.5 py-0.5 rounded text-[9px] font-mono">${name}: $${parseFloat(money).toFixed(1)}</span>`)
           .join(' ');
 
         return `
-          <li class="bg-zinc-950 border border-zinc-900 p-4 rounded-2xl flex justify-between items-center relative group">
+          <li class="bg-white border border-gray-200 p-4 rounded-2xl flex justify-between items-center relative shadow-sm">
             <div class="space-y-1.5 flex-1 min-w-0 pr-2">
               <div class="flex items-center gap-2">
-                <span class="font-bold text-white text-xs truncate tracking-wide">${exp.storeName}</span>
-                <span class="text-[8px] tracking-widest font-bold uppercase text-pink-400 bg-pink-400/5 px-2 py-0.5 rounded border border-pink-500/10">${exp.category}</span>
+                <span class="font-bold text-slate-900 text-xs truncate tracking-wide">${exp.storeName}</span>
+                <span class="text-[8px] tracking-widest font-bold uppercase text-pink-600 bg-pink-50 px-2 py-0.5 rounded border border-pink-100">${exp.category}</span>
               </div>
-              <p class="text-[11px] text-zinc-500 truncate font-mono">${exp.items}</p>
+              <p class="text-[11px] text-gray-500 truncate font-mono">${exp.items}</p>
               <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
-                <span class="text-[9px] text-zinc-600">Paid by <strong class="text-zinc-400">${exp.paidBy}</strong></span>
+                <span class="text-[9px] text-gray-400">Paid by <strong class="text-slate-700">${exp.paidBy}</strong></span>
                 <div class="flex flex-wrap gap-1">${splitBreakdowns}</div>
               </div>
             </div>
-            <div class="text-right flex flex-col items-end justify-between h-full space-y-2">
-              <div>
-                <p class="text-xs font-black text-white font-mono">A$ ${parseFloat(exp.amountAUD).toFixed(2)}</p>
-                <p class="text-[9px] text-zinc-500">NT$ ${Math.round(exp.amountAUD * config.rate)}</p>
-              </div>
-              <div class="flex gap-2 text-[10px] tracking-wider font-bold uppercase">
-                <button onclick="window.initiateBillTweak('${exp.id}')" class="text-pink-400 hover:text-white transition">Tweak</button>
-                <button onclick="window.nukeBillLog('${exp.id}')" class="text-zinc-600 hover:text-red-400 transition">Drop</button>
+            <div class="text-right flex flex-col items-end justify-between space-y-2">
+              <p class="text-sm font-black text-slate-900 font-mono">A$ ${parseFloat(exp.amountAUD).toFixed(2)}</p>
+              <div class="flex gap-3 text-[10px] tracking-wider font-bold uppercase">
+                <button onclick="window.initiateBillTweak('${exp.id}')" class="text-pink-600 hover:text-slate-900 transition cursor-pointer">Tweak</button>
+                <button onclick="window.nukeBillLog('${exp.id}')" class="text-gray-400 hover:text-red-500 transition cursor-pointer">Drop</button>
               </div>
             </div>
           </li>
@@ -386,7 +362,6 @@
       }).join('');
     }
 
-    // IMAGE OCR EXTRACTION & PIPELINE
     document.getElementById('file-input').addEventListener('change', async (ev) => {
       const file = ev.target.files[0];
       if (!file || !db) return;
@@ -430,20 +405,19 @@
       const p = `
         Parse this Australian purchase transaction data asset.
         CRITICAL: YOU MUST PRESERVE STORES & ITEM TERMINOLOGIES IN ABSOLUTE RAW ENGLISH AS WRITTEN. DO NOT TRANSLATE TO CHINESE.
-        Provide standard serialized application/json stream format matching:
+        Provide standard serialized application/json format matching:
         {
-          "storeName": "Store name strictly matching receipt text exactly (e.g. Coles Central, Woolworths Metro, Sydney Airport Transit)",
-          "items": "Flat summaries list in English text (e.g. 1x Cappuccino, 2x Croissants, Evian Water)",
-          "amountAUD": Numeric exact transaction net float total (e.g. 18.90),
-          "category": "Map into one descriptor precisely: Food, Supermarket, Transport, Tickets, Hotel, Shopping, Others",
-          "date": "Transaction timestamp stamp match format YYYY-MM-DD. Fallback timeline default anchor: ${new Date().toISOString().split('T')[0]}"
+          "storeName": "Store name text (e.g. Coles Central, Woolworths Metro)",
+          "items": "Flat summaries list in English (e.g. 1x Cappuccino, 2x Croissants)",
+          "amountAUD": Numeric float total (e.g. 18.90),
+          "category": "Food, Supermarket, Transport, Tickets, Hotel, Shopping, Others",
+          "date": "Transaction format YYYY-MM-DD. Fallback: ${new Date().toISOString().split('T')[0]}"
         }
       `;
       const res = await aiModel.generateContent([p, { inlineData: { data: bytes, mimeType: "image/jpeg" } }]);
       return JSON.parse(res.response.text());
     }
 
-    // MODAL MANIPULATOR ROUTINES
     function openBillPanel(id, data) {
       document.getElementById('bill-editor').classList.remove('hidden');
       document.getElementById('edit-id').value = id || '';
@@ -467,8 +441,8 @@
 
       weightBox.innerHTML = config.members.map(m => `
         <div class="flex items-center justify-between gap-4">
-          <span class="text-xs text-zinc-400 font-medium">${m} owes (A$)</span>
-          <input type="number" step="0.01" data-member="${m}" class="split-weight-node w-24 p-2 bg-zinc-950 border border-zinc-800 rounded-xl text-right text-xs text-pink-400 font-mono" value="${initialMatrix[m] || 0}">
+          <span class="text-xs text-gray-600 font-medium">${m} owes (A$)</span>
+          <input type="number" step="0.01" data-member="${m}" class="split-weight-node w-24 p-2 bg-gray-50 border border-gray-200 rounded-xl text-right text-xs text-pink-600 font-mono focus:bg-white focus:outline-pink-400" value="${initialMatrix[m] || 0}">
         </div>
       `).join('');
 
@@ -523,19 +497,13 @@
     }
 
     window.nukeBillLog = async function(id) {
-      if(confirm("Expunge bill from live datastore permanently?")) await deleteDoc(doc(db, "sydney_luxe_expenses", id));
+      if(confirm("Expunge bill permanently?")) await deleteDoc(doc(db, "sydney_luxe_expenses", id));
     }
 
-
-    // ==========================================
-    // DATA STREAM 2: MOBILE FLUID ITINERARY FLOW
-    // ==========================================
     function streamItineraryPlanner() {
-      // 依序排列（由 order 權重判定）
       onSnapshot(collection(db, "sydney_luxe_itinerary"), (snap) => {
         currentItinerary = [];
         snap.forEach(d => currentItinerary.push({ id: d.id, ...d.data() }));
-        
         currentItinerary.sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
         refreshItineraryTimelineUI();
       });
@@ -544,48 +512,46 @@
     function refreshItineraryTimelineUI() {
       const targetBox = document.getElementById('itinerary-cards-container');
       if(currentItinerary.length === 0) {
-        targetBox.innerHTML = `<div class="p-8 text-center text-xs text-zinc-600 bg-zinc-950 border border-zinc-900 rounded-2xl">No itinerary segments map. Ignite scheduling matrix below.</div>`;
+        targetBox.innerHTML = `<div class="p-8 text-center text-xs text-gray-400 bg-white border border-gray-200 rounded-2xl shadow-sm">No itinerary segments.</div>`;
         return;
       }
 
-      // 徽章樣式映射矩陣
       const badgeStyles = {
-        Flight: "bg-amber-400/10 text-amber-400 border-amber-500/20",
-        Breakfast: "bg-emerald-400/10 text-emerald-400 border-emerald-500/20",
-        Lunch: "bg-teal-400/10 text-teal-400 border-teal-500/20",
-        Dinner: "bg-rose-400/10 text-rose-400 border-rose-500/20",
-        Activity: "bg-pink-400/10 text-pink-400 border-pink-500/20",
-        Hotel: "bg-indigo-400/10 text-indigo-400 border-indigo-500/20"
+        Flight: "bg-amber-50 text-amber-600 border-amber-200",
+        Breakfast: "bg-emerald-50 text-emerald-600 border-emerald-200",
+        Lunch: "bg-teal-50 text-teal-600 border-teal-200",
+        Dinner: "bg-rose-50 text-rose-600 border-rose-200",
+        Activity: "bg-pink-50 text-pink-600 border-pink-200",
+        Hotel: "bg-indigo-50 text-indigo-600 border-indigo-200"
       };
 
       targetBox.innerHTML = currentItinerary.map(node => {
-        const style = badgeStyles[node.nodeType] || "bg-zinc-800 text-zinc-400 border-zinc-700";
+        const style = badgeStyles[node.nodeType] || "bg-gray-100 text-gray-600 border-gray-200";
         return `
-          <div class="bg-zinc-950 border border-zinc-900 rounded-2xl p-4 space-y-3 relative active:scale-[0.99] transition duration-150" onclick="window.triggerEditItineraryNode('${node.id}')">
+          <div class="bg-white border border-gray-200 rounded-2xl p-4 space-y-3 relative cursor-pointer shadow-sm hover:bg-gray-50/50" onclick="window.triggerEditItineraryNode('${node.id}')">
             <div class="flex justify-between items-start">
-              <div class="space-y-1">
-                <p class="text-xs font-mono text-zinc-400 font-bold tracking-tight">${node.dateTime || '09:00'}</p>
-                <h4 class="text-sm font-bold text-white tracking-wide">${node.hubLocation || 'Unspecified Spot'}</h4>
+              <div class="space-y-0.5">
+                <p class="text-xs font-mono text-gray-400 font-bold">${node.dateTime || '09:00'}</p>
+                <h4 class="text-sm font-bold text-slate-900 tracking-wide">${node.hubLocation || 'Spot'}</h4>
               </div>
               <span class="text-[8px] uppercase tracking-widest font-black border px-2 py-0.5 rounded-full ${style}">${node.nodeType || 'Activity'}</span>
             </div>
-            ${node.activityDetails ? `<p class="text-[11px] text-zinc-500 leading-relaxed font-sans whitespace-pre-line bg-zinc-900/40 p-2.5 rounded-xl border border-zinc-900/80">${node.activityDetails}</p>` : ''}
-            <div class="flex justify-end gap-3 text-[10px] font-bold uppercase tracking-wider pt-1 text-zinc-600">
-              <span class="text-pink-400/80 group-hover:text-white">Tap to Edit</span>
-              <span class="hover:text-red-400 z-30" onclick="event.stopPropagation(); window.nukeItineraryNode('${node.id}')">✕ Delete</span>
+            ${node.activityDetails ? `<p class="text-[11px] text-gray-600 whitespace-pre-line bg-gray-50 p-2.5 rounded-xl border border-gray-100 leading-relaxed">${node.activityDetails}</p>` : ''}
+            <div class="flex justify-end gap-4 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+              <span class="text-pink-600">Tap to Edit</span>
+              <span class="hover:text-red-500" onclick="event.stopPropagation(); window.nukeItineraryNode('${node.id}')">✕ Delete</span>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    // ITINERARY MODAL ACTIONS
     document.getElementById('btn-add-schedule').addEventListener('click', () => {
       openItineraryEditorModal(null, {
         dateTime: "09:00 / Day 1",
         nodeType: "Activity",
         hubLocation: "Circular Quay Wharf",
-        activityDetails: "Take ferry to Taronga Zoo, remember to tap Opal card."
+        activityDetails: "Take ferry to Taronga Zoo."
       });
     });
 
@@ -597,13 +563,11 @@
       document.getElementById('edit-itin-location').value = data.hubLocation || '';
       document.getElementById('edit-itin-details').value = data.activityDetails || '';
       document.getElementById('itin-editor-title').innerText = id ? "Modify Schedule Node" : "Create Schedule Node";
-      
-      // 自動捲動到編輯框，讓手機視野對焦
       document.getElementById('itinerary-editor').scrollIntoView({ behavior: 'smooth' });
     }
 
     document.getElementById('btn-close-itin-editor').addEventListener('click', () => {
-      document.getElementById('itinerary-editor').add('hidden');
+      document.getElementById('itinerary-editor').classList.add('hidden');
     });
 
     document.getElementById('btn-save-itinerary').addEventListener('click', async () => {
@@ -626,7 +590,6 @@
       } else {
         await addDoc(collection(db, "sydney_luxe_itinerary"), payload);
       }
-
       document.getElementById('itinerary-editor').classList.add('hidden');
     });
 
@@ -636,12 +599,9 @@
     };
 
     window.nukeItineraryNode = async function(id) {
-      if(confirm("Expunge this itinerary event from live database?")) {
-        await deleteDoc(doc(db, "sydney_luxe_itinerary", id));
-      }
+      if(confirm("Expunge this event?")) await deleteDoc(doc(db, "sydney_luxe_itinerary", id));
     };
 
-    // SYSTEM BOOTSTRAPPING CODES
     bootstrapConfig();
   </script>
 </body>
