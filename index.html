@@ -64,7 +64,7 @@
       <div class="bg-white border border-gray-200 p-5 rounded-2xl shadow-sm">
         <p class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-ledger-title">本團澳幣總花費</p>
         <p class="text-3xl font-black text-slate-900 mt-1" id="dash-total">A$ 0.00</p>
-        <p class="text-xs font-bold text-slate-500 mt-2"><span id="ui-ledger-crew">本團成員:</span> <span id="dash-members">Sabrina, 中偉, 聖聖, 老麥, 輸偷倫</span></p>
+        <p class="text-xs font-bold text-slate-500 mt-2"><span id="ui-ledger-crew">本團成員:</span> <span id="dash-members">Sabrina, 中偉, 聖聖, 老麥, 倫倫</span></p>
       </div>
 
       <!-- 記帳面板 -->
@@ -624,7 +624,7 @@ function saveHotelInfo() {
     // 強制設定一個保底名單，如果 FIXED_MEMBERS 為空，就用這組
     const members = (FIXED_MEMBERS && FIXED_MEMBERS.length > 0) 
                     ? FIXED_MEMBERS 
-                    : ['Sabrina', '中偉', '聖聖', '老麥', '輸偷倫'];
+                    : ['Sabrina', '中偉', '聖聖', '老麥', '倫倫'];
 
     // 1. 填補「誰付的錢」選單
     const paidBySelect = document.getElementById('edit-paid-by');
@@ -700,7 +700,7 @@ function saveHotelInfo() {
     }
 
     function renderFinalSettlementMatrix() {
-    const members = (FIXED_MEMBERS && FIXED_MEMBERS.length > 0) ? FIXED_MEMBERS : ['Sabrina', '中偉', '聖聖', '老麥', '輸偷倫'];
+    const members = (FIXED_MEMBERS && FIXED_MEMBERS.length > 0) ? FIXED_MEMBERS : ['Sabrina', '中偉', '聖聖', '老麥', '倫倫'];
     let paidMap = {}, oweMap = {};
     members.forEach(m => { paidMap[m] = 0; oweMap[m] = 0; });
 
