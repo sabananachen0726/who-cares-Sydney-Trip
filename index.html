@@ -131,14 +131,28 @@
         <ul id="expense-list" class="space-y-2"></ul>
       </div>
 
-<section class="bg-white border-2 border-slate-900 rounded-2xl shadow-sm mt-6 p-5">
-    <div class="mb-4 flex justify-between items-center">
-        <h3 class="text-xs font-black uppercase text-slate-900">📊 即時結算表</h3>
-        <span class="text-[9px] text-gray-400 font-mono">Real-time</span>
-    </div>
-    <div id="settlement-matrix-box" class="space-y-2">
+      <!-- 📊 動態對帳結算面板 (可折疊) -->
+      <section class="bg-white border-2 border-dashed border-slate-300 rounded-2xl shadow-xs overflow-hidden mt-6">
+        <!-- 折疊標頭：點擊可展開/收合 -->
+        <button onclick="toggleSettlement()" type="button" class="w-full p-5 flex justify-between items-center text-left group">
+          <div>
+            <span class="text-[8px] font-black tracking-widest text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full uppercase border border-pink-100">FINAL SETTLEMENT</span>
+            <h3 class="text-sm font-black text-slate-900 mt-1.5 flex items-center gap-1.5">
+              <span>📊</span> <span>本團現時動態對帳結算清單</span>
+            </h3>
+          </div>
+          <span id="settlement-chevron" class="text-gray-400 text-lg font-bold transition-transform duration-300">▾</span>
+        </button>
+
+        <!-- 折疊內容 -->
+        <div id="settlement-body" class="settlement-collapse collapsed">
+          <div class="px-5 pb-5 space-y-3">
+            <p class="text-[10px] text-gray-400 -mt-2 mb-3">最後一天對帳不燒腦，綠色代表拿回錢，粉色代表需補繳</p>
+            <div id="settlement-matrix-box" class="space-y-2.5"></div>
+          </div>
         </div>
-</section>
+      </section>
+    </div>
 
     <!-- TAB 2: PLANNER -->
     <div id="tab-itinerary-content" class="space-y-6" style="display: none;">
@@ -383,7 +397,40 @@
       "appId": "1:794096659826:web:d99d862c67c94ce56f41eb",
       "measurementId": "G-XCH2ZH980C"
     }`;
-    const FIXED_MEMBERS = ['Sabrina', '中偉', '聖聖', '老麥', '倫倫'];
+    const FIXED_MEMBERS = [];
+    // 1. 初始化讀取名單 (放在 bootstrapConfig 啟動時)
+function streamMembers() {
+    db.collection("sydney_luxe_meta").doc("members").onSnapshot(d => {
+        if (d.exists && d.data().list && d.data().list.length > 0) {
+            // 雲端有資料，才更新
+            FIXED_MEMBERS = d.data().list;
+            console.log("從雲端載入成員:", FIXED_MEMBERS);
+        } else {
+            // 雲端沒資料，保留預設值，不要讓它變空
+            console.log("雲端無成員資料，使用預設值");
+            FIXED_MEMBERS = ['Sabrina', '中偉', '聖聖', '老麥', '輸偷倫']; 
+        }
+        updateAllMemberUI(); // 確保名單抓到後立刻刷新 UI
+    });
+}
+
+// 2. 當名單更新時，自動刷新選單與列表
+function updateAllMemberUI() {
+    // A. 刷新分帳人選單
+    const paidBySelect = document.getElementById('edit-paid-by');
+    if(paidBySelect) paidBySelect.innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
+    
+    // B. 刷新分帳核取方塊 (重新建立分帳區塊)
+    initStaticBillForm(); 
+    
+    // C. 刷新航班成員選單
+    const fSelect = document.getElementById('flight-member-select');
+    if(fSelect) fSelect.innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
+
+    // D. 刷新名單顯示文字
+    const dashMembers = document.getElementById('dash-members');
+    if(dashMembers) dashMembers.innerText = FIXED_MEMBERS.join(', ');
+}
 
     let db = null;
     let currentExpenses = []; let currentItinerary = []; let currentWishes = [];
@@ -462,16 +509,22 @@
     }
     window.switchTab = switchTab;
 
-    function bootstrapConfig() {
-      applyLanguagePack();
-      document.getElementById('dash-members').innerText = FIXED_MEMBERS.join(', ');
-      document.getElementById('flight-member-select').innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
-      if (firebase.apps.length === 0) {
+   function bootstrapConfig() {
+    applyLanguagePack();
+    
+    if (firebase.apps.length === 0) {
         db = firebase.firestore(firebase.initializeApp(JSON.parse(EMBEDDED_FIREBASE_JSON)));
-      } else { db = firebase.firestore(); }
-      initStaticBillForm();
-      streamExpenses(); streamItinerary(); streamWishes(); streamHotel(); streamFlights();
-    }
+    } else { db = firebase.firestore(); }
+
+    // 【重要】先啟動名單監聽，再啟動其他函數
+    streamMembers(); 
+    
+    // 稍作延遲確保名單讀取後才渲染初始表單
+    setTimeout(() => {
+        initStaticBillForm();
+        streamExpenses(); streamItinerary(); streamWishes(); streamHotel(); streamFlights();
+    }, 500);
+}
 
     // HOTEL
     function openHotelEditor() { document.getElementById('hotel-editor-panel').style.display = 'block'; }
@@ -565,24 +618,41 @@ function saveHotelInfo() {
     }
 
     // EXPENSES
-    function initStaticBillForm() {
-      document.getElementById('edit-date').value = new Date().toISOString().split('T')[0];
-      document.getElementById('edit-paid-by').innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
-      const weightBox = document.getElementById('split-shares-container');
-      weightBox.innerHTML = FIXED_MEMBERS.map(m => `
-        <div class="flex items-center justify-between gap-2 bg-white p-2 rounded-xl border border-gray-100">
-          <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer select-none">
-            <input type="checkbox" data-member-check="${m}" checked class="member-split-checkbox w-4 h-4 text-pink-600 rounded border-gray-300 focus:ring-pink-400">
-            <span>${m}</span>
-          </label>
-          <div class="flex items-center gap-1">
-            <span class="text-[10px] text-gray-400">A$</span>
-            <input type="number" step="0.01" data-member-weight="${m}" class="split-weight-node w-20 p-1.5 bg-gray-50 border border-gray-200 rounded-lg text-right text-xs text-pink-600 font-mono" value="0.00">
-          </div>
-        </div>
-      `).join('');
-      document.querySelectorAll('.split-weight-node').forEach(i => i.addEventListener('input', sumWeightNodes));
+   function initStaticBillForm() {
+    // 強制設定一個保底名單，如果 FIXED_MEMBERS 為空，就用這組
+    const members = (FIXED_MEMBERS && FIXED_MEMBERS.length > 0) 
+                    ? FIXED_MEMBERS 
+                    : ['Sabrina', '中偉', '聖聖', '老麥', '倫倫'];
+
+    // 1. 填補「誰付的錢」選單
+    const paidBySelect = document.getElementById('edit-paid-by');
+    if (paidBySelect) {
+        paidBySelect.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join('');
     }
+
+    // 2. 強制渲染「分帳人與金額微調」的勾選框
+    const weightBox = document.getElementById('split-shares-container');
+    if (weightBox) {
+        weightBox.innerHTML = members.map(m => `
+            <div class="flex items-center justify-between gap-2 bg-white p-2 rounded-xl border border-gray-100">
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer select-none">
+                    <input type="checkbox" data-member-check="${m}" checked class="member-split-checkbox w-4 h-4 text-pink-600 rounded border-gray-300 focus:ring-pink-400">
+                    <span>${m}</span>
+                </label>
+                <div class="flex items-center gap-1">
+                    <span class="text-[10px] text-gray-400">A$</span>
+                    <input type="number" step="0.01" data-member-weight="${m}" class="split-weight-node w-20 p-1.5 bg-gray-50 border border-gray-200 rounded-lg text-right text-xs text-pink-600 font-mono" value="0.00">
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 綁定事件監聽器 (確保輸入金額時能自動計算)
+    document.querySelectorAll('.split-weight-node').forEach(i => 
+        i.removeEventListener('input', sumWeightNodes), // 先移除舊的避免重複綁定
+        i.addEventListener('input', sumWeightNodes)
+    );
+}
 
     function calculateEqualSplit() {
       const totalAmount = parseFloat(document.getElementById('edit-amount').value) || 0;
@@ -627,34 +697,24 @@ function saveHotelInfo() {
       });
     }
 
-function renderFinalSettlementMatrix() {
-    const box = document.getElementById('settlement-matrix-box');
-    if (!box) return;
-
-    let paidMap = {}, oweMap = {};
-    FIXED_MEMBERS.forEach(m => { paidMap[m] = 0; oweMap[m] = 0; });
-
-    currentExpenses.forEach(exp => {
-        if (FIXED_MEMBERS.includes(exp.paidBy)) paidMap[exp.paidBy] += parseFloat(exp.amountAUD) || 0;
-        Object.entries(exp.splits || {}).forEach(([m, v]) => {
-            if (FIXED_MEMBERS.includes(m)) oweMap[m] += parseFloat(v) || 0;
-        });
-    });
-
-    box.innerHTML = FIXED_MEMBERS.map(m => {
+    function renderFinalSettlementMatrix() {
+      let paidMap = {}, oweMap = {};
+      FIXED_MEMBERS.forEach(m => { paidMap[m]=0; oweMap[m]=0; });
+      currentExpenses.forEach(exp => {
+        if(FIXED_MEMBERS.includes(exp.paidBy)) paidMap[exp.paidBy] += parseFloat(exp.amountAUD)||0;
+        Object.entries(exp.splits||{}).forEach(([m,v]) => { if(FIXED_MEMBERS.includes(m)) oweMap[m] += parseFloat(v)||0; });
+      });
+      const box = document.getElementById('settlement-matrix-box');
+      box.innerHTML = FIXED_MEMBERS.map(m => {
         const net = paidMap[m] - oweMap[m];
-        // 使用英文標籤，確保絕對不會亂碼
-        const color = net > 0.01 ? "text-emerald-600 bg-emerald-50 border-emerald-100" : (net < -0.01 ? "text-pink-600 bg-pink-50 border-pink-100" : "text-gray-400 bg-gray-50 border-gray-200");
-        const status = net > 0.01 ? "RECEIVE" : (net < -0.01 ? "PAY" : "BALANCED");
-        const val = Math.abs(net).toFixed(2);
-        
-        return `
-            <div class="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-100 shadow-sm">
-                <span class="text-xs font-black text-slate-900">${m}</span>
-                <span class="text-[10px] font-black px-2 py-1 rounded-lg border ${color}">${status} $${val}</span>
-            </div>`;
-    }).join('');
-}
+        let badge = '';
+        if(net > 0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-xl"><span>應收回</span><span class="font-mono text-sm">A$ ${net.toFixed(2)}</span></div>`;
+        else if(net < -0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-pink-600 bg-pink-50 border border-pink-100 px-3 py-1.5 rounded-xl"><span>應補繳</span><span class="font-mono text-sm">A$ ${Math.abs(net).toFixed(2)}</span></div>`;
+        else badge = `<div class="text-xs font-bold text-gray-400 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-xl">已兩清 A$ 0.00</div>`;
+        return `<div class="flex items-center justify-between bg-gray-50/50 p-3 rounded-2xl border border-gray-100"><div><h4 class="text-xs font-black text-slate-900">${m}</h4><p class="text-[9px] text-gray-400 mt-0.5 font-mono">已代付: $${paidMap[m].toFixed(1)} | 總應付: $${oweMap[m].toFixed(1)}</p></div>${badge}</div>`;
+      }).join('');
+    }
+
     window.initiateBillTweak = function(id) {
       const t = currentExpenses.find(e=>e.id===id); if(!t) return;
       document.getElementById('edit-id').value=t.id; document.getElementById('edit-store').value=t.storeName||''; document.getElementById('edit-items').value=t.items||''; document.getElementById('edit-amount').value=t.amountAUD||0; document.getElementById('edit-cat').value=t.category||'Food'; document.getElementById('edit-date').value=t.date||''; document.getElementById('edit-paid-by').value=t.paidBy||FIXED_MEMBERS[0];
