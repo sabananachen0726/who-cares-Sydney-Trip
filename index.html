@@ -698,22 +698,42 @@ function saveHotelInfo() {
     }
 
     function renderFinalSettlementMatrix() {
-      let paidMap = {}, oweMap = {};
-      FIXED_MEMBERS.forEach(m => { paidMap[m]=0; oweMap[m]=0; });
-      currentExpenses.forEach(exp => {
-        if(FIXED_MEMBERS.includes(exp.paidBy)) paidMap[exp.paidBy] += parseFloat(exp.amountAUD)||0;
-        Object.entries(exp.splits||{}).forEach(([m,v]) => { if(FIXED_MEMBERS.includes(m)) oweMap[m] += parseFloat(v)||0; });
-      });
-      const box = document.getElementById('settlement-matrix-box');
-      box.innerHTML = FIXED_MEMBERS.map(m => {
+    // 確保有成員列表，沒有就用預設的
+    const members = (FIXED_MEMBERS && FIXED_MEMBERS.length > 0) 
+                    ? FIXED_MEMBERS 
+                    : ['Sabrina', '中偉', '聖聖', '老麥', '倫倫'];
+
+    let paidMap = {}, oweMap = {};
+    members.forEach(m => { paidMap[m] = 0; oweMap[m] = 0; });
+
+    currentExpenses.forEach(exp => {
+        if (members.includes(exp.paidBy)) paidMap[exp.paidBy] += parseFloat(exp.amountAUD) || 0;
+        Object.entries(exp.splits || {}).forEach(([m, v]) => {
+            if (members.includes(m)) oweMap[m] += parseFloat(v) || 0;
+        });
+    });
+
+    const box = document.getElementById('settlement-matrix-box');
+    if (!box) return;
+
+    // 渲染清單
+    box.innerHTML = members.map(m => {
         const net = paidMap[m] - oweMap[m];
         let badge = '';
-        if(net > 0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-xl"><span>應收回</span><span class="font-mono text-sm">A$ ${net.toFixed(2)}</span></div>`;
-        else if(net < -0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-pink-600 bg-pink-50 border border-pink-100 px-3 py-1.5 rounded-xl"><span>應補繳</span><span class="font-mono text-sm">A$ ${Math.abs(net).toFixed(2)}</span></div>`;
+        if (net > 0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-xl"><span>應收回</span><span class="font-mono text-sm">A$ ${net.toFixed(2)}</span></div>`;
+        else if (net < -0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-pink-600 bg-pink-50 border border-pink-100 px-3 py-1.5 rounded-xl"><span>應補繳</span><span class="font-mono text-sm">A$ ${Math.abs(net).toFixed(2)}</span></div>`;
         else badge = `<div class="text-xs font-bold text-gray-400 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-xl">已兩清 A$ 0.00</div>`;
-        return `<div class="flex items-center justify-between bg-gray-50/50 p-3 rounded-2xl border border-gray-100"><div><h4 class="text-xs font-black text-slate-900">${m}</h4><p class="text-[9px] text-gray-400 mt-0.5 font-mono">已代付: $${paidMap[m].toFixed(1)} | 總應付: $${oweMap[m].toFixed(1)}</p></div>${badge}</div>`;
-      }).join('');
-    }
+        
+        return `
+            <div class="flex items-center justify-between bg-gray-50/50 p-3 rounded-2xl border border-gray-100">
+                <div>
+                    <h4 class="text-xs font-black text-slate-900">${m}</h4>
+                    <p class="text-[9px] text-gray-400 mt-0.5 font-mono">已付: $${paidMap[m].toFixed(1)} | 應付: $${oweMap[m].toFixed(1)}</p>
+                </div>
+                ${badge}
+            </div>`;
+    }).join('');
+}
 
     window.initiateBillTweak = function(id) {
       const t = currentExpenses.find(e=>e.id===id); if(!t) return;
