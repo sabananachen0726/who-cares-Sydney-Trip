@@ -397,40 +397,7 @@
       "appId": "1:794096659826:web:d99d862c67c94ce56f41eb",
       "measurementId": "G-XCH2ZH980C"
     }`;
-    const FIXED_MEMBERS = [];
-    // 1. 初始化讀取名單 (放在 bootstrapConfig 啟動時)
-function streamMembers() {
-    db.collection("sydney_luxe_meta").doc("members").onSnapshot(d => {
-        if (d.exists && d.data().list && d.data().list.length > 0) {
-            // 雲端有資料，才更新
-            FIXED_MEMBERS = d.data().list;
-            console.log("從雲端載入成員:", FIXED_MEMBERS);
-        } else {
-            // 雲端沒資料，保留預設值，不要讓它變空
-            console.log("雲端無成員資料，使用預設值");
-            FIXED_MEMBERS = ['Sabrina', '中偉', '聖聖', '老麥', '輸偷倫']; 
-        }
-        updateAllMemberUI(); // 確保名單抓到後立刻刷新 UI
-    });
-}
-
-// 2. 當名單更新時，自動刷新選單與列表
-function updateAllMemberUI() {
-    // A. 刷新分帳人選單
-    const paidBySelect = document.getElementById('edit-paid-by');
-    if(paidBySelect) paidBySelect.innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
-    
-    // B. 刷新分帳核取方塊 (重新建立分帳區塊)
-    initStaticBillForm(); 
-    
-    // C. 刷新航班成員選單
-    const fSelect = document.getElementById('flight-member-select');
-    if(fSelect) fSelect.innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
-
-    // D. 刷新名單顯示文字
-    const dashMembers = document.getElementById('dash-members');
-    if(dashMembers) dashMembers.innerText = FIXED_MEMBERS.join(', ');
-}
+    const FIXED_MEMBERS = ['Sabrina', '中偉', '聖聖', '老麥', '倫倫'];
 
     let db = null;
     let currentExpenses = []; let currentItinerary = []; let currentWishes = [];
@@ -509,22 +476,16 @@ function updateAllMemberUI() {
     }
     window.switchTab = switchTab;
 
-   function bootstrapConfig() {
-    applyLanguagePack();
-    
-    if (firebase.apps.length === 0) {
+    function bootstrapConfig() {
+      applyLanguagePack();
+      document.getElementById('dash-members').innerText = FIXED_MEMBERS.join(', ');
+      document.getElementById('flight-member-select').innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
+      if (firebase.apps.length === 0) {
         db = firebase.firestore(firebase.initializeApp(JSON.parse(EMBEDDED_FIREBASE_JSON)));
-    } else { db = firebase.firestore(); }
-
-    // 【重要】先啟動名單監聽，再啟動其他函數
-    streamMembers(); 
-    
-    // 稍作延遲確保名單讀取後才渲染初始表單
-    setTimeout(() => {
-        initStaticBillForm();
-        streamExpenses(); streamItinerary(); streamWishes(); streamHotel(); streamFlights();
-    }, 500);
-}
+      } else { db = firebase.firestore(); }
+      initStaticBillForm();
+      streamExpenses(); streamItinerary(); streamWishes(); streamHotel(); streamFlights();
+    }
 
     // HOTEL
     function openHotelEditor() { document.getElementById('hotel-editor-panel').style.display = 'block'; }
@@ -618,41 +579,24 @@ function saveHotelInfo() {
     }
 
     // EXPENSES
-   function initStaticBillForm() {
-    // 強制設定一個保底名單，如果 FIXED_MEMBERS 為空，就用這組
-    const members = (FIXED_MEMBERS && FIXED_MEMBERS.length > 0) 
-                    ? FIXED_MEMBERS 
-                    : ['Sabrina', '中偉', '聖聖', '老麥', '倫倫'];
-
-    // 1. 填補「誰付的錢」選單
-    const paidBySelect = document.getElementById('edit-paid-by');
-    if (paidBySelect) {
-        paidBySelect.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join('');
+    function initStaticBillForm() {
+      document.getElementById('edit-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('edit-paid-by').innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
+      const weightBox = document.getElementById('split-shares-container');
+      weightBox.innerHTML = FIXED_MEMBERS.map(m => `
+        <div class="flex items-center justify-between gap-2 bg-white p-2 rounded-xl border border-gray-100">
+          <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer select-none">
+            <input type="checkbox" data-member-check="${m}" checked class="member-split-checkbox w-4 h-4 text-pink-600 rounded border-gray-300 focus:ring-pink-400">
+            <span>${m}</span>
+          </label>
+          <div class="flex items-center gap-1">
+            <span class="text-[10px] text-gray-400">A$</span>
+            <input type="number" step="0.01" data-member-weight="${m}" class="split-weight-node w-20 p-1.5 bg-gray-50 border border-gray-200 rounded-lg text-right text-xs text-pink-600 font-mono" value="0.00">
+          </div>
+        </div>
+      `).join('');
+      document.querySelectorAll('.split-weight-node').forEach(i => i.addEventListener('input', sumWeightNodes));
     }
-
-    // 2. 強制渲染「分帳人與金額微調」的勾選框
-    const weightBox = document.getElementById('split-shares-container');
-    if (weightBox) {
-        weightBox.innerHTML = members.map(m => `
-            <div class="flex items-center justify-between gap-2 bg-white p-2 rounded-xl border border-gray-100">
-                <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer select-none">
-                    <input type="checkbox" data-member-check="${m}" checked class="member-split-checkbox w-4 h-4 text-pink-600 rounded border-gray-300 focus:ring-pink-400">
-                    <span>${m}</span>
-                </label>
-                <div class="flex items-center gap-1">
-                    <span class="text-[10px] text-gray-400">A$</span>
-                    <input type="number" step="0.01" data-member-weight="${m}" class="split-weight-node w-20 p-1.5 bg-gray-50 border border-gray-200 rounded-lg text-right text-xs text-pink-600 font-mono" value="0.00">
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // 綁定事件監聽器 (確保輸入金額時能自動計算)
-    document.querySelectorAll('.split-weight-node').forEach(i => 
-        i.removeEventListener('input', sumWeightNodes), // 先移除舊的避免重複綁定
-        i.addEventListener('input', sumWeightNodes)
-    );
-}
 
     function calculateEqualSplit() {
       const totalAmount = parseFloat(document.getElementById('edit-amount').value) || 0;
@@ -698,42 +642,22 @@ function saveHotelInfo() {
     }
 
     function renderFinalSettlementMatrix() {
-    // 確保有成員列表，沒有就用預設的
-    const members = (FIXED_MEMBERS && FIXED_MEMBERS.length > 0) 
-                    ? FIXED_MEMBERS 
-                    : ['Sabrina', '中偉', '聖聖', '老麥', '倫倫'];
-
-    let paidMap = {}, oweMap = {};
-    members.forEach(m => { paidMap[m] = 0; oweMap[m] = 0; });
-
-    currentExpenses.forEach(exp => {
-        if (members.includes(exp.paidBy)) paidMap[exp.paidBy] += parseFloat(exp.amountAUD) || 0;
-        Object.entries(exp.splits || {}).forEach(([m, v]) => {
-            if (members.includes(m)) oweMap[m] += parseFloat(v) || 0;
-        });
-    });
-
-    const box = document.getElementById('settlement-matrix-box');
-    if (!box) return;
-
-    // 渲染清單
-    box.innerHTML = members.map(m => {
+      let paidMap = {}, oweMap = {};
+      FIXED_MEMBERS.forEach(m => { paidMap[m]=0; oweMap[m]=0; });
+      currentExpenses.forEach(exp => {
+        if(FIXED_MEMBERS.includes(exp.paidBy)) paidMap[exp.paidBy] += parseFloat(exp.amountAUD)||0;
+        Object.entries(exp.splits||{}).forEach(([m,v]) => { if(FIXED_MEMBERS.includes(m)) oweMap[m] += parseFloat(v)||0; });
+      });
+      const box = document.getElementById('settlement-matrix-box');
+      box.innerHTML = FIXED_MEMBERS.map(m => {
         const net = paidMap[m] - oweMap[m];
         let badge = '';
-        if (net > 0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-xl"><span>應收回</span><span class="font-mono text-sm">A$ ${net.toFixed(2)}</span></div>`;
-        else if (net < -0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-pink-600 bg-pink-50 border border-pink-100 px-3 py-1.5 rounded-xl"><span>應補繳</span><span class="font-mono text-sm">A$ ${Math.abs(net).toFixed(2)}</span></div>`;
+        if(net > 0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-xl"><span>應收回</span><span class="font-mono text-sm">A$ ${net.toFixed(2)}</span></div>`;
+        else if(net < -0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-pink-600 bg-pink-50 border border-pink-100 px-3 py-1.5 rounded-xl"><span>應補繳</span><span class="font-mono text-sm">A$ ${Math.abs(net).toFixed(2)}</span></div>`;
         else badge = `<div class="text-xs font-bold text-gray-400 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-xl">已兩清 A$ 0.00</div>`;
-        
-        return `
-            <div class="flex items-center justify-between bg-gray-50/50 p-3 rounded-2xl border border-gray-100">
-                <div>
-                    <h4 class="text-xs font-black text-slate-900">${m}</h4>
-                    <p class="text-[9px] text-gray-400 mt-0.5 font-mono">已付: $${paidMap[m].toFixed(1)} | 應付: $${oweMap[m].toFixed(1)}</p>
-                </div>
-                ${badge}
-            </div>`;
-    }).join('');
-}
+        return `<div class="flex items-center justify-between bg-gray-50/50 p-3 rounded-2xl border border-gray-100"><div><h4 class="text-xs font-black text-slate-900">${m}</h4><p class="text-[9px] text-gray-400 mt-0.5 font-mono">已代付: $${paidMap[m].toFixed(1)} | 總應付: $${oweMap[m].toFixed(1)}</p></div>${badge}</div>`;
+      }).join('');
+    }
 
     window.initiateBillTweak = function(id) {
       const t = currentExpenses.find(e=>e.id===id); if(!t) return;
@@ -746,66 +670,30 @@ function saveHotelInfo() {
     // ITINERARY
     function streamItinerary() { db.collection("sydney_luxe_itinerary").onSnapshot(snap => { currentItinerary=[]; snap.forEach(d=>currentItinerary.push({id:d.id,...d.data()})); refreshItineraryTimelineUI(); }); }
     function refreshItineraryTimelineUI() {
-    const days = ['2026-06-29', '2026-06-30', '2026-07-01', '2026-07-02'];
-    const badgeStyles = { 
-        Breakfast: "bg-emerald-50 text-emerald-600", 
-        Lunch: "bg-teal-50 text-teal-600", 
-        Dinner: "bg-rose-50 text-rose-600", 
-        Activity: "bg-pink-50 text-pink-600" 
-    };
-
-    // 1. 清空所有天數的內容
-    days.forEach(day => {
-        const box = document.getElementById(`day-box-${day}`);
-        if (box) box.innerHTML = '';
-    });
-
-    // 2. 排序並渲染行程
-    const sortedNodes = [...currentItinerary].sort((a,b) => (a.timeStr || '').localeCompare(b.timeStr || ''));
-    let counters = {}; days.forEach(d => counters[d] = 0);
-
-    sortedNodes.forEach(node => {
-        const targetBox = document.getElementById(`day-box-${node.dateStr}`);
-        if (targetBox) {
-            counters[node.dateStr]++;
-
-            // 【購票邏輯區塊】：優化版樣式
-            const ticketBadge = node.isTicketRequired ? `
-                <div class="flex items-center gap-1.5 mt-2 px-2 py-1 bg-amber-50 rounded-lg border border-amber-100 w-fit">
-                    <span class="text-[10px]">🎫</span>
-                    <span class="text-[9px] font-black text-amber-700 uppercase tracking-wider">需預先購票</span>
-                </div>` : '';
-
-            const cardHtml = `
-                <div class="bg-white border border-gray-100 rounded-xl p-3 shadow-sm active:bg-gray-50 transition mb-3" onclick="window.triggerEditItineraryNode('${node.id}')">
-                    <div class="flex justify-between items-start text-xs">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="bg-slate-900 text-white font-mono font-bold px-2 py-0.5 rounded text-[10px]">${node.timeStr || '⏰ --:--'}</span>
-                                <h5 class="font-bold text-slate-900 truncate">${node.hubLocation}</h5>
-                            </div>
-                            ${ticketBadge} 
-                        </div>
-                        <span class="text-[8px] font-black px-2 py-0.5 rounded-full ${badgeStyles[node.nodeType] || 'bg-gray-100'} ml-2 flex-shrink-0">
-                            ${node.nodeType}
-                        </span>
-                    </div>
-                    <p class="text-[11px] text-gray-500 mt-2 whitespace-pre-line pl-1 border-l-2 border-gray-100 ml-0.5">${node.activityDetails || ''}</p>
+      const days = ['2026-06-29','2026-06-30','2026-07-01','2026-07-02'];
+      days.forEach(day => { document.getElementById(`day-box-${day}`).innerHTML=''; });
+      const badgeStyles = { Breakfast:"bg-emerald-50 text-emerald-600", Lunch:"bg-teal-50 text-teal-600", Dinner:"bg-rose-50 text-rose-600", Activity:"bg-pink-50 text-pink-600" };
+      let counters = {};  days.forEach(d=>counters[d]=0);
+      [...currentItinerary].sort((a,b)=>(a.timeStr||'').localeCompare(b.timeStr||'')).forEach(node => {
+        const box = document.getElementById(`day-box-${node.dateStr}`);
+        if(box) {
+          counters[node.dateStr]++;
+          box.insertAdjacentHTML('beforeend',`
+            <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 active:bg-gray-100/70" onclick="window.triggerEditItineraryNode('${node.id}')">
+              <div class="flex justify-between items-center text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="bg-slate-900 text-white font-mono font-bold px-2 py-0.5 rounded text-[10px]">${node.timeStr||'⏰ --:--'}</span>
+                  <h5 class="font-bold text-slate-900 truncate max-w-[150px]">${node.hubLocation}</h5>
                 </div>
-            `;
-            targetBox.insertAdjacentHTML('beforeend', cardHtml);
+                <span class="text-[8px] font-black px-2 py-0.5 rounded-full ${badgeStyles[node.nodeType]||'bg-gray-100'}">${node.nodeType}</span>
+              </div>
+              <p class="text-[11px] text-gray-500 mt-1.5 whitespace-pre-line pl-1">${node.activityDetails||''}</p>
+            </div>
+          `);
         }
-    });
-
-    // 3. 沒有行程時的提示
-    days.forEach(day => {
-        const box = document.getElementById(`day-box-${day}`);
-        if (box && counters[day] === 0) {
-            box.innerHTML = `<p class="text-[11px] text-gray-400 italic py-1 text-center">今天目前沒有安排行程活動</p>`;
-        }
-    });
-}
-
+      });
+      days.forEach(day => { if(counters[day]===0) document.getElementById(`day-box-${day}`).innerHTML=`<p class="text-[11px] text-gray-400 italic py-1 text-center">今天目前沒有安排行程活動</p>`; });
+    }
 
     function openItineraryEditorModal(id) {
     const modal = document.getElementById('itinerary-editor'); 
