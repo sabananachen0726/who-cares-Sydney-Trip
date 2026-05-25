@@ -248,6 +248,11 @@
           </div>
           <div>
             <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">具體計劃與備忘細節</label>
+            <!-- 在編輯器裡加入這個勾選框 -->
+<div class="flex items-center gap-2 p-3 bg-amber-50 rounded-xl border border-amber-200">
+  <input type="checkbox" id="edit-itin-ticket" class="w-5 h-5 text-amber-500 rounded focus:ring-amber-500">
+  <label for="edit-itin-ticket" class="text-xs font-bold text-amber-800">⚠️ 此行程需要「預先購票」</label>
+</div>
             <textarea id="edit-itin-details" rows="3" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-slate-900" placeholder="填寫行程活動細節..."></textarea>
           </div>
           <div class="flex gap-2">
@@ -691,27 +696,71 @@ function saveHotelInfo() {
     }
 
     function openItineraryEditorModal(id) {
-      const modal = document.getElementById('itinerary-editor'); modal.style.display='block';
-      if(id) {
-        document.getElementById('itin-editor-title').innerText="修改行程活動"; document.getElementById('edit-itin-id').value=id; document.getElementById('btn-delete-itin').style.display='block';
-        const n=currentItinerary.find(i=>i.id===id);
-        if(n){ document.getElementById('edit-itin-date').value=n.dateStr||'2026-06-29'; document.getElementById('edit-itin-time').value=n.timeStr||''; document.getElementById('edit-itin-type').value=n.nodeType||'Activity'; document.getElementById('edit-itin-location').value=n.hubLocation||''; document.getElementById('edit-itin-details').value=n.activityDetails||''; }
-      } else {
-        document.getElementById('itin-editor-title').innerText="規劃活動卡片"; document.getElementById('edit-itin-id').value=''; document.getElementById('btn-delete-itin').style.display='none';
-        document.getElementById('edit-itin-date').value="2026-06-29"; document.getElementById('edit-itin-time').value="09:00"; document.getElementById('edit-itin-type').value="Activity"; document.getElementById('edit-itin-location').value=''; document.getElementById('edit-itin-details').value='';
-      }
-      modal.scrollIntoView({behavior:'smooth'});
+    const modal = document.getElementById('itinerary-editor'); 
+    modal.style.display = 'block';
+    
+    if(id) {
+        document.getElementById('itin-editor-title').innerText = "修改行程活動"; 
+        document.getElementById('edit-itin-id').value = id; 
+        document.getElementById('btn-delete-itin').style.display = 'block';
+        
+        const n = currentItinerary.find(i => i.id === id); 
+        if(n) { 
+            document.getElementById('edit-itin-date').value = n.dateStr || '2026-06-29'; 
+            document.getElementById('edit-itin-time').value = n.timeStr || ''; 
+            document.getElementById('edit-itin-type').value = n.nodeType || 'Activity'; 
+            document.getElementById('edit-itin-location').value = n.hubLocation || ''; 
+            document.getElementById('edit-itin-details').value = n.activityDetails || ''; 
+            
+            // --- 【請在此處補上這一行】 ---
+            // 讀取該行程原本是否已勾選購票提醒，若沒有資料則預設為 false (不勾選)
+            document.getElementById('edit-itin-ticket').checked = n.isTicketRequired || false; 
+        }
+    } else {
+        // 新增行程時，將核取方塊重置為未勾選
+        document.getElementById('itin-editor-title').innerText = "規劃活動卡片"; 
+        document.getElementById('edit-itin-id').value = ''; 
+        document.getElementById('btn-delete-itin').style.display = 'none';
+        document.getElementById('edit-itin-date').value = "2026-06-29"; 
+        document.getElementById('edit-itin-time').value = "09:00"; 
+        document.getElementById('edit-itin-type').value = "Activity"; 
+        document.getElementById('edit-itin-location').value = ""; 
+        document.getElementById('edit-itin-details').value = "";
+        
+        // 【新增這行】確保新增行程時，勾選框是乾淨的
+        document.getElementById('edit-itin-ticket').checked = false;
     }
+    modal.scrollIntoView({ behavior: 'smooth' });
+}
     window.openItineraryEditorModal = openItineraryEditorModal; window.triggerEditItineraryNode = openItineraryEditorModal;
     function closeItineraryEditor() { document.getElementById('itinerary-editor').style.display='none'; }
     window.closeItineraryEditor = closeItineraryEditor;
 
-    function saveItineraryNode() {
-      const id = document.getElementById('edit-itin-id').value;
-      const payload = { dateStr:document.getElementById('edit-itin-date').value, timeStr:document.getElementById('edit-itin-time').value, nodeType:document.getElementById('edit-itin-type').value, hubLocation:document.getElementById('edit-itin-location').value.trim()||'未填地點', activityDetails:document.getElementById('edit-itin-details').value.trim()||'' };
-      if(id) db.collection("sydney_luxe_itinerary").doc(id).set(payload,{merge:true}).then(()=>closeItineraryEditor());
-      else db.collection("sydney_luxe_itinerary").add(payload).then(()=>closeItineraryEditor());
+   function saveItineraryNode() {
+    // 1. 取得 ID (如果是修改行程就會有 ID，新增行程則為空)
+    const id = document.getElementById('edit-itin-id').value;
+
+    // 2. 準備要送到雲端的資料包 (Payload)
+    // 我們多加了一行：isTicketRequired: document.getElementById('edit-itin-ticket').checked
+    // 這行會自動去抓那個核取方塊有沒有被打勾 (true 或 false)
+    const payload = { 
+        dateStr: document.getElementById('edit-itin-date').value, 
+        timeStr: document.getElementById('edit-itin-time').value, 
+        nodeType: document.getElementById('edit-itin-type').value, 
+        hubLocation: document.getElementById('edit-itin-location').value.trim() || '未填地點', 
+        activityDetails: document.getElementById('edit-itin-details').value.trim() || '',
+        isTicketRequired: document.getElementById('edit-itin-ticket').checked 
+    };
+
+    // 3. 根據有無 ID 決定是「更新」還是「新增」
+    if(id) { 
+        db.collection("sydney_luxe_itinerary").doc(id).set(payload, {merge:true})
+          .then(() => closeItineraryEditor()); 
+    } else { 
+        db.collection("sydney_luxe_itinerary").add(payload)
+          .then(() => closeItineraryEditor()); 
     }
+}
     window.saveItineraryNode = saveItineraryNode;
     function deleteItineraryNode() { const id=document.getElementById('edit-itin-id').value; if(confirm("確定刪除此行程節點？")) db.collection("sydney_luxe_itinerary").doc(id).delete().then(()=>closeItineraryEditor()); }
     window.deleteItineraryNode = deleteItineraryNode;
