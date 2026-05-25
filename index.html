@@ -397,7 +397,34 @@
       "appId": "1:794096659826:web:d99d862c67c94ce56f41eb",
       "measurementId": "G-XCH2ZH980C"
     }`;
-    const FIXED_MEMBERS = ['Sabrina', '中偉', '聖聖', '老麥', '倫倫'];
+    const FIXED_MEMBERS = [];
+    // 1. 初始化讀取名單 (放在 bootstrapConfig 啟動時)
+function streamMembers() {
+    db.collection("sydney_luxe_meta").doc("members").onSnapshot(d => {
+        if (d.exists) {
+            FIXED_MEMBERS = d.data().list;
+            updateAllMemberUI(); // 只要名單變，就自動刷新所有 UI
+        }
+    });
+}
+
+// 2. 當名單更新時，自動刷新選單與列表
+function updateAllMemberUI() {
+    // A. 刷新分帳人選單
+    const paidBySelect = document.getElementById('edit-paid-by');
+    if(paidBySelect) paidBySelect.innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
+    
+    // B. 刷新分帳核取方塊 (重新建立分帳區塊)
+    initStaticBillForm(); 
+    
+    // C. 刷新航班成員選單
+    const fSelect = document.getElementById('flight-member-select');
+    if(fSelect) fSelect.innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
+
+    // D. 刷新名單顯示文字
+    const dashMembers = document.getElementById('dash-members');
+    if(dashMembers) dashMembers.innerText = FIXED_MEMBERS.join(', ');
+}
 
     let db = null;
     let currentExpenses = []; let currentItinerary = []; let currentWishes = [];
@@ -476,16 +503,22 @@
     }
     window.switchTab = switchTab;
 
-    function bootstrapConfig() {
-      applyLanguagePack();
-      document.getElementById('dash-members').innerText = FIXED_MEMBERS.join(', ');
-      document.getElementById('flight-member-select').innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
-      if (firebase.apps.length === 0) {
+   function bootstrapConfig() {
+    applyLanguagePack();
+    
+    if (firebase.apps.length === 0) {
         db = firebase.firestore(firebase.initializeApp(JSON.parse(EMBEDDED_FIREBASE_JSON)));
-      } else { db = firebase.firestore(); }
-      initStaticBillForm();
-      streamExpenses(); streamItinerary(); streamWishes(); streamHotel(); streamFlights();
-    }
+    } else { db = firebase.firestore(); }
+
+    // 【重要】先啟動名單監聽，再啟動其他函數
+    streamMembers(); 
+    
+    // 稍作延遲確保名單讀取後才渲染初始表單
+    setTimeout(() => {
+        initStaticBillForm();
+        streamExpenses(); streamItinerary(); streamWishes(); streamHotel(); streamFlights();
+    }, 500);
+}
 
     // HOTEL
     function openHotelEditor() { document.getElementById('hotel-editor-panel').style.display = 'block'; }
