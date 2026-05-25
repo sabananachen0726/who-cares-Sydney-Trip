@@ -486,18 +486,37 @@
     function openHotelEditor() { document.getElementById('hotel-editor-panel').style.display = 'block'; }
     function closeHotelEditor() { document.getElementById('hotel-editor-panel').style.display = 'none'; }
     window.openHotelEditor = openHotelEditor; window.closeHotelEditor = closeHotelEditor;
-    function saveHotelInfo() { db.collection("sydney_luxe_meta").doc("hotel").set({ name: document.getElementById('input-hotel-name').value.trim(), address: document.getElementById('input-hotel-address').value.trim() }).then(() => closeHotelEditor()); }
+function saveHotelInfo() {
+  const name = document.getElementById('input-hotel-name').value.trim();
+  const address = document.getElementById('input-hotel-address').value.trim();
+  
+  // 檢查是否為空，避免誤存空白資料
+  if (!name && !address) { alert("請至少填寫飯店名稱！"); return; }
+
+  db.collection("sydney_luxe_meta").doc("hotel").set({ name, address })
+    .then(() => {
+      closeHotelEditor();
+      alert("住宿資訊已更新！");
+    })
+    .catch((error) => {
+      alert("同步失敗，請再試一次：" + error.message);
+    });
+}
     window.saveHotelInfo = saveHotelInfo;
     function streamHotel() {
-      db.collection("sydney_luxe_meta").doc("hotel").onSnapshot(d => {
-        if (d.exists()) {
-          document.getElementById('hotel-display-name').innerText = d.data().name || "點擊設定飯店名稱與資訊";
-          document.getElementById('hotel-display-address').innerText = d.data().address || "目前尚未提供地址資訊";
-          document.getElementById('input-hotel-name').value = d.data().name || '';
-          document.getElementById('input-hotel-address').value = d.data().address || '';
-        }
-      });
+  db.collection("sydney_luxe_meta").doc("hotel").onSnapshot(d => {
+    if (d.exists()) {
+      const data = d.data();
+      // 更新顯示區域
+      document.getElementById('hotel-display-name').innerText = data.name || "點擊設定飯店名稱與資訊";
+      document.getElementById('hotel-display-address').innerText = data.address || "目前尚未提供地址資訊";
+      
+      // 【關鍵步驟】一定要更新編輯框的數值，這樣你下次打開才看得到舊資料
+      document.getElementById('input-hotel-name').value = data.name || '';
+      document.getElementById('input-hotel-address').value = data.address || '';
     }
+  });
+}
 
     // FLIGHTS
     function openFlightEditor(typeMode) {
