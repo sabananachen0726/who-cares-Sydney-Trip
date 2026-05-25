@@ -401,10 +401,16 @@
     // 1. 初始化讀取名單 (放在 bootstrapConfig 啟動時)
 function streamMembers() {
     db.collection("sydney_luxe_meta").doc("members").onSnapshot(d => {
-        if (d.exists) {
+        if (d.exists && d.data().list && d.data().list.length > 0) {
+            // 雲端有資料，才更新
             FIXED_MEMBERS = d.data().list;
-            updateAllMemberUI(); // 只要名單變，就自動刷新所有 UI
+            console.log("從雲端載入成員:", FIXED_MEMBERS);
+        } else {
+            // 雲端沒資料，保留預設值，不要讓它變空
+            console.log("雲端無成員資料，使用預設值");
+            FIXED_MEMBERS = ['Sabrina', '中偉', '聖聖', '老麥', '輸偷倫']; 
         }
+        updateAllMemberUI(); // 確保名單抓到後立刻刷新 UI
     });
 }
 
