@@ -618,24 +618,41 @@ function saveHotelInfo() {
     }
 
     // EXPENSES
-    function initStaticBillForm() {
-      document.getElementById('edit-date').value = new Date().toISOString().split('T')[0];
-      document.getElementById('edit-paid-by').innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
-      const weightBox = document.getElementById('split-shares-container');
-      weightBox.innerHTML = FIXED_MEMBERS.map(m => `
-        <div class="flex items-center justify-between gap-2 bg-white p-2 rounded-xl border border-gray-100">
-          <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer select-none">
-            <input type="checkbox" data-member-check="${m}" checked class="member-split-checkbox w-4 h-4 text-pink-600 rounded border-gray-300 focus:ring-pink-400">
-            <span>${m}</span>
-          </label>
-          <div class="flex items-center gap-1">
-            <span class="text-[10px] text-gray-400">A$</span>
-            <input type="number" step="0.01" data-member-weight="${m}" class="split-weight-node w-20 p-1.5 bg-gray-50 border border-gray-200 rounded-lg text-right text-xs text-pink-600 font-mono" value="0.00">
-          </div>
-        </div>
-      `).join('');
-      document.querySelectorAll('.split-weight-node').forEach(i => i.addEventListener('input', sumWeightNodes));
+   function initStaticBillForm() {
+    // 強制設定一個保底名單，如果 FIXED_MEMBERS 為空，就用這組
+    const members = (FIXED_MEMBERS && FIXED_MEMBERS.length > 0) 
+                    ? FIXED_MEMBERS 
+                    : ['Sabrina', '中偉', '聖聖', '老麥', '倫倫'];
+
+    // 1. 填補「誰付的錢」選單
+    const paidBySelect = document.getElementById('edit-paid-by');
+    if (paidBySelect) {
+        paidBySelect.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join('');
     }
+
+    // 2. 強制渲染「分帳人與金額微調」的勾選框
+    const weightBox = document.getElementById('split-shares-container');
+    if (weightBox) {
+        weightBox.innerHTML = members.map(m => `
+            <div class="flex items-center justify-between gap-2 bg-white p-2 rounded-xl border border-gray-100">
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer select-none">
+                    <input type="checkbox" data-member-check="${m}" checked class="member-split-checkbox w-4 h-4 text-pink-600 rounded border-gray-300 focus:ring-pink-400">
+                    <span>${m}</span>
+                </label>
+                <div class="flex items-center gap-1">
+                    <span class="text-[10px] text-gray-400">A$</span>
+                    <input type="number" step="0.01" data-member-weight="${m}" class="split-weight-node w-20 p-1.5 bg-gray-50 border border-gray-200 rounded-lg text-right text-xs text-pink-600 font-mono" value="0.00">
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 綁定事件監聽器 (確保輸入金額時能自動計算)
+    document.querySelectorAll('.split-weight-node').forEach(i => 
+        i.removeEventListener('input', sumWeightNodes), // 先移除舊的避免重複綁定
+        i.addEventListener('input', sumWeightNodes)
+    );
+}
 
     function calculateEqualSplit() {
       const totalAmount = parseFloat(document.getElementById('edit-amount').value) || 0;
