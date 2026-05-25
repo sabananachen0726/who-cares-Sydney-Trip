@@ -64,7 +64,7 @@
       <div class="bg-white border border-gray-200 p-5 rounded-2xl shadow-sm">
         <p class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-ledger-title">本團澳幣總花費</p>
         <p class="text-3xl font-black text-slate-900 mt-1" id="dash-total">A$ 0.00</p>
-        <p class="text-xs font-bold text-slate-500 mt-2"><span id="ui-ledger-crew">本團成員:</span> <span id="dash-members">Sabrina, 中偉, 聖聖, 老麥, 倫倫</span></p>
+        <p class="text-xs font-bold text-slate-500 mt-2"><span id="ui-ledger-crew">本團成員:</span> <span id="dash-members">Sabrina, 中偉, 聖聖, 老麥, 輸偷倫</span></p>
       </div>
 
       <!-- 記帳面板 -->
@@ -145,14 +145,16 @@
         </button>
 
         <!-- 折疊內容 -->
-        <div id="settlement-body" class="settlement-collapse collapsed">
-          <div class="px-5 pb-5 space-y-3">
-            <p class="text-[10px] text-gray-400 -mt-2 mb-3">最後一天對帳不燒腦，綠色代表拿回錢，粉色代表需補繳</p>
-            <div id="settlement-matrix-box" class="space-y-2.5"></div>
-          </div>
-        </div>
-      </section>
+      <div id="settlement-body" class="settlement-collapse collapsed">
+    <div class="px-5 pb-5 pt-2">
+        <p class="text-[10px] text-gray-400 mb-3 leading-tight block">
+            最後一天對帳不燒腦，綠色代表拿回錢，粉色代表需補繳
+        </p>
+        <div id="settlement-matrix-box" class="flex flex-col gap-2.5">
+            </div>
     </div>
+</div>
+
 
     <!-- TAB 2: PLANNER -->
     <div id="tab-itinerary-content" class="space-y-6" style="display: none;">
@@ -622,7 +624,7 @@ function saveHotelInfo() {
     // 強制設定一個保底名單，如果 FIXED_MEMBERS 為空，就用這組
     const members = (FIXED_MEMBERS && FIXED_MEMBERS.length > 0) 
                     ? FIXED_MEMBERS 
-                    : ['Sabrina', '中偉', '聖聖', '老麥', '倫倫'];
+                    : ['Sabrina', '中偉', '聖聖', '老麥', '輸偷倫'];
 
     // 1. 填補「誰付的錢」選單
     const paidBySelect = document.getElementById('edit-paid-by');
@@ -698,22 +700,60 @@ function saveHotelInfo() {
     }
 
     function renderFinalSettlementMatrix() {
-      let paidMap = {}, oweMap = {};
-      FIXED_MEMBERS.forEach(m => { paidMap[m]=0; oweMap[m]=0; });
-      currentExpenses.forEach(exp => {
-        if(FIXED_MEMBERS.includes(exp.paidBy)) paidMap[exp.paidBy] += parseFloat(exp.amountAUD)||0;
-        Object.entries(exp.splits||{}).forEach(([m,v]) => { if(FIXED_MEMBERS.includes(m)) oweMap[m] += parseFloat(v)||0; });
-      });
-      const box = document.getElementById('settlement-matrix-box');
-      box.innerHTML = FIXED_MEMBERS.map(m => {
+    const members = (FIXED_MEMBERS && FIXED_MEMBERS.length > 0) ? FIXED_MEMBERS : ['Sabrina', '中偉', '聖聖', '老麥', '輸偷倫'];
+    let paidMap = {}, oweMap = {};
+    members.forEach(m => { paidMap[m] = 0; oweMap[m] = 0; });
+
+    currentExpenses.forEach(exp => {
+        if (members.includes(exp.paidBy)) paidMap[exp.paidBy] += parseFloat(exp.amountAUD) || 0;
+        Object.entries(exp.splits || {}).forEach(([m, v]) => { if (members.includes(m)) oweMap[m] += parseFloat(v) || 0; });
+    });
+
+    const box = document.getElementById('settlement-matrix-box');
+    if (!box) return;
+
+    box.innerHTML = members.map(m => {
+        const net = paidMap[m] - oweMap[m];
+        // 這裡我們直接用邏輯判斷產生 HTML，避開編碼衝突
+        let colorClass = net > 0.01 ? "text-emerald-600 bg-emerald-50 border-emerald-100" : (net < -0.01 ? "text-pink-600 bg-pink-50 border-pink-100" : "text-gray-400 bg-gray-50 border-gray-200");
+        let statusText = net > 0.01 ? "RECEIVE" : (net < -0.01 ? "PAY" : "BALANCED");
+        let amount = Math.abs(net).toFixed(2);
+        
+        return `
+            <div class="flex items-center justify-between bg-white p-3 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="min-w-0 pr-2">
+                    <h4 class="text-xs font-black text-slate-900 truncate">${m}</h4>
+                    <p class="text-[9px] text-gray-400 mt-0.5 font-mono">Paid: $${paidMap[m].toFixed(1)} | Due: $${oweMap[m].toFixed(1)}</p>
+                </div>
+                <div class="flex items-center gap-1.5 text-xs font-black ${colorClass} px-3 py-1.5 rounded-xl border flex-shrink-0">
+                    <span>${statusText}</span>
+                    <span class="font-mono text-sm">$${amount}</span>
+                </div>
+            </div>`;
+    }).join('');
+}
+
+    const box = document.getElementById('settlement-matrix-box');
+    if (!box) return;
+
+    // 渲染清單
+    box.innerHTML = members.map(m => {
         const net = paidMap[m] - oweMap[m];
         let badge = '';
-        if(net > 0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-xl"><span>應收回</span><span class="font-mono text-sm">A$ ${net.toFixed(2)}</span></div>`;
-        else if(net < -0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-pink-600 bg-pink-50 border border-pink-100 px-3 py-1.5 rounded-xl"><span>應補繳</span><span class="font-mono text-sm">A$ ${Math.abs(net).toFixed(2)}</span></div>`;
+        if (net > 0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-xl"><span>應收回</span><span class="font-mono text-sm">A$ ${net.toFixed(2)}</span></div>`;
+        else if (net < -0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-pink-600 bg-pink-50 border border-pink-100 px-3 py-1.5 rounded-xl"><span>應補繳</span><span class="font-mono text-sm">A$ ${Math.abs(net).toFixed(2)}</span></div>`;
         else badge = `<div class="text-xs font-bold text-gray-400 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-xl">已兩清 A$ 0.00</div>`;
-        return `<div class="flex items-center justify-between bg-gray-50/50 p-3 rounded-2xl border border-gray-100"><div><h4 class="text-xs font-black text-slate-900">${m}</h4><p class="text-[9px] text-gray-400 mt-0.5 font-mono">已代付: $${paidMap[m].toFixed(1)} | 總應付: $${oweMap[m].toFixed(1)}</p></div>${badge}</div>`;
-      }).join('');
-    }
+        
+        return `
+            <div class="flex items-center justify-between bg-gray-50/50 p-3 rounded-2xl border border-gray-100">
+                <div>
+                    <h4 class="text-xs font-black text-slate-900">${m}</h4>
+                    <p class="text-[9px] text-gray-400 mt-0.5 font-mono">已付: $${paidMap[m].toFixed(1)} | 應付: $${oweMap[m].toFixed(1)}</p>
+                </div>
+                ${badge}
+            </div>`;
+    }).join('');
+}
 
     window.initiateBillTweak = function(id) {
       const t = currentExpenses.find(e=>e.id===id); if(!t) return;
