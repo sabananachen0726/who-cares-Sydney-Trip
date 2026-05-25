@@ -64,7 +64,7 @@
       <div class="bg-white border border-gray-200 p-5 rounded-2xl shadow-sm">
         <p class="text-[10px] font-bold tracking-widest uppercase text-gray-400" id="ui-ledger-title">本團澳幣總花費</p>
         <p class="text-3xl font-black text-slate-900 mt-1" id="dash-total">A$ 0.00</p>
-        <p class="text-xs font-bold text-slate-500 mt-2"><span id="ui-ledger-crew">本團成員:</span> <span id="dash-members">Sabrina, 中偉, 聖聖, 老麥, 輸偷倫</span></p>
+        <p class="text-xs font-bold text-slate-500 mt-2"><span id="ui-ledger-crew">本團成員:</span> <span id="dash-members">Sabrina, 中偉, 聖聖, 老麥, 倫倫</span></p>
       </div>
 
       <!-- 記帳面板 -->
@@ -145,16 +145,14 @@
         </button>
 
         <!-- 折疊內容 -->
-      <div id="settlement-body" class="settlement-collapse collapsed">
-    <div class="px-5 pb-5 pt-2">
-        <p class="text-[10px] text-gray-400 mb-3 leading-tight block">
-            最後一天對帳不燒腦，綠色代表拿回錢，粉色代表需補繳
-        </p>
-        <div id="settlement-matrix-box" class="flex flex-col gap-2.5">
-            </div>
+        <div id="settlement-body" class="settlement-collapse collapsed">
+          <div class="px-5 pb-5 space-y-3">
+            <p class="text-[10px] text-gray-400 -mt-2 mb-3">最後一天對帳不燒腦，綠色代表拿回錢，粉色代表需補繳</p>
+            <div id="settlement-matrix-box" class="space-y-2.5"></div>
+          </div>
+        </div>
+      </section>
     </div>
-</div>
-
 
     <!-- TAB 2: PLANNER -->
     <div id="tab-itinerary-content" class="space-y-6" style="display: none;">
@@ -399,40 +397,7 @@
       "appId": "1:794096659826:web:d99d862c67c94ce56f41eb",
       "measurementId": "G-XCH2ZH980C"
     }`;
-    const FIXED_MEMBERS = [];
-    // 1. 初始化讀取名單 (放在 bootstrapConfig 啟動時)
-function streamMembers() {
-    db.collection("sydney_luxe_meta").doc("members").onSnapshot(d => {
-        if (d.exists && d.data().list && d.data().list.length > 0) {
-            // 雲端有資料，才更新
-            FIXED_MEMBERS = d.data().list;
-            console.log("從雲端載入成員:", FIXED_MEMBERS);
-        } else {
-            // 雲端沒資料，保留預設值，不要讓它變空
-            console.log("雲端無成員資料，使用預設值");
-            FIXED_MEMBERS = ['Sabrina', '中偉', '聖聖', '老麥', '輸偷倫']; 
-        }
-        updateAllMemberUI(); // 確保名單抓到後立刻刷新 UI
-    });
-}
-
-// 2. 當名單更新時，自動刷新選單與列表
-function updateAllMemberUI() {
-    // A. 刷新分帳人選單
-    const paidBySelect = document.getElementById('edit-paid-by');
-    if(paidBySelect) paidBySelect.innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
-    
-    // B. 刷新分帳核取方塊 (重新建立分帳區塊)
-    initStaticBillForm(); 
-    
-    // C. 刷新航班成員選單
-    const fSelect = document.getElementById('flight-member-select');
-    if(fSelect) fSelect.innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
-
-    // D. 刷新名單顯示文字
-    const dashMembers = document.getElementById('dash-members');
-    if(dashMembers) dashMembers.innerText = FIXED_MEMBERS.join(', ');
-}
+    const FIXED_MEMBERS = ['Sabrina', '中偉', '聖聖', '老麥', '倫倫'];
 
     let db = null;
     let currentExpenses = []; let currentItinerary = []; let currentWishes = [];
@@ -511,22 +476,16 @@ function updateAllMemberUI() {
     }
     window.switchTab = switchTab;
 
-   function bootstrapConfig() {
-    applyLanguagePack();
-    
-    if (firebase.apps.length === 0) {
+    function bootstrapConfig() {
+      applyLanguagePack();
+      document.getElementById('dash-members').innerText = FIXED_MEMBERS.join(', ');
+      document.getElementById('flight-member-select').innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
+      if (firebase.apps.length === 0) {
         db = firebase.firestore(firebase.initializeApp(JSON.parse(EMBEDDED_FIREBASE_JSON)));
-    } else { db = firebase.firestore(); }
-
-    // 【重要】先啟動名單監聽，再啟動其他函數
-    streamMembers(); 
-    
-    // 稍作延遲確保名單讀取後才渲染初始表單
-    setTimeout(() => {
-        initStaticBillForm();
-        streamExpenses(); streamItinerary(); streamWishes(); streamHotel(); streamFlights();
-    }, 500);
-}
+      } else { db = firebase.firestore(); }
+      initStaticBillForm();
+      streamExpenses(); streamItinerary(); streamWishes(); streamHotel(); streamFlights();
+    }
 
     // HOTEL
     function openHotelEditor() { document.getElementById('hotel-editor-panel').style.display = 'block'; }
@@ -620,41 +579,24 @@ function saveHotelInfo() {
     }
 
     // EXPENSES
-   function initStaticBillForm() {
-    // 強制設定一個保底名單，如果 FIXED_MEMBERS 為空，就用這組
-    const members = (FIXED_MEMBERS && FIXED_MEMBERS.length > 0) 
-                    ? FIXED_MEMBERS 
-                    : ['Sabrina', '中偉', '聖聖', '老麥', '輸偷倫'];
-
-    // 1. 填補「誰付的錢」選單
-    const paidBySelect = document.getElementById('edit-paid-by');
-    if (paidBySelect) {
-        paidBySelect.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join('');
+    function initStaticBillForm() {
+      document.getElementById('edit-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('edit-paid-by').innerHTML = FIXED_MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
+      const weightBox = document.getElementById('split-shares-container');
+      weightBox.innerHTML = FIXED_MEMBERS.map(m => `
+        <div class="flex items-center justify-between gap-2 bg-white p-2 rounded-xl border border-gray-100">
+          <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer select-none">
+            <input type="checkbox" data-member-check="${m}" checked class="member-split-checkbox w-4 h-4 text-pink-600 rounded border-gray-300 focus:ring-pink-400">
+            <span>${m}</span>
+          </label>
+          <div class="flex items-center gap-1">
+            <span class="text-[10px] text-gray-400">A$</span>
+            <input type="number" step="0.01" data-member-weight="${m}" class="split-weight-node w-20 p-1.5 bg-gray-50 border border-gray-200 rounded-lg text-right text-xs text-pink-600 font-mono" value="0.00">
+          </div>
+        </div>
+      `).join('');
+      document.querySelectorAll('.split-weight-node').forEach(i => i.addEventListener('input', sumWeightNodes));
     }
-
-    // 2. 強制渲染「分帳人與金額微調」的勾選框
-    const weightBox = document.getElementById('split-shares-container');
-    if (weightBox) {
-        weightBox.innerHTML = members.map(m => `
-            <div class="flex items-center justify-between gap-2 bg-white p-2 rounded-xl border border-gray-100">
-                <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer select-none">
-                    <input type="checkbox" data-member-check="${m}" checked class="member-split-checkbox w-4 h-4 text-pink-600 rounded border-gray-300 focus:ring-pink-400">
-                    <span>${m}</span>
-                </label>
-                <div class="flex items-center gap-1">
-                    <span class="text-[10px] text-gray-400">A$</span>
-                    <input type="number" step="0.01" data-member-weight="${m}" class="split-weight-node w-20 p-1.5 bg-gray-50 border border-gray-200 rounded-lg text-right text-xs text-pink-600 font-mono" value="0.00">
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // 綁定事件監聽器 (確保輸入金額時能自動計算)
-    document.querySelectorAll('.split-weight-node').forEach(i => 
-        i.removeEventListener('input', sumWeightNodes), // 先移除舊的避免重複綁定
-        i.addEventListener('input', sumWeightNodes)
-    );
-}
 
     function calculateEqualSplit() {
       const totalAmount = parseFloat(document.getElementById('edit-amount').value) || 0;
@@ -700,60 +642,22 @@ function saveHotelInfo() {
     }
 
     function renderFinalSettlementMatrix() {
-    const members = (FIXED_MEMBERS && FIXED_MEMBERS.length > 0) ? FIXED_MEMBERS : ['Sabrina', '中偉', '聖聖', '老麥', '輸偷倫'];
-    let paidMap = {}, oweMap = {};
-    members.forEach(m => { paidMap[m] = 0; oweMap[m] = 0; });
-
-    currentExpenses.forEach(exp => {
-        if (members.includes(exp.paidBy)) paidMap[exp.paidBy] += parseFloat(exp.amountAUD) || 0;
-        Object.entries(exp.splits || {}).forEach(([m, v]) => { if (members.includes(m)) oweMap[m] += parseFloat(v) || 0; });
-    });
-
-    const box = document.getElementById('settlement-matrix-box');
-    if (!box) return;
-
-    box.innerHTML = members.map(m => {
-        const net = paidMap[m] - oweMap[m];
-        // 這裡我們直接用邏輯判斷產生 HTML，避開編碼衝突
-        let colorClass = net > 0.01 ? "text-emerald-600 bg-emerald-50 border-emerald-100" : (net < -0.01 ? "text-pink-600 bg-pink-50 border-pink-100" : "text-gray-400 bg-gray-50 border-gray-200");
-        let statusText = net > 0.01 ? "RECEIVE" : (net < -0.01 ? "PAY" : "BALANCED");
-        let amount = Math.abs(net).toFixed(2);
-        
-        return `
-            <div class="flex items-center justify-between bg-white p-3 rounded-2xl border border-gray-100 shadow-sm">
-                <div class="min-w-0 pr-2">
-                    <h4 class="text-xs font-black text-slate-900 truncate">${m}</h4>
-                    <p class="text-[9px] text-gray-400 mt-0.5 font-mono">Paid: $${paidMap[m].toFixed(1)} | Due: $${oweMap[m].toFixed(1)}</p>
-                </div>
-                <div class="flex items-center gap-1.5 text-xs font-black ${colorClass} px-3 py-1.5 rounded-xl border flex-shrink-0">
-                    <span>${statusText}</span>
-                    <span class="font-mono text-sm">$${amount}</span>
-                </div>
-            </div>`;
-    }).join('');
-}
-
-    const box = document.getElementById('settlement-matrix-box');
-    if (!box) return;
-
-    // 渲染清單
-    box.innerHTML = members.map(m => {
+      let paidMap = {}, oweMap = {};
+      FIXED_MEMBERS.forEach(m => { paidMap[m]=0; oweMap[m]=0; });
+      currentExpenses.forEach(exp => {
+        if(FIXED_MEMBERS.includes(exp.paidBy)) paidMap[exp.paidBy] += parseFloat(exp.amountAUD)||0;
+        Object.entries(exp.splits||{}).forEach(([m,v]) => { if(FIXED_MEMBERS.includes(m)) oweMap[m] += parseFloat(v)||0; });
+      });
+      const box = document.getElementById('settlement-matrix-box');
+      box.innerHTML = FIXED_MEMBERS.map(m => {
         const net = paidMap[m] - oweMap[m];
         let badge = '';
-        if (net > 0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-xl"><span>應收回</span><span class="font-mono text-sm">A$ ${net.toFixed(2)}</span></div>`;
-        else if (net < -0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-pink-600 bg-pink-50 border border-pink-100 px-3 py-1.5 rounded-xl"><span>應補繳</span><span class="font-mono text-sm">A$ ${Math.abs(net).toFixed(2)}</span></div>`;
+        if(net > 0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-xl"><span>應收回</span><span class="font-mono text-sm">A$ ${net.toFixed(2)}</span></div>`;
+        else if(net < -0.01) badge = `<div class="flex items-center gap-1.5 text-xs font-black text-pink-600 bg-pink-50 border border-pink-100 px-3 py-1.5 rounded-xl"><span>應補繳</span><span class="font-mono text-sm">A$ ${Math.abs(net).toFixed(2)}</span></div>`;
         else badge = `<div class="text-xs font-bold text-gray-400 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-xl">已兩清 A$ 0.00</div>`;
-        
-        return `
-            <div class="flex items-center justify-between bg-gray-50/50 p-3 rounded-2xl border border-gray-100">
-                <div>
-                    <h4 class="text-xs font-black text-slate-900">${m}</h4>
-                    <p class="text-[9px] text-gray-400 mt-0.5 font-mono">已付: $${paidMap[m].toFixed(1)} | 應付: $${oweMap[m].toFixed(1)}</p>
-                </div>
-                ${badge}
-            </div>`;
-    }).join('');
-}
+        return `<div class="flex items-center justify-between bg-gray-50/50 p-3 rounded-2xl border border-gray-100"><div><h4 class="text-xs font-black text-slate-900">${m}</h4><p class="text-[9px] text-gray-400 mt-0.5 font-mono">已代付: $${paidMap[m].toFixed(1)} | 總應付: $${oweMap[m].toFixed(1)}</p></div>${badge}</div>`;
+      }).join('');
+    }
 
     window.initiateBillTweak = function(id) {
       const t = currentExpenses.find(e=>e.id===id); if(!t) return;
