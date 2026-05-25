@@ -670,30 +670,53 @@ function saveHotelInfo() {
     // ITINERARY
     function streamItinerary() { db.collection("sydney_luxe_itinerary").onSnapshot(snap => { currentItinerary=[]; snap.forEach(d=>currentItinerary.push({id:d.id,...d.data()})); refreshItineraryTimelineUI(); }); }
     function refreshItineraryTimelineUI() {
-      const days = ['2026-06-29','2026-06-30','2026-07-01','2026-07-02'];
-      days.forEach(day => { document.getElementById(`day-box-${day}`).innerHTML=''; });
-      const badgeStyles = { Breakfast:"bg-emerald-50 text-emerald-600", Lunch:"bg-teal-50 text-teal-600", Dinner:"bg-rose-50 text-rose-600", Activity:"bg-pink-50 text-pink-600" };
-      let counters = {};  days.forEach(d=>counters[d]=0);
-      [...currentItinerary].sort((a,b)=>(a.timeStr||'').localeCompare(b.timeStr||'')).forEach(node => {
-        const box = document.getElementById(`day-box-${node.dateStr}`);
-        if(box) {
-          counters[node.dateStr]++;
-          box.insertAdjacentHTML('beforeend',`
-            <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 active:bg-gray-100/70" onclick="window.triggerEditItineraryNode('${node.id}')">
-              <div class="flex justify-between items-center text-xs">
-                <div class="flex items-center gap-2">
-                  <span class="bg-slate-900 text-white font-mono font-bold px-2 py-0.5 rounded text-[10px]">${node.timeStr||'⏰ --:--'}</span>
-                  <h5 class="font-bold text-slate-900 truncate max-w-[150px]">${node.hubLocation}</h5>
+    const days = ['2026-06-29', '2026-06-30', '2026-07-01', '2026-07-02'];
+    
+    // 1. 先清空現有畫面
+    days.forEach(day => { 
+        const box = document.getElementById(`day-box-${day}`);
+        if(box) box.innerHTML = ''; 
+    });
+
+    const badgeStyles = { Breakfast: "bg-emerald-50 text-emerald-600", Lunch: "bg-teal-50 text-teal-600", Dinner: "bg-rose-50 text-rose-600", Activity: "bg-pink-50 text-pink-600" };
+    
+    // 2. 排序行程 (按時間)
+    const sortedNodes = [...currentItinerary].sort((a,b) => (a.timeStr || '').localeCompare(b.timeStr || ''));
+    let counters = {}; days.forEach(d => counters[d] = 0);
+
+    sortedNodes.forEach(node => {
+        const targetBox = document.getElementById(`day-box-${node.dateStr}`);
+        if(targetBox) {
+            counters[node.dateStr]++;
+            
+            // 【核心修改點】：判斷是否需要購票，並產生標籤
+            const ticketBadge = node.isTicketRequired ? 
+                `<span class="bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded text-[8px] font-black uppercase ml-2 border border-amber-200">🎫 需購票</span>` : '';
+
+            const cardHtml = `
+                <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 active:bg-gray-100/70" onclick="window.triggerEditItineraryNode('${node.id}')">
+                  <div class="flex justify-between items-center text-xs">
+                    <div class="flex items-center gap-2">
+                      <span class="bg-slate-900 text-white font-mono font-bold px-2 py-0.5 rounded text-[10px]">${node.timeStr || '⏰ --:--'}</span>
+                      <h5 class="font-bold text-slate-900 truncate max-w-[150px]">
+                        ${node.hubLocation} ${ticketBadge}
+                      </h5>
+                    </div>
+                    <span class="text-[8px] font-black px-2 py-0.5 rounded-full ${badgeStyles[node.nodeType] || 'bg-gray-100'}">${node.nodeType}</span>
+                  </div>
+                  <p class="text-[11px] text-gray-500 mt-1.5 whitespace-pre-line pl-1">${node.activityDetails || ''}</p>
                 </div>
-                <span class="text-[8px] font-black px-2 py-0.5 rounded-full ${badgeStyles[node.nodeType]||'bg-gray-100'}">${node.nodeType}</span>
-              </div>
-              <p class="text-[11px] text-gray-500 mt-1.5 whitespace-pre-line pl-1">${node.activityDetails||''}</p>
-            </div>
-          `);
+            `;
+            targetBox.insertAdjacentHTML('beforeend', cardHtml);
         }
-      });
-      days.forEach(day => { if(counters[day]===0) document.getElementById(`day-box-${day}`).innerHTML=`<p class="text-[11px] text-gray-400 italic py-1 text-center">今天目前沒有安排行程活動</p>`; });
-    }
+    });
+
+    // 3. 檢查當天是否無行程
+    days.forEach(day => { 
+        const box = document.getElementById(`day-box-${day}`);
+        if(box && counters[day] === 0) box.innerHTML = `<p class="text-[11px] text-gray-400 italic py-1 text-center">今天目前沒有安排行程活動</p>`; 
+    });
+}
 
     function openItineraryEditorModal(id) {
     const modal = document.getElementById('itinerary-editor'); 
